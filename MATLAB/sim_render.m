@@ -39,7 +39,7 @@ for t = 1:size(frameset,4)
     
 end
 
-vid = VideoWriter('render.avi');
+vid = VideoWriter('render.m4v','MPEG-4');
 open(vid);
 writeVideo(vid,frameset);
 close(vid);

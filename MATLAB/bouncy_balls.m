@@ -2,37 +2,36 @@ clear all
 clc
 
 %% Initial positions
-r(1,:) = [0.5 0 0];
-r(2,:) = [-0.5 0 0];
-
+r(1,:) = [0 0 0];
+r(2,:) = r(1,:) + [3.829545e8 0 0];
+r(3,:) = r(1,:) + [1.914773e8 -3.316483e8 0];
 %% Initial velocities
 v(1,:) = [0 0 0];
-v(2,:) = [0.5 0 0];
-
+v(2,:) = v(1,:) + [0 1.02e3 0]; 
+v(3,:) = v(1,:) + [883.3459 510 0];
 %% Initial angular velocities
 w = [0 0 0; 0 0 0; 0 0 0];
 %% Charges
 q(1) = 0;
 q(2) = 0;
-
+q(3) = 0;
 %% Radii
-rad(1) = 0.05;
-rad(2) = 0.05;
-
+rad(1) = 6371e3;
+rad(2) = 1737e3;
+rad(3) = 1;
 %% Masses
-m = [1 1];
-
+m = [5.97e24 7.35e22 10];
 %% Settings
 do_translate = 0;
-do_render = 1;
+do_render = 0;
 frame = 1;
-delta_t = 0.0001;
+delta_t = 60;
 F_tol = 0.01;
 v_tol = 0.01;
 k = (4*pi*8.85419e-12)^-1;
 G = 6.67384e-11;
-max_step = 32000;
-warp = 1;
+max_step = 80640;
+warp = 720;
 
 
 %% Dynamics iterations
