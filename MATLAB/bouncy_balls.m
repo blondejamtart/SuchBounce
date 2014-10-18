@@ -3,16 +3,16 @@ clc
 
 %% Initial positions
 r(1,:) = [0 0 0];
-r(2,:) = [0 -0.199 0];
-r(3,:) = [0 0.199 0];
-r(4,:) = [-1 0.199 0];
+r(2,:) = [-0.25 -0.199 0];
+% r(3,:) = [0 0.199 0];
+% r(4,:) = [-1 0.199 0];
 %% Initial velocities
 v(1,:) = [0 0 0];
-v(2,:) = [0 0 0];
-v(3,:) = [0 0 0];
-v(4,:) = [1 0 0];
+v(2,:) = [1 0 0];
+% v(3,:) = [0 0 0];
+% v(4,:) = [1 0 0];
 %% Initial angular velocities
-w(1,:) = [0 0 0];
+w(1,:) = [0 0 10];
 w(2,:) = [0 0 0];
 w(3,:) = [0 0 0];
 w(4,:) = [0 0 0];
@@ -91,7 +91,7 @@ while (t_step < max_step)
                     F_part_grad(:,i,ii) = 0;
                 end   
               
-                j_f_part(:,i,ii) = v_rel/(rad(i)^2/I(i) + rad(ii)^2/I(ii) - 1/m(i) - 1/m(ii));
+                j_f_part(:,i,ii) = v_rel/(rad(ii)^2/I(ii) - rad(i)^2/I(i) + 1/m(i) - 1/m(ii));
                 j_part(:,i,ii) = -(1+diss)*R(:,i,ii)*heaviside(rad(i) + rad(ii) - d)*dot((v(ii,:)-v(i,:)),R(:,i,ii))/(d^2*(m(i)^-1 + m(ii)^-1)); 
                 
                 j_f_part(:,ii,i) = -j_f_part(:,i,ii);
@@ -110,10 +110,10 @@ while (t_step < max_step)
         v(i,:) = v(i,:) + F(:,i)'/m(i)*delta_t + F_grad(:,i)'/m(i)*delta_t^2  - j(:,i)'/m(i);
         for ii = 1:size(r,1)
             d = norm(R(:,i,ii));
-%             if (heaviside(rad(i) + rad(ii) - d) && i ~= ii)
-%                 w(i,:) = w(i,:) - cross(j_f_part(:,i,ii)/I(i),R(:,i,ii)*rad(i)/d)';
-%                 v(i,:) = v(i,:) - j_f_part(:,i,ii)'/m(i);               
-%             end
+            if (heaviside(rad(i) + rad(ii) - d) && i ~= ii)
+                w(i,:) = w(i,:) - cross(j_f_part(:,i,ii)/I(i),R(:,i,ii)*rad(i)/d)';
+                v(i,:) = v(i,:) - j_f_part(:,i,ii)'/m(i);               
+            end
         end
         r(i,:) = r(i,:) + v(i,:)*delta_t;
         r_tracker(t_step,i,:) = r(i,:);
