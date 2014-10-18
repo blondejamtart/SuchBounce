@@ -1,29 +1,29 @@
 clear all
-clc
+
 
 %% Initial positions
 r(1,:) = [0 0 0];
-r(2,:) = [-0.25 -0.199 0];
+r(2,:) = [-2.5 1.99 0];
 % r(3,:) = [0 0.199 0];
 % r(4,:) = [-1 0.199 0];
 %% Initial velocities
 v(1,:) = [0 0 0];
-v(2,:) = [1 0 0];
+v(2,:) = [10 0 0];
 % v(3,:) = [0 0 0];
 % v(4,:) = [1 0 0];
 %% Initial angular velocities
-w(1,:) = [0 0 10];
+w(1,:) = [0 0 0];
 w(2,:) = [0 0 0];
 w(3,:) = [0 0 0];
 w(4,:) = [0 0 0];
 %% Charges
-q(1) = 1e-3;
-q(2) = -1e-3;
-q(3) = 1e-3;
+q(1) = 0;
+q(2) = 0;
+q(3) = 0;
 q(4) = 0;
 %% Radii
-rad(1) = 0.1;
-rad(2) = 0.1;
+rad(1) = 1;
+rad(2) = 1;
 rad(3) = 0.1;
 rad(4) = 0.1;
 %% Masses
@@ -37,7 +37,7 @@ k = (4*pi*8.85419e-12)^-1;
 G = 6.67384e-11;
 epsilon = 0;
 r_m = 0.3;
-max_step = 25e3;
+max_step = 3e4;
 mu = 0.1;
 diss = 1;
 %% Render options
@@ -51,10 +51,13 @@ frame = 1;
 F_total = Inf;
 t_step = 0;
 
+E_start = [0 0];
 for i = 1 :size(r,1)
     I(i) = (2*m(i)*(rad(i)^2)/5);
-% I(i)=inf;
+    % I(i)=inf;
+     E_start = E_start + 0.5*(dot(v(i,:),v(i,:))*m(i)*[1 0] + dot(w(i,:),w(i,:))*I(i)*[0 1]);
 end
+
 
 h = waitbar(0,'Simulating...');
 
@@ -82,17 +85,17 @@ while (t_step < max_step)
                     fric_dir = [0 0 0]';
                 end
                 
-                v_rel = (fric_dir'*dot(v(ii,:)',fric_dir) + cross(w(ii,:),R(:,ii,i))/d*rad(ii)) - (fric_dir'*dot(v(i,:)',fric_dir) + cross(w(i,:),R(:,i,ii))/d*rad(i));
+                v_rel = fric_dir'*dir_length + cross(w(ii,:),R(:,ii,i)*rad(ii)/d) - cross(w(i,:),R(:,i,ii)*rad(i)/d);
                 
                 if grad_correct
                     F_part_grad(:,i,ii) = (2*q(i)*q(ii)*k/d^3 - 2*m(i)*m(ii)*G/d^3 - epsilon*(-13*r_m^12/d^14 + 14*r_m^6/d^8))*...
-                        R(:,i,ii)*(1-heaviside(rad(i) + rad(ii) - d))/d*dot(v_rel,R(:,i,ii)/d);
+                        R(:,i,ii)*(1-heaviside(rad(i) + rad(ii) - d))/d*dot((v(ii,:) - v(i,:)),R(:,i,ii)/d);
                 else
                     F_part_grad(:,i,ii) = 0;
-                end   
-              
-                j_f_part(:,i,ii) = v_rel/(rad(ii)^2/I(ii) - rad(i)^2/I(i) + 1/m(i) - 1/m(ii));
-                j_part(:,i,ii) = -(1+diss)*R(:,i,ii)*heaviside(rad(i) + rad(ii) - d)*dot((v(ii,:)-v(i,:)),R(:,i,ii))/(d^2*(m(i)^-1 + m(ii)^-1)); 
+                end
+                
+                j_f_part(:,i,ii) = -v_rel/(rad(ii)^2/I(ii) + rad(i)^2/I(i) + 1/m(i) + 1/m(ii));
+                j_part(:,i,ii) = -(1+diss)*R(:,i,ii)*heaviside(rad(i) + rad(ii) - d)*dot((v(ii,:)-v(i,:)),R(:,i,ii))/(d^2*(m(i)^-1 + m(ii)^-1));
                 
                 j_f_part(:,ii,i) = -j_f_part(:,i,ii);
                 j_part(:,ii,i) = -j_part(:,i,ii);
@@ -111,8 +114,8 @@ while (t_step < max_step)
         for ii = 1:size(r,1)
             d = norm(R(:,i,ii));
             if (heaviside(rad(i) + rad(ii) - d) && i ~= ii)
-                w(i,:) = w(i,:) - cross(j_f_part(:,i,ii)/I(i),R(:,i,ii)*rad(i)/d)';
-                v(i,:) = v(i,:) - j_f_part(:,i,ii)'/m(i);               
+                w(i,:) = w(i,:) - cross(R(:,i,ii),j_f_part(:,i,ii))'*rad(i)/(d*I(i));
+                v(i,:) = v(i,:) - j_f_part(:,i,ii)'/m(i);
             end
         end
         r(i,:) = r(i,:) + v(i,:)*delta_t;
@@ -123,6 +126,11 @@ while (t_step < max_step)
     
     F_total = sum(F_norm);
     
+end
+
+E_end = [0 0];
+for i = 1:size(r,1)
+    E_end = E_end + 0.5*(dot(v(i,:),v(i,:))*m(i)*[1 0] + dot(w(i,:),w(i,:))*I(i)*[0 1]);
 end
 
 close(h)
