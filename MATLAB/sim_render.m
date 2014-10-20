@@ -41,7 +41,8 @@ circ.Antialiasing = true;
 
 h = waitbar(0,'Rendering...');
 
-vid = VideoWriter('render.avi');
+vname = ['render_',num2str(length(dir('render*.avi'))+1),'.avi'];
+vid = VideoWriter(vname);
 open(vid);
 
 for t = 1:size(frameset,1)
