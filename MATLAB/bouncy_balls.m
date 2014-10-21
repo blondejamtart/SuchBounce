@@ -1,36 +1,43 @@
 clear all
 
-%% Initial Positions
-r = [-1 0 0; -0.5 0 0; 0 0 0; 1 0 0];
+r(1,:) = [1.4947e11 0 0];
+r(2,:) = r(1,:) + [3.829545e8 0 0];
+r(3,:) = r(1,:) + [1.914773e8 -3.316483e8 0];
+r(4,:) = [0 0 0];
 %% Initial velocities
-v = [0 0 0; 0 0 0; 0 0 0; -1 0 0];
+v(1,:) = [0 2.978e4 0];
+v(2,:) = v(1,:) + [0 1.02e3 0]; 
+v(3,:) = v(1,:) + [883.3459 510 0];
+v(4,:) = [0 0 0];
 %% Initial angular velocities
-w = [0 0 0; 0 0 0; 0 0 0; 0 0 0; 0 0 0];
+w = [0 0 0; 0 0 0; 0 0 0; 0 0 0];
 %% Charges
-q =(rand([5,1])-0.5)*1e-10;
+q(1) = 0;
+q(2) = 0;
+q(3) = 0;
+q(4) = 0;
 %% Radii
-rad(1) = 0.25;
-rad(2) = 0.25;
-rad(3) = 0.25;
-rad(4) = 0.25;
-rad(5) = 0.01;
+rad(1) = 6371e3;
+rad(2) = 1737e3;
+rad(3) = 1;
+rad(4) = 696342e3;
 %% Masses
-m = [100 100 100 100 100];
+m = [5.97e24 7.35e22 10 1.98855e30];
 
 %% Settings
-delta_t = 0.0005; % Delta t for integration
+delta_t = 120; % Delta t for integration
 grad_correct = 1; % Use gradient term in integration in addition to linear
 k = (4*pi*8.85419e-12)^-1; % Strength of Electrostatic (Coulomb) interactions
 G = 6.67384e-11; % Strength of Gravitiational (Newtonian) interactions
 epsilon = 1e-6; % Strength of LJ interactions
 r_m = 0.3; % Range of LJ
-max_step = 4e4; % Number of time steps simulated
+max_step = 4e5; % Number of time steps simulated
 mu_s = 0.5; % Coefficient of Static Friction
 mu_d = 0.4; % Coefficient of Dynamic Friction
 diss = 1; % Coefficient of Restitution
 %% Render options
 do_render = 1;
-warp = 0.5; % Ratio of simulated time to rendered video time
+warp = 5e5; % Ratio of simulated time to rendered video time
 do_translate = 1;
 frame = 2;
 
@@ -58,8 +65,14 @@ while (t_step < max_step)
     waitbar(t_step/max_step)
     
     t_step = t_step + 1;
+    
     F = zeros(size(r));
-    d = zeros(size(r));
+    d = zeros(size(r,1));
+    R = zeros(3,size(r,1),size(r,1));
+    F_part = zeros(3,size(r,1),size(r,1));
+    F_part_grad = zeros(3,size(r,1),size(r,1));    
+    j_part = zeros(3,size(r,1),size(r,1));
+    j_f_part = zeros(3,size(r,1),size(r,1));
     
     for i = 1:size(r,1)
         
