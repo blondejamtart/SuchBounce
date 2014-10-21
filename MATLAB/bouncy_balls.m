@@ -1,36 +1,38 @@
 clear all
 
 %% Initial Positions
-r = rand([5,3])*0.4;
+r = [-1 0 0; -0.5 0 0; 0 0 0; 1 0 0];
 %% Initial velocities
-v = 0.5*(rand([5,3])-0.5)*1e-5;
+v = [0 0 0; 0 0 0; 0 0 0; -1 0 0];
 %% Initial angular velocities
 w = [0 0 0; 0 0 0; 0 0 0; 0 0 0; 0 0 0];
 %% Charges
 q =(rand([5,1])-0.5)*1e-10;
 %% Radii
-rad(1) = 0.01;
-rad(2) = 0.01;
-rad(3) = 0.01;
-rad(4) = 0.01;
+rad(1) = 0.25;
+rad(2) = 0.25;
+rad(3) = 0.25;
+rad(4) = 0.25;
 rad(5) = 0.01;
 %% Masses
-m = [1 1 1 1 1];
+m = [100 100 100 100 100];
+
 %% Settings
-delta_t = 0.025;
-grad_correct = 1;
-k = (4*pi*8.85419e-12)^-1;
-G = 6.67384e-11;
-epsilon = 1e-6;
-r_m = 0.3;
-max_step = 1e3;
-mu = 0.1;
-diss = 0.995;
+delta_t = 0.0005; % Delta t for integration
+grad_correct = 1; % Use gradient term in integration in addition to linear
+k = (4*pi*8.85419e-12)^-1; % Strength of Electrostatic (Coulomb) interactions
+G = 6.67384e-11; % Strength of Gravitiational (Newtonian) interactions
+epsilon = 1e-6; % Strength of LJ interactions
+r_m = 0.3; % Range of LJ
+max_step = 4e4; % Number of time steps simulated
+mu_s = 0.5; % Coefficient of Static Friction
+mu_d = 0.4; % Coefficient of Dynamic Friction
+diss = 1; % Coefficient of Restitution
 %% Render options
-warp = 5;
-do_translate = 0;
 do_render = 1;
-frame = 1;
+warp = 0.5; % Ratio of simulated time to rendered video time
+do_translate = 1;
+frame = 2;
 
 %% Simulation!
 
@@ -57,7 +59,7 @@ while (t_step < max_step)
     
     t_step = t_step + 1;
     F = zeros(size(r));
-       
+    d = zeros(size(r));
     
     for i = 1:size(r,1)
         
@@ -65,33 +67,36 @@ while (t_step < max_step)
             
             R(:,i,ii) = r(ii,:) - r(i,:);
             R(:,ii,i) = -R(:,i,ii);
-            d = norm(R(:,i,ii));
+            d(i,ii) = norm(R(:,i,ii));
+            d(ii,i) = d(i,ii);
+            collision_flag = heaviside(rad(ii) + rad(i) - d(i,ii)); % 1/2 + (rad(ii) + rad(i) - d(i,ii))/(2*norm(rad(ii) + rad(i) - d(i,ii)))
             
-            F_part(:,i,ii) = (-charge(i,ii)*k/d^2 + mass(i,ii)*G/d^2 + epsilon*(r_m^12/d^13 - 2*r_m^6/d^7))*R(:,i,ii)*(1-heaviside(rad(i) + rad(ii) - d))/d;
-            
-            dir_length = norm((v(ii,:) - v(i,:))' - dot((v(ii,:) - v(i,:))',R(:,i,ii)/d)*R(:,i,ii)/d);
-            if dir_length ~= 0
-                fric_dir = ((v(ii,:) - v(i,:))' - dot((v(ii,:) - v(i,:))',R(:,i,ii)/d)*R(:,i,ii)/d)/dir_length;
-            else
-                fric_dir = [0 0 0]';
-            end
-            
-            v_rel = fric_dir'*dir_length + cross(w(ii,:),R(:,ii,i)*rad(ii)/d) - cross(w(i,:),R(:,i,ii)*rad(i)/d);
-            
+            %% Force from ranged particle interactions
+            F_part(:,i,ii) = (-charge(i,ii)*k/d(i,ii)^2 + mass(i,ii)*G/d(i,ii)^2 + epsilon*(r_m^12/d(i,ii)^13 - 2*r_m^6/d(i,ii)^7))*R(:,i,ii)*(1-collision_flag)/d(i,ii);
             if grad_correct
-                F_part_grad(:,i,ii) = (2*charge(i,ii)*k/d^3 - 2*mass(i,ii)*G/d^3 - epsilon*(-13*r_m^12/d^14 + 14*r_m^6/d^8))*...
-                    R(:,i,ii)*(1-heaviside(rad(i) + rad(ii) - d))/d*dot((v(ii,:) - v(i,:)),R(:,i,ii)/d);
+                F_part_grad(:,i,ii) = (2*charge(i,ii)*k/d(i,ii)^3 - 2*mass(i,ii)*G/d(i,ii)^3 - epsilon*(-13*r_m^12/d(i,ii)^14 + 14*r_m^6/d(i,ii)^8))*...
+                    R(:,i,ii)*(1-collision_flag)/d(i,ii)*dot((v(ii,:) - v(i,:)),R(:,i,ii)/d(i,ii));
             else
                 F_part_grad(:,i,ii) = 0;
             end
             
-            j_f_part(:,i,ii) = -v_rel/(rad(ii)^2/I(ii) + rad(i)^2/I(i) + 1/m(i) + 1/m(ii));
-            j_part(:,i,ii) = -(1+diss)*R(:,i,ii)*heaviside(rad(i) + rad(ii) - d)*dot((v(ii,:)-v(i,:)),R(:,i,ii))/(d^2*(m(i)^-1 + m(ii)^-1));
+            F_part(:,ii,i) = -F_part(:,i,ii);
+            F_part_grad(:,ii,i) = -F_part_grad(:,i,ii);
+            
+            %% Impulses for particle collisions
+            dir_length = norm((v(ii,:) - v(i,:))' - dot((v(ii,:) - v(i,:))',R(:,i,ii)/d(i,ii))*R(:,i,ii)/d(i,ii));
+            if dir_length ~= 0
+                fric_dir = ((v(ii,:) - v(i,:))' - dot((v(ii,:) - v(i,:))',R(:,i,ii)/d(i,ii))*R(:,i,ii)/d(i,ii))/dir_length;
+            else
+                fric_dir = [0 0 0]';
+            end
+            v_rel = fric_dir'*dir_length + cross(w(ii,:),R(:,ii,i)*rad(ii)/d(i,ii)) - cross(w(i,:),R(:,i,ii)*rad(i)/d(i,ii));
+            j_f_part(:,i,ii) = -v_rel*collision_flag/(rad(ii)^2/I(ii) + rad(i)^2/I(i) + 1/m(i) + 1/m(ii));
+            j_part(:,i,ii) = -(1+diss)*R(:,i,ii)*collision_flag*dot((v(ii,:)-v(i,:)),R(:,i,ii))/(d(i,ii)^2*(m(i)^-1 + m(ii)^-1));
             
             j_f_part(:,ii,i) = -j_f_part(:,i,ii);
             j_part(:,ii,i) = -j_part(:,i,ii);
-            F_part(:,ii,i) = -F_part(:,i,ii);
-            F_part_grad(:,ii,i) = -F_part_grad(:,i,ii);
+            
             
         end
         
@@ -100,15 +105,18 @@ while (t_step < max_step)
     F = sum(F_part,3);
     F_grad = sum(F_part_grad,3);
     j = sum(j_part,3);
+    
+    %% Update particle positions and velocities
+    
     for i = 1:size(r,1)
         v(i,:) = v(i,:) + F(:,i)'/m(i)*delta_t + F_grad(:,i)'/m(i)*delta_t^2  - j(:,i)'/m(i);
-        for ii = 1:size(r,1)
-            d = norm(R(:,i,ii));
-            if (heaviside(rad(i) + rad(ii) - d) && i ~= ii)
-                w(i,:) = w(i,:) - cross(R(:,i,ii),j_f_part(:,i,ii))'*rad(i)/(d*I(i));
+        for ii = 1:size(r,1);
+            if i ~= ii
+                w(i,:) = w(i,:) - cross(R(:,i,ii),j_f_part(:,i,ii))'*rad(i)/(d(i,ii)*I(i));
                 v(i,:) = v(i,:) - j_f_part(:,i,ii)'/m(i);
             end
         end
+        
         r(i,:) = r(i,:) + v(i,:)*delta_t;
         r_tracker(t_step,i,:) = r(i,:);
     end
