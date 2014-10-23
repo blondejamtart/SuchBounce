@@ -1,8 +1,20 @@
-[0 0 0; 1 0 0]
-[0 0 0; -1 0 0]
-[0 0 0; 0 0 0]
-[0 0]
-[1 1]
-[0.1 0.1]
-[1 1 1]
+----------------------------------------------------------
+|  Simulation Setup file:                                |
+| - Initial parameters are in order: positions,          |
+|   linear velocities, angular velocities (vectors)  	 |
+|   charges, masses, radii (scalars).              	 |
+| - Run settings are as follows:                         |
+|   [ Max steps, Delta T, Co. of Restitution,            |
+|   static friction, dynamic friction, render warp ].  	 |
+----------------------------------------------------------
+
+Settings:
+Rand
+Rand
+Rand
+Rand
+[1 1 1 1 1 1 1 1 1 1 1 1]
+[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+[1e7 0.0001 1 1 1 10]
+
 

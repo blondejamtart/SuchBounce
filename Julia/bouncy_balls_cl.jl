@@ -81,8 +81,8 @@ for t_step = 1:max_step
 			
 			collisionflag = 1/2 + (radvec[x] - d[x])/(2*norm(radvec[x] - d[x]));	
 			
-			F_part[x] = ((massvec[x]*G - chargevec[x]*k)/d[x]^2  + epsilon*(r_m^12/d[x]^13 -2*r_m^6/d[x]^7))*(1 - collisionflag);
-			F_part_grad[x] = ((-2*massvec[x]*G + 2*chargevec[x]*k)/d[x]^3  + epsilon*(-13*r_m^12/d[x]^14 + 14*r_m^6/d[x]^8))*(1 - collisionflag)*dot(vnorm[x,:],Runit[x,:]);
+			F_part[x] = ((massvec[x]*G - chargevec[x]*k)/d[x]^2  + epsilon*(LJforce)*(1 - collisionflag);
+			F_part_grad[x] = ((-2*massvec[x]*G + 2*chargevec[x]*k)/d[x]^3  + epsilon*(diff(LJforce))*(1 - collisionflag)*dot(vnorm[x,:],Runit[x,:]);
 			
 			global frictiondir = [0 0 0];
 			global templength = norm(vnorm[x,:] - dot(vnorm[x,:],Runit[x,:])*Runit[x,:]);
