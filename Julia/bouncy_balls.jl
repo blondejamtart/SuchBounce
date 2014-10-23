@@ -1,4 +1,5 @@
 include("fileread.jl")
+include("filewrite.jl")
 
 const k = (4*pi*8.85419e-12)^-1;
 const G = 6.67384e-11;
@@ -7,15 +8,24 @@ const r_m = 0.3;
 
 fileread("setup.vec");
 
-const max_step = int64(5e4);
-const delta_t = 0.00004;
-const diss = 1;
+try
+	global const mu_d = float64(settings[5]);	
+	global const max_step = int64(settings[1]);
+	global const delta_t = float64(settings[2]);
+	global const diss = float64(settings[3]);
+	global const mu_s = float64(settings[4]);	
+catch
+	print("Settings not present or invalid; using defaults\n")
+	global const max_step = int64(5e4);
+	global const delta_t = float64(0.00004);
+	global const diss = float64(1);
+end
 
 global t_step = int64(0);
 global x = int64(0);
 const n = int64(size(r,1));
 const n_el = int64(1/2*n*(n-1));
-global r_tracker = zeros(max_step,n,3);	
+global r_tracker = zeros(3,n,max_step);	
 
 mass = zeros(n,n);
 charge = zeros(n,n);
@@ -87,13 +97,13 @@ while t_step < max_step
 	
 	for i = 1:n	
 		r[i,:] = r[i,:] + v[i,:]*delta_t;			
-		r_tracker[t_step,i,:] = r[i,:];	
+		r_tracker[:,i,t_step] = vec(r[i,:]);	
 	end
 
 end
 
-
-
+print("Simulation complete!\n")
+filewrite("Particle_tracks.dat",r_tracker)
 
 
 			
