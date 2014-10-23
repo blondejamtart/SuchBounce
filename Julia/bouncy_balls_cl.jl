@@ -42,6 +42,19 @@ for x = 1:n
 	end
 end
 
+
+local i = 0;
+for x = 2:n
+	for y = 1:(x-1)
+		i = i + 1;
+		massvec[i] = mass[x,y];
+		chargevec[i] = charge[x,y];
+		radvec[i] = rad[x] + rad[y];
+		massrecip[x] = (1/m[i] + 1/m[j]);
+		inertiapair[x] = rad[j]^2/I[j] + rad[i]^2/I[i];
+	end
+end
+
 p = Progress(max_step,1)
 for t_step = 1:max_step
 	
@@ -62,29 +75,30 @@ for t_step = 1:max_step
 			x = x + 1;
 			R[x,:] = r[j,:] - r[i,:];
 			d[x] = norm(R[x,:]);
-			Runit[x,:] = R[x,:]/d[x];
+			Runit[x,:] = vec(R[x,:])/d[x];
+			wvec[x,:] = vec(w[j,:])*rad[j] + vec(w[i,:])*rad[i];
+			vnorm[x,:] = vec(v[j,:] - v[i,:]); 
 			
-			collisionflag = 1/2 + (rad[i] + rad[j] - d[x])/(2*norm(rad[i] + rad[j] - d[x]));	
+			collisionflag = 1/2 + (radvec[x] - d[x])/(2*norm(radvec[x] - d[x]));	
 			
-			F_part[x] = ((mass[i,j]*G - charge[i,j]*k)/d[x]^2  + epsilon*(r_m^12/d[x]^13 -2*r_m^6/d[x]^7))*(1 - collisionflag);
-			F_part_grad[x] = ((-2*mass[i,j]*G + 2*charge[i,j]*k)/d[x]^3  + epsilon*(-13*r_m^12/d[x]^14 + 14*r_m^6/d[x]^8))*(1 - collisionflag)*dot(vec(v[i,:] - v[j,:]),vec(Runit[x,:]));
+			F_part[x] = ((massvec[x]*G - chargevec[x]*k)/d[x]^2  + epsilon*(r_m^12/d[x]^13 -2*r_m^6/d[x]^7))*(1 - collisionflag);
+			F_part_grad[x] = ((-2*massvec[x]*G + 2*chargevec[x]*k)/d[x]^3  + epsilon*(-13*r_m^12/d[x]^14 + 14*r_m^6/d[x]^8))*(1 - collisionflag)*dot(vnorm[x,:],Runit[x,:]);
 			
 			global frictiondir = [0 0 0];
-			global templength = norm((v[j,:] - v[i,:]) - dot(vec(v[j,:] - v[i,:]),vec(Runit[x,:]))*Runit[x,:]);
+			global templength = norm(vnorm[x,:] - dot(vnorm[x,:],Runit[x,:])*Runit[x,:]);
 			if templength != 0
-				frictiondir = (v[j,:] - v[i,:]) - dot(vec(v[j,:] - v[i,:]),vec(Runit[x,:]))*Runit[x,:];			
+				frictiondir = (vnorm[x,:] - dot(vnorm[x,:],Runit[x,:])*Runit[x,:];			
 			end
 
-			v_rel = frictiondir' - cross(vec(w[j,:]),(vec(Runit[x,:])*rad[j])) - cross(vec(w[i,:]),vec(Runit[x,:])*rad[i]);
-			j_f_part[x,:] = -v_rel*collisionflag/(rad[j]^2/I[j] + rad[i]^2/I[i] + 1/m[i] + 1/m[j]);
-			j_part[x] =  -(1 + diss)*collisionflag*dot(vec(v[j,:] - v[i,:]),vec(Runit[x,:]))/(1/m[i] + 1/m[j]);		
+			v_rel = frictiondir' - cross(wvec[x,:],(vec(Runit[x,:]);
+			j_f_part[x,:] = -v_rel*collisionflag/(inertiapair[x] + massrecip[x]);
+			j_part[x] =  -(1 + diss)*collisionflag*dot(vnorm[x,:],Runit[x,:])/massrecip[x];		
 
 		end
 	end
 	
 	x = 0;
-	for i = 2:n
-		
+	for i = 2:n		
 		for j = 1:(i-1)
 			x = x + 1;
 			v[i,:] = v[i,:] + F_part[x]*Runit[x,:]*delta_t/m[i] + F_part_grad[x]*Runit[x,:]*delta_t^2/m[i] - j_part[x]*Runit[x,:]/m[i] - j_f_part[x,:]/m[i];
@@ -92,7 +106,6 @@ for t_step = 1:max_step
 			w[i,:] = w[i,:] - cross(vec(Runit[x,:]),vec(j_f_part[x,:]))'*rad[i]/I[i];
 			w[j,:] = w[j,:] + cross(vec(Runit[x,:]),vec(j_f_part[x,:]))'*rad[j]/I[j];			
 		end
-
 	end
 
 	

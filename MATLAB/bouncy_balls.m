@@ -1,43 +1,26 @@
 clear all
 
-
-r(1,:) = [0 0 0];
-r(2,:) = [1 0 0];
-
-%% Initial velocities
-
-v(1,:) = [0 0 0];
-v(2,:) = [-1 0 0]; 
-
-%% Initial angular velocities
-w = [0 0 0; 0 0 0; 0 0 0; 0 0 0];
-%% Charges
-q(1) = 0;
-q(2) = 0;
-q(3) = 0;
-q(4) = 0;
-%% Radii
-rad(1) = 0.1;
-rad(2) = 0.1;
-
-%% Masses
-m = [1 1];
+n = 12;
+rad = 0.1*ones(n,1);
+m = ones(n,1);
+w = zeros(n,3);
+random_seed;
 
 %% Settings
-delta_t = 0.00004; % Delta t for integration
+delta_t = 0.0004; % Delta t for integration
 grad_correct = 1; % Use gradient term in integration in addition to linear
 k = (4*pi*8.85419e-12)^-1; % Strength of Electrostatic (Coulomb) interactions
 G = 6.67384e-11; % Strength of Gravitiational (Newtonian) interactions
 epsilon = 1e-6; % Strength of LJ interactions
-r_m = 0.3; % Range of LJ
-max_step = 5e4; % Number of time steps simulated
+r_m = 0.05; % Range of LJ
+max_step = 1e4; % Number of time steps simulated
 mu_s = 0.5; % Coefficient of Static Friction
 mu_d = 0.4; % Coefficient of Dynamic Friction
 diss = 1; % Coefficient of Restitution
 %% Render options
-do_render = 0;
-warp = 4e4; % Ratio of simulated time to rendered video time
-do_translate = 1;
+do_render = 1;
+warp = 0.5; % Ratio of simulated time to rendered video time
+do_translate = 0;
 frame = 2;
 
 %% Simulation!
