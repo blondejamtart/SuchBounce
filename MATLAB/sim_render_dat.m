@@ -1,3 +1,5 @@
+clear frameset
+
 file = fopen('Particle_tracks.dat');
 tempstr = 'a';
 i = 0;
@@ -6,7 +8,7 @@ while tempstr ~= -1
     i = i + 1;
     tempstr = fgetl(file);
     try
-        frameset(:,:,i) = double(eval(tempstr));
+        frameset(i,:,:) = double(eval(tempstr));
     end
 end
 

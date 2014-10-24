@@ -77,25 +77,16 @@ for t_step = 1:max_step
 
 			v_rel = frictiondir' - cross(vec(w[j,:]),(vec(Runit[x,:])*rad[j])) - cross(vec(w[i,:]),vec(Runit[x,:])*rad[i]);
 			j_f_part[x,:] = -v_rel*collisionflag/(rad[j]^2/I[j] + rad[i]^2/I[i] + 1/m[i] + 1/m[j]);
-			j_part[x] =  -(1 + diss)*collisionflag*dot(vec(v[j,:] - v[i,:]),vec(Runit[x,:]))/(1/m[i] + 1/m[j]);		
+			j_part[x] =  -(1 + diss)*collisionflag*dot(vec(v[j,:] - v[i,:]),vec(Runit[x,:]))/(1/m[i] + 1/m[j]);
 
-		end
-	end
-	
-	x = 0;
-	for i = 2:n
-		
-		for j = 1:(i-1)
-			x = x + 1;
 			v[i,:] = v[i,:] + F_part[x]*Runit[x,:]*delta_t/m[i] + F_part_grad[x]*Runit[x,:]*delta_t^2/m[i] - j_part[x]*Runit[x,:]/m[i] - j_f_part[x,:]/m[i];
 			v[j,:] = v[j,:] - F_part[x]*Runit[x,:]*delta_t/m[j] - F_part_grad[x]*Runit[x,:]*delta_t^2/m[j] + j_part[x]*Runit[x,:]/m[j] + j_f_part[x,:]/m[j];
 			w[i,:] = w[i,:] - cross(vec(Runit[x,:]),vec(j_f_part[x,:]))'*rad[i]/I[i];
 			w[j,:] = w[j,:] + cross(vec(Runit[x,:]),vec(j_f_part[x,:]))'*rad[j]/I[j];			
+
 		end
-
 	end
-
-	
+		
 	for i = 1:n	
 		r[i,:] = r[i,:] + v[i,:]*delta_t;			
 		r_tracker[:,i,t_step] = vec(r[i,:]);	

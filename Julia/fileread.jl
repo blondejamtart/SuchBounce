@@ -23,10 +23,10 @@ global const settings = float64(eval(parse(stringdump[7][1:length(stringdump[7])
 
 const n = size(rad,2);
 
-global r = zeros(n,3);
-global v = zeros(n,3);
-global w = zeros(n,3);
-global q = zeros(n,1);
+global r = zeros(3,n);
+global v = zeros(3,n);
+global w = zeros(3,n);
+global q = zeros(1,n);
 
 if stringdump[1][1:length(stringdump[1])-1] == "Rand"
 	r, v, w, q = randseed(r,v,w,q,rad);

@@ -1,5 +1,3 @@
-
-include("F_kernel.jl")
 include("fileread.jl")
 include("filewrite.jl")
 using ProgressMeter
@@ -15,7 +13,7 @@ try
 	global const warp = float64(settings[6]);	
 	global const mu_d = float64(settings[5]);	
 	global const max_step = int64(settings[1]);
-	global const dt = float64(settings[2]);
+	global const delta_t = float64(settings[2]);
 	global const diss = float64(settings[3]);
 	global const mu_s = float64(settings[4]);	
 catch
@@ -37,7 +35,7 @@ global chargevec = zeros(n_el,1);
 global radvec = zeros(n_el,1);
 global massrecip = zeros(n_el,1);
 global inertiapair = zeros(n_el,1);
-global lookup = zeros(n_el,2));
+
 
 for x = 1:n
 	I[x] = (2*m[x]*(rad[x]^2)/5);
@@ -46,45 +44,47 @@ end
 for x = 2:n
 	for y = 1:(x-1)	
 	local i = int64(0.5*(x-1)*(x-2) + y);	
-		massvec[i] = m[x]*m[y]*G;
-		chargevec[i] = q[x]*q[y]*k;
+		massvec[i] = m[x]*m[y];
+		chargevec[i] = q[x]*q[y];
 		radvec[i] = rad[x] + rad[y];
 		massrecip[i] = (1/m[x] + 1/m[y]);
 		inertiapair[i] = rad[y]^2/I[y] + rad[x]^2/I[x];
-		lookup[i,:] = [x y];
 	end
 end
-
-device, ctx, queue = cl.create_compute_context();
-
-cbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=chargevec);
-m1buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=m);
-m2buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=massvec);
-m3buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=massrecip);
-r1buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=rad);
-r2buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=radvec);
-I1buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=I);
-I2buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=inertiapair);
-lbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=lookup);
-
-rbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=r);
-vbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=v);
-wbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=w);
-
-dyn = cl.Program(ctx, source=F_kernel) |> cl.build!
-ker = cl.Kernel(dyn, "dyanmics");
-
 p = Progress(max_step,1)
 for t_step = 1:max_step
-						
 	
+	
+	for i = 2:n
+		for j = 1:(i-1)
+			
+			local collisionflag = int64(0);
+			local x = int64(0.5*(i-1)*(i-2) + j);
+			local R = r[:,j] - r[:,i];
+			local d = norm(R);
+			local Runit = vec(R)/d;
+			local wvec = w[:,j]*rad[j] + w[:,i]*rad[i];
+			local vtemp = v[:,j] - v[:,i]; 
 		
+			collisionflag = 1/2 + (radvec[x] - d)/(2*norm(radvec[x] - d));	
+		
+			local F_part = ((massvec[x]*G - chargevec[x]*k)/d^2 + 0)*(1 - collisionflag);				
+			local F_part_grad = ((-2*massvec[x]*G + 2*chargevec[x]*k)/d^3 + 0)*(1 - collisionflag)*dot(vtemp,Runit);	
 	
-	cl.call(queue, ker, n_el, nothing, cbuff, m1buff, I1buff, lbuff, m2buff, r2buff, m3buff, I2buff, r1buff, rbuff, vbuff, wbuff) 
-	
-	v = cl.read(queue, vbuff);
-	w = cl.read(queue, wbuff);
+			local frictiondir = (vtemp - dot(vtemp,Runit)*Runit);			
+			local v_rel = frictiondir - cross(wvec,Runit);
 
+			local j_f_part = -collisionflag/(inertiapair[x] + massrecip[x]);
+			local j_part =  -(1 + diss)*collisionflag*dot(vtemp,Runit)/massrecip[x];					
+					
+			v[:,i] = v[:,i] + F_part*Runit*delta_t/m[i] + F_part_grad*Runit*delta_t^2/m[i] - j_part*Runit/m[i] - j_f_part*v_rel/m[i];
+			v[:,j] = v[:,j] - F_part*Runit*delta_t/m[j] - F_part_grad*Runit*delta_t^2/m[j] + j_part*Runit/m[j] + j_f_part*v_rel/m[j];
+			w[:,i] = w[:,i] - cross(Runit,j_f_part*v_rel)*rad[i]/I[i];
+			w[:,j] = w[:,j] + cross(Runit,j_f_part*v_rel)*rad[j]/I[j];			
+		end
+	end
+
+	
 	for i = 1:n	
 		r[:,i] = r[:,i] + v[:,i]*delta_t;			
 		r_tracker[:,i,t_step] = r[:,i];	
