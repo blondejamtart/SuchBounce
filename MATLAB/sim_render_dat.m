@@ -52,9 +52,9 @@ for t = 1:size(frameset,1)
     
     temp_frame = ones(1080,1920,1);
     
-    balls = zeros(size(r,1),3);
+    balls = zeros(size(frameset,2),3);
     
-    for i = 1:size(r,1)
+    for i = 1:size(frameset,2)
         balls(i,:) = [r_scaled(t,i,2),r_scaled(t,i,1),ceil(rad(i)*scale)];
     end
     

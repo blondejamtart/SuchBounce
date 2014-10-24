@@ -37,7 +37,7 @@ global chargevec = zeros(n_el,1);
 global radvec = zeros(n_el,1);
 global massrecip = zeros(n_el,1);
 global inertiapair = zeros(n_el,1);
-global lookup = zeros(n_el,2));
+global lookup = float32(zeros(n_el,2));
 
 for x = 1:n
 	I[x] = (2*m[x]*(rad[x]^2)/5);
@@ -55,40 +55,30 @@ for x = 2:n
 	end
 end
 
-device, ctx, queue = cl.create_compute_context();
+tbuff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(dt));
+cbuff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(chargevec));
+m1buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(m));
+m2buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(massvec));
+m3buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(massrecip));
+r1buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(rad));
+r2buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(radvec));
+I1buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(I));
+I2buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(inertiapair));
+lbuff = cl.Buffer(Int32, ctx, (:r, :copy), hostbuf=lookup);
 
-cbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=chargevec);
-m1buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=m);
-m2buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=massvec);
-m3buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=massrecip);
-r1buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=rad);
-r2buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=radvec);
-I1buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=I);
-I2buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=inertiapair);
-lbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=lookup);
-
-rbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=r);
-vbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=v);
-wbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=w);
-
-dyn = cl.Program(ctx, source=F_kernel) |> cl.build!
-ker = cl.Kernel(dyn, "dyanmics");
+rbuff = cl.Buffer(Float32, ctx, (:rw, :copy), hostbuf=float32(r));
+vbuff = cl.Buffer(Float32, ctx, (:rw, :copy), hostbuf=float32(v));
+wbuff = cl.Buffer(Float32, ctx, (:rw, :copy), hostbuf=float32(w));
 
 p = Progress(max_step,1)
-for t_step = 1:max_step
-						
+for t_step = 1:max_step			
 	
-		
-	
-	cl.call(queue, ker, n_el, nothing, cbuff, m1buff, I1buff, lbuff, m2buff, r2buff, m3buff, I2buff, r1buff, rbuff, vbuff, wbuff) 
-	
-	v = cl.read(queue, vbuff);
-	w = cl.read(queue, wbuff);
+	cl.call(queue, kerF, n_el, nothing, cbuff, m1buff, I1buff, lbuff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rbuff, vbuff, wbuff); 
 
-	for i = 1:n	
-		r[:,i] = r[:,i] + v[:,i]*delta_t;			
-		r_tracker[:,i,t_step] = r[:,i];	
-	end
+	cl.call(queue, kerR, n, nothing, tbuff, vbuff, rbuff);	
+					
+      	r_tracker[:,:,t_step] = cl.read(queue, rbuff);	
+	
 next!(p)
 end
 
