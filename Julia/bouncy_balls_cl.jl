@@ -5,7 +5,7 @@ include("filewrite.jl")
 using ProgressMeter
 
 const k = (4*pi*8.85419e-12)^-1;
-const G = 6.67384e-11;
+const G = 6.67384e-9;
 const epsilon = 0;
 const r_m = 0.3;
 
@@ -32,8 +32,10 @@ end
 global t_step = int32(0);
 const n = int32(size(r,2));
 const n_el = int32(1/2*n*(n-1));
-global r_tracker = float32(zeros(4,n,max_step));
-global bug_tracker = float32(zeros(n_el,max_step));	
+global n_frames = int32(ceil(max_step*stuff[1]*30/warp));
+global framecount = int32(0);
+global tempcount = int32(0);
+global r_tracker = float32(zeros(4,n,n_frames));
 
 global I = float32(zeros(size(r,2),1));
 global massvec = float32(zeros(n_el,1));
@@ -73,24 +75,22 @@ I1buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=I);
 I2buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=inertiapair);
 tbuff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=stuff);
 
-
-rbuff = cl.Buffer(Float32, ctx, (:rw, :copy), hostbuf=float32(r));
 rpbuff = cl.Buffer(Float32, ctx, (:rw, :copy), hostbuf=float32(r_pad));
-vbuff = cl.Buffer(Float32, ctx, (:rw, :copy), hostbuf=float32(v));
 vpbuff = cl.Buffer(Float32, ctx, (:rw, :copy), hostbuf=float32(v_pad));
-wbuff = cl.Buffer(Float32, ctx, (:rw, :copy), hostbuf=float32(w));
 wpbuff = cl.Buffer(Float32, ctx, (:rw, :copy), hostbuf=float32(w_pad));
-
-bugbuff = cl.Buffer(Float32, ctx, :rw, n_el);
 
 p = Progress(max_step,1)
 for t_step = 1:max_step		
-	
+	tempcount = tempcount + 1;
 	cl.call(queue, ker1, n, nothing, tbuff, vpbuff, rpbuff);
 	
-	cl.call(queue, ker2, n_el, nothing, cbuff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff, bugbuff); 	
-	bug_tracker[:,t_step] = cl.read(queue, bugbuff);				
-    	r_tracker[:,:,t_step] = cl.read(queue, rpbuff);	
+	cl.call(queue, ker2, n_el, nothing, cbuff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff); 	
+	
+	if tempcount ==	max_step/n_frames 
+		tempcount = 0;
+		framecount = framecount + 1;
+		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);	
+	end
 	
 	next!(p)
 end
@@ -98,14 +98,9 @@ end
 print("Simulation complete!\n")
 
 global frameset = zeros(3,n,int32(ceil(max_step*stuff[1]*30/warp)));
-
-for t = 1:int32(ceil(max_step*stuff[1]*30/warp))
+   
+frameset[:,:,:] = r_tracker[1:3,:,:];
     
-    local t_ind = min(ceil(max_step/ceil(max_step*stuff[1]*30/warp)*t),size(r_tracker,3));
-    frameset[:,:,t] = r_tracker[1:3,:,t_ind];
-    
-end
-
 filewrite("Particle_tracks.dat",frameset)
 
 

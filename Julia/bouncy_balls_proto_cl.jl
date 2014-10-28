@@ -94,7 +94,7 @@ end
 
 print("Simulation complete!\n")
 
-global frameset = zeros(3,n,int64(ceil(max_step*delta_t*30/warp))+1);
+global frameset = zeros(3,n,int64(ceil(max_step*delta_t*30/warp)));
 
 for t = 1:int64(ceil(max_step*delta_t*30/warp))
     
