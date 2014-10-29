@@ -80,7 +80,7 @@ for t_step = 1:max_step
 			v[:,i] = v[:,i] + F_part*Runit*delta_t/m[i] + F_part_grad*Runit*delta_t^2/m[i] - j_part*Runit/m[i] - j_f_part*v_rel/m[i];
 			v[:,j] = v[:,j] - F_part*Runit*delta_t/m[j] - F_part_grad*Runit*delta_t^2/m[j] + j_part*Runit/m[j] + j_f_part*v_rel/m[j];
 			w[:,i] = w[:,i] - cross(Runit,j_f_part*v_rel)*rad[i]/I[i];
-			w[:,j] = w[:,j] + cross(Runit,j_f_part*v_rel)*rad[j]/I[j];			
+			w[:,j] = w[:,j] - cross(Runit,j_f_part*v_rel)*rad[j]/I[j];			
 		end
 	end
 

@@ -49,10 +49,10 @@ const F_kernel = "
 			float jf = -collisionflag/(inertiapair[x] + massrecip[x]);
 			float j =  -(1 + stuff[1])*collisionflag*p/massrecip[x];			
 		
-			v[b] += F*Runit*stuff[1]/m[b] + dF*Runit*stuff[1]*stuff[1]/m[b] - j*Runit/m[b] - jf*v_rel/m[b];
-			v[a] += -F*Runit*stuff[1]/m[a] - dF*Runit*stuff[1]*stuff[1]/m[a] + j*Runit/m[a] + jf*v_rel/m[a];
-			w[b] += -1*cross(Runit,jf*v_rel)*rad[b]/I[b];
-			w[a] += cross(Runit,jf*v_rel)*rad[a]/I[a];			
+			v[b] += F*Runit*stuff[0]/m[b] + dF*Runit*stuff[0]*stuff[0]/m[b] - j*Runit/m[b] - jf*v_rel/m[b];
+			v[a] += -F*Runit*stuff[0]/m[a] - dF*Runit*stuff[0]*stuff[0]/m[a] + j*Runit/m[a] + jf*v_rel/m[a];
+			w[b] += -cross(Runit,jf*v_rel)*rad[b]/I[b];
+			w[a] += -cross(Runit,jf*v_rel)*rad[a]/I[a];			
 		}
 "		
 

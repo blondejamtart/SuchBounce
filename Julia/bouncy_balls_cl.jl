@@ -1,7 +1,7 @@
 
 include("F_kernel.jl")
 include("fileread.jl")
-include("filewrite.jl")
+include("filewriteshort.jl")
 using ProgressMeter
 
 const k = (4*pi*8.85419e-12)^-1;
@@ -32,7 +32,7 @@ end
 global t_step = int32(0);
 const n = int32(size(r,2));
 const n_el = int32(1/2*n*(n-1));
-global n_frames = int32(ceil(max_step*stuff[1]*30/warp));
+global n_frames = int32(floor(max_step*stuff[1]*30/warp));
 global framecount = int32(0);
 global tempcount = int32(0);
 global r_tracker = float32(zeros(4,n,n_frames));
@@ -71,7 +71,7 @@ m2buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=massvec);
 m3buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=massrecip);
 r1buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(rad));
 r2buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=radvec);
-I1buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=I);
+I1buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=float32(I));
 I2buff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=inertiapair);
 tbuff = cl.Buffer(Float32, ctx, (:r, :copy), hostbuf=stuff);
 
@@ -86,7 +86,7 @@ for t_step = 1:max_step
 	
 	cl.call(queue, ker2, n_el, nothing, cbuff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff); 	
 	
-	if tempcount ==	max_step/n_frames 
+	if (tempcount == floor(max_step/n_frames)) && (framecount < n_frames)
 		tempcount = 0;
 		framecount = framecount + 1;
 		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);	
@@ -97,11 +97,13 @@ end
 
 print("Simulation complete!\n")
 
-global frameset = zeros(3,n,int32(ceil(max_step*stuff[1]*30/warp)));
+global frameset = zeros(3,int32(floor(max_step*stuff[1]*30/warp)));
    
-frameset[:,:,:] = r_tracker[1:3,:,:];
-    
-filewrite("Particle_tracks.dat",frameset)
+for i = 1:n
+	frameset[:,:] = r_tracker[1:3,n,:];    
+	local tempn = ["Particle_tracks_"string(i)".dat"]	
+	filewriteshort(tempn[1],frameset)
+end
 
 
 			
