@@ -48,9 +48,9 @@ const F_kernel = "
 			float del = rad[a] - rad[b];
 			float fi = (del*(9+14*rad[a])-d*d+2*rad[a]*(13*rad[a]-2))/pow((2*rad[a]+d),7)+(-del*(9+14*rad[b])-d*d+2*rad[b]*(13*rad[b]-2))/pow((2*rad[b]+d),7);
 			float di = (-14*rad[a]*(13*rad[a]-2+7*del)+d*d-63*del)/pow((2*rad[a]+d),8) - 2*d/pow((2*rad[a]+d),7)+(-14*rad[b]*(13*rad[b]-2-7*del)+d*d+63*del)/pow((2*rad[b]+d),8) - 2*d/pow((2*rad[b]+d),7); 
-			float vw121 = stuff[3]*(1/(6*c))*((c*c+8*c*radvec[x]+7*rsquares[x]+28*rprod[x])/pow((c+radvec[x]),8)+(21*rprod[x]-7*radvec[x]+d*d)/pow(d,8)-0.2*di);
-			float vw122 = stuff[3]*(1/(30*c*c))*((c*c+7*c*radvec[x]+6*rsquares[x]+21*rprod[x])/pow((c+radvec[x]),7)+(15*rprod[x]-5*radvec[x]+d*d)/pow(d,7)+fi);
-			float F = ((massvec[x] - chargevec[x])/(d*d) + vw6 + vw121 + vw122)*(1 - collisionflag);				
+			float vw121 = stuff[3]*(1/(6*c))*((c*c+8*c*radvec[x]+7*rsquares[x]+28*rprod[x])/pow((c+radvec[x]),8)+(21*rprod[x]+7*radvec[x]+d*d)/pow(d,8)-0.2*di);
+			float vw122 = stuff[3]*(1/(30*c*c))*((c*c+7*c*radvec[x]+6*rsquares[x]+21*rprod[x])/pow((c+radvec[x]),7)+(15*rprod[x]+5*radvec[x]+d*d)/pow(d,7)+fi);
+			float F = ((massvec[x] - chargevec[x])/(d*d) + vw6 - vw121 - vw122)*(1 - collisionflag);				
 			float dF = ((-2*massvec[x] + 2*chargevec[x])/(d*d*d))*(1 - collisionflag)*p;		
 			
 			float3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);
