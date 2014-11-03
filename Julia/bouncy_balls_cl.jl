@@ -5,18 +5,19 @@ include("filewrite.jl")
 using ProgressMeter
 
 const k = (4*pi*8.85419e-12)^-1;
-const G = 6.67384e-9;
+const G = 6.67384e-11;
 const epsilon = 0;
 const r_m = 0.3;
 
 fileread("setup.vec");
 
-global const stuff = float64([0,0,0,0]);
+global const stuff = float64([0,0,0,0,0]);
 
 try
-	global const warp = float64(settings[6]);	
+	global const warp = float64(settings[7]);	
+	stuff[5] = float64(settings[6]);
 	stuff[4] = float64(settings[5]);	
-	global const max_step = int32(settings[1]);
+	global const max_step = int64(settings[1]);
 	stuff[1] = float64(settings[2]);
 	stuff[2] = float64(settings[3]);
 	stuff[3] = float64(settings[4]);	
@@ -35,6 +36,7 @@ global n_frames = int32(floor(max_step*stuff[1]*30/warp));
 global framecount = int32(0);
 global tempcount = int32(0);
 global r_tracker = float64(zeros(4,n,n_frames));
+global bug_tracker = float64(zeros(n_el,n_frames));
 
 global I = float64(zeros(size(r,2),1));
 global massvec = float64(zeros(n_el,1));
@@ -80,6 +82,8 @@ I1buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(I));
 I2buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=inertiapair);
 tbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=stuff);
 
+bugbuff = cl.Buffer(Float64, ctx, :rw, n_el);
+
 rpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(r_pad));
 vpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(v_pad));
 wpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(w_pad));
@@ -89,12 +93,13 @@ for t_step = 1:max_step
 	tempcount = tempcount + 1;
 	cl.call(queue, ker1, n, nothing, tbuff, vpbuff, rpbuff);
 	
-	cl.call(queue, ker2, n_el, nothing, cbuff, r3buff, r4buff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff); 	
+	cl.call(queue, ker2, n_el, nothing, cbuff, r3buff, r4buff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff, bugbuff); 	
 	
 	if (tempcount == floor(max_step/n_frames)) && (framecount < n_frames)
 		tempcount = 0;
 		framecount = framecount + 1;
-		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);	
+		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);
+		bug_tracker[:,framecount] = cl.read(queue, bugbuff);
 	end
 	
 	next!(p)

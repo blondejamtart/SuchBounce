@@ -28,7 +28,8 @@ const F_kernel = "
 				 	__global const double *stuff,			  
 				 	__global double3 *r,
 				 	__global double3 *v,
-				 	__global double3 *w)
+				 	__global double3 *w,
+					__global double *bug)
 					
 				  
 		{ 			
@@ -42,22 +43,23 @@ const F_kernel = "
 			double p = dot(vtemp,Runit);
 		
 			double collisionflag = 0;
-			if (d < radvec[x]+0.0001) collisionflag = 1; //0.5*(1 + (radvec[x] - d)/(fabs(radvec[x] - d)));	
+			if (d < radvec[x]*1.0001) collisionflag = 1; //0.5*(1 + (radvec[x] - d)/(fabs(radvec[x] - d)));	
 			double c = d + radvec[x];
-			double vw6 = (1/6)*stuff[2]*(pow(c,3)-2*rsquares[x]*c)*(1/pow((c*c - rsquares[x] - rprod[x]),2)-1/pow((c*c - rsquares[x] + rprod[x]),2));
+			double vw6 = (0.1666666)*stuff[2]*(pow(c,3)-2*rsquares[x]*c)*(1/pow((c*c - rsquares[x] - rprod[x]),2)-1/pow((c*c - rsquares[x] + rprod[x]),2));
 			double del = rad[a] - rad[b];
-			double fi = (del*(9+14*rad[a])-d*d+2*rad[a]*(13*rad[a]-2))/pow((2*rad[a]+d),7)+(-del*(9+14*rad[b])-d*d+2*rad[b]*(13*rad[b]-2))/pow((2*rad[b]+d),7);
-			double di = (-14*rad[a]*(13*rad[a]-2+7*del)+d*d-63*del)/pow((2*rad[a]+d),8) - 2*d/pow((2*rad[a]+d),7)+(-14*rad[b]*(13*rad[b]-2-7*del)+d*d+63*del)/pow((2*rad[b]+d),8) - 2*d/pow((2*rad[b]+d),7); 
-			double vw121 = stuff[3]*(1/(6*c))*((c*c+8*c*radvec[x]+7*rsquares[x]+28*rprod[x])/pow((c+radvec[x]),8)+(21*rprod[x]+7*radvec[x]+d*d)/pow(d,8)-0.2*di);
-			double vw122 = stuff[3]*(1/(30*c*c))*((c*c+7*c*radvec[x]+6*rsquares[x]+21*rprod[x])/pow((c+radvec[x]),7)+(15*rprod[x]+5*radvec[x]+d*d)/pow(d,7)+fi);
-			double F = ((massvec[x] - chargevec[x])/(d*d) + vw6 - vw121 - vw122)*(1 - collisionflag);				
-			double dF = ((-2*massvec[x] + 2*chargevec[x])/(d*d*d))*(1 - collisionflag)*p;		
+			// double fi = (del*(9+14*rad[a])-d*d+2*rad[a]*(13*rad[a]-2))/pow((2*rad[a]+d),7)+(-del*(9+14*rad[b])-d*d+2*rad[b]*(13*rad[b]-2))/pow((2*rad[b]+d),7);
+			// double di = (-14*rad[a]*(13*rad[a]-2+7*del)+d*d-63*del)/pow((2*rad[a]+d),8) - 2*d/pow((2*rad[a]+d),7)+(-14*rad[b]*(13*rad[b]-2-7*del)+d*d+63*del)/pow((2*rad[b]+d),8) - 2*d/pow((2*rad[b]+d),7); 
+			// double vw121 = 0; //stuff[3]*(1/(6*c))*((c*c+8*c*radvec[x]+7*rsquares[x]+28*rprod[x])/pow((c+radvec[x]),8)+(21*rprod[x]+7*radvec[x]+d*d)/pow(d,8)-0.2*di);
+			// double vw122 = 0; //stuff[3]*(1/(30*c*c))*((c*c+7*c*radvec[x]+6*rsquares[x]+21*rprod[x])/pow((c+radvec[x]),7)+(15*rprod[x]+5*radvec[x]+d*d)/pow(d,7)+fi);
+			double F = ((massvec[x] - chargevec[x])/(d*d) + vw6);				
+			double dF = ((-2*massvec[x] + 2*chargevec[x])/(d*d*d))*p;		
 			
-			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);
-			double jf = -collisionflag/(inertiapair[x] + massrecip[x]);
+			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);			
+			double jf = -collisionflag/(inertiapair[x] + massrecip[x]) + F*stuff[0]*stuff[4]*collisionflag;						 
 			double j =  -(1 + stuff[1])*collisionflag*p/massrecip[x];			
-		
-			v[b] += F*Runit*stuff[0]/m[b] + dF*Runit*stuff[0]*stuff[0]/m[b] - j*Runit/m[b] - jf*v_rel/m[b];
+			if (jf > j*stuff[4]) jf = j*stuff[4];
+			bug[x] = vw6;
+			v[b] += (1-collisionflag)*(F*Runit*stuff[0]/m[b] + dF*Runit*stuff[0]*stuff[0]/m[b]) - j*Runit/m[b] - jf*v_rel/m[b];
 			v[a] += -F*Runit*stuff[0]/m[a] - dF*Runit*stuff[0]*stuff[0]/m[a] + j*Runit/m[a] + jf*v_rel/m[a];
 			w[b] += -cross(Runit,jf*v_rel)*rad[b]/I[b];
 			w[a] += -cross(Runit,jf*v_rel)*rad[a]/I[a];			

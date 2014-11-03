@@ -11,17 +11,17 @@ while tempstr ~= -1
         frameset(i,:,:) = double(eval(tempstr));
     end
 end
+framestop = size(frameset,1);
+r_scaled = zeros(framestop,size(frameset,2),2);
 
-r_scaled = zeros(390,size(frameset,2),2);
-
-xmin = min(min(frameset(1:45,:,1))) - 2*max(rad);
-ymin = min(min(frameset(1:45,:,2))) - 2*max(rad);
-xmax = max(max(frameset(1:45,:,1))) + 2*max(rad);
-ymax = max(max(frameset(1:45,:,2))) + 2*max(rad);
+xmin = min(min(frameset(1:60,:,1))) - 2*max(rad);
+ymin = min(min(frameset(1:60,:,2))) - 2*max(rad);
+xmax = max(max(frameset(1:60,:,1))) + 2*max(rad);
+ymax = max(max(frameset(1:60,:,2))) + 2*max(rad);
 
 scale = min(1920/(xmax-xmin),1080/(ymax-ymin));
-r_scaled(:,:,2) = int16((frameset(1:390,:,1) - xmin)*scale);
-r_scaled(:,:,1) = int16((frameset(1:390,:,2) - ymin)*scale);
+r_scaled(:,:,2) = int16((frameset(1:framestop,:,1) - xmin)*scale);
+r_scaled(:,:,1) = int16((frameset(1:framestop,:,2) - ymin)*scale);
 %
 % if (1920/(xmax-xmin) < 1080/(ymax-ymin))
 %     scale = 1920/(xmax-xmin);
@@ -56,15 +56,13 @@ for t = 1:size(r_scaled,1)
     
     for i = 1:size(frameset,2)
         balls(i,:) = [r_scaled(t,i,2),r_scaled(t,i,1),ceil(rad(i)*scale)];
-        try
-            temp_frame = step(circ,temp_frame(:,:,1),balls);
-        end
+        %         try
+        %             temp_frame = step(circ,temp_frame(:,:,1),balls);
+        %         end
     end
     
     temp_frame = step(circ,temp_frame(:,:,1),balls);
-    
     writeVideo(vid,temp_frame);
-    
 end
 
 close(h)
