@@ -23,18 +23,17 @@ try
 	stuff[3] = float64(settings[4]);	
 catch
 	print("Settings not present or invalid; using defaults\n")
-	global const max_step = int32(5e4);
+	global const max_step = int64(5e4);
 	stuff[1] = float64(0.05);
 	stuff[2] = float64(1);
 	global const warp = float64(1);
 end
 
-global t_step = int32(0);
-const n = int32(size(r,2));
-const n_el = int32(1/2*n*(n-1));
-global n_frames = int32(floor(max_step*stuff[1]*30/warp));
-global framecount = int32(0);
-global tempcount = int32(0);
+global t_step = int64(0);
+const n_el = int64(1/2*n*(n-1));
+global n_frames = int64(floor(max_step*stuff[1]*30/warp));
+global framecount = int64(0);
+global tempcount = int64(0);
 global r_tracker = float64(zeros(4,n,n_frames));
 global bug_tracker = float64(zeros(n_el,n_frames));
 
@@ -46,8 +45,9 @@ global rsquares = float64(zeros(n_el,1));
 global rprod = float64(zeros(n_el,1));
 global massrecip = float64(zeros(n_el,1));
 global inertiapair = float64(zeros(n_el,1));
-global l1 = int32(zeros(n_el,1));
-global l2 = int32(zeros(n_el,1));
+global l1 = int64(zeros(n_el,1));
+global l2 = int64(zeros(n_el,1));
+global l3 = int64(zeros(n,n_el));
 
 for x = 1:n
 	I[x] = (2*m[x]*(rad[x]^2)/5);
@@ -55,7 +55,7 @@ end
 
 for x = 2:n
 	for y = 1:(x-1)	
-	local i = int32(0.5*(x-1)*(x-2) + y);	
+	local i = int64(0.5*(x-1)*(x-2) + y);	
 		massvec[i] = float64(m[x]*m[y]*G);
 		chargevec[i] = float64(q[x]*q[y]*k);
 		radvec[i] = float64(rad[x] + rad[y]);
@@ -65,11 +65,18 @@ for x = 2:n
 		inertiapair[i] = rad[y]^2/I[y] + rad[x]^2/I[x];
 		l1[i] = x;
 		l2[i] = y;
+		l3[x,i] = 1;
+		l3[y,i] = -1;
 	end
 end
 
-l1buff = cl.Buffer(Int32, ctx, (:r, :copy), hostbuf=l1);
-l2buff = cl.Buffer(Int32, ctx, (:r, :copy), hostbuf=l2);
+initdump = zeros(3,n,2)
+initdump[:,:,1] = r;
+initdump[:,:,2] = v;
+filewrite("init_dump.dat",initdump,"i")
+
+l1buff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=l1);
+l2buff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=l2);
 cbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=chargevec);
 m1buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(m));
 m2buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=massvec);
@@ -88,29 +95,38 @@ rpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(r_pad));
 vpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(v_pad));
 wpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(w_pad));
 
+vincbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n_el));
+wincbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n_el));
+vindbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n));
+windbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n));
+
 p = Progress(max_step,1)
-for t_step = 1:max_step		
-	tempcount = tempcount + 1;
-	cl.call(queue, ker1, n, nothing, tbuff, vpbuff, rpbuff);
+for t_step = 1:max_step	
 	
-	cl.call(queue, ker2, n_el, nothing, cbuff, r3buff, r4buff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff, bugbuff); 	
-	
+	tempcount = tempcount + 1;	
+		
+	cl.call(queue, ker2, n_el, nothing, cbuff, r3buff, r4buff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff); 	
+	for a = 2:n_el
+		abuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(a*ones(1)))
+		bbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(l3[:,a]));
+		cl.call(queue, ker3, n, nothing, vincbuff, wincbuff, vindbuff, windbuff, bbuff, I1buff, m1buff, r1buff, abuff, bugbuff);
+	end
 	if (tempcount == floor(max_step/n_frames)) && (framecount < n_frames)
 		tempcount = 0;
 		framecount = framecount + 1;
 		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);
 		bug_tracker[:,framecount] = cl.read(queue, bugbuff);
 	end
-	
+	cl.call(queue, ker1, n, nothing, tbuff, vpbuff, rpbuff, wpbuff, vindbuff, windbuff);
 	next!(p)
 end
 
 print("Simulation complete!\n")
 
-global frameset = float64(zeros(3,n,int32(floor(max_step*stuff[1]*30/warp))));
+global frameset = float64(zeros(3,n,int64(floor(max_step*stuff[1]*30/warp))));
    
 frameset[:,:,:] = float64(r_tracker[1:3,:,:]);
-filewrite("Particle_tracks.dat",frameset)
+filewrite("Particle_tracks.dat",frameset,"r")
 
    
 #for i = 1:n
