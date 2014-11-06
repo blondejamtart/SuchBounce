@@ -60,9 +60,9 @@ const F_kernel = "
 			double j =  -(1 + stuff[1])*collisionflag*p/massrecip[x];			
 			if (jf > j*stuff[4]) jf = j*stuff[4];
 			
-			vinc[x] += ((1-collisionflag)*(F*Runit*stuff[0] + 0.5*dF*Runit*stuff[0]*stuff[0]) - (j*Runit + jf*v_rel));
+			vinc[x] = ((1-collisionflag)*(F*Runit*stuff[0] + 0.5*dF*Runit*stuff[0]*stuff[0]) - (j*Runit + jf*v_rel));
 			// vinc[x,a] += ((collisionflag-1)*(F*Runit*stuff[0] + 0.5*dF*Runit*stuff[0]*stuff[0]) + (j*Runit + jf*v_rel))/m[a];
-			winc[x] += -cross(Runit,jf*v_rel);
+			winc[x] = -cross(Runit,jf*v_rel);
 			//winc[x,a] += -cross(Runit,jf*v_rel)*rad[a]/I[a];
 			
 		}
@@ -77,7 +77,7 @@ const r_kernel = "
 					__global double3 *wind)
 		{
 			int x = get_global_id(0);
-			v[x] += vind[x];
+			v[x] += -vind[x];
 			w[x] += wind[x];
 			r[x] += (v[x]*stuff[0]);
 			vind[x] = (0,0,0);
@@ -93,13 +93,16 @@ const red_kernel = "
 					__global double *m,
 					__global double *I,
 					__global double *rad,
-					__global long *a,
+					__global long *n,
 					__global double *bug)
 		{
-			long x = get_global_id(0);
-			long c = a[1];
-			vind[x] += b[x]*vinc[c]/m[x];
-			wind[x] += b[x]*winc[c]*rad[x]/I[x];	
+			long x = get_global_id(0);			
+			for (long c = 0; c < n[0]; c++)					
+			{	
+				vind[x] += b[c+n[0]*x]*vinc[c]/m[x];
+				wind[x] += b[c+n[0]*x]*b[c+n[0]*x]*winc[c]*rad[x]/I[x];
+				bug[x] = b[c+n[0]*x];
+			}		
 		}	
 "
 		
@@ -110,4 +113,3 @@ dynamics = cl.Program(ctx, source=F_kernel) |> cl.build!
 ker2 = cl.Kernel(dynamics, "Fimp");
 red = cl.Program(ctx, source=red_kernel) |> cl.build!
 ker3 = cl.Kernel(red, "red");
-	

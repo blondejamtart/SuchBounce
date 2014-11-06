@@ -35,7 +35,7 @@ global n_frames = int64(floor(max_step*stuff[1]*30/warp));
 global framecount = int64(0);
 global tempcount = int64(0);
 global r_tracker = float64(zeros(4,n,n_frames));
-global bug_tracker = float64(zeros(n_el,n_frames));
+global bug_tracker = float64(zeros(n,n_frames));
 
 global I = float64(zeros(size(r,2),1));
 global massvec = float64(zeros(n_el,1));
@@ -47,7 +47,7 @@ global massrecip = float64(zeros(n_el,1));
 global inertiapair = float64(zeros(n_el,1));
 global l1 = int64(zeros(n_el,1));
 global l2 = int64(zeros(n_el,1));
-global l3 = int64(zeros(n,n_el));
+global l3 = int64(zeros(n_el,n));
 
 for x = 1:n
 	I[x] = (2*m[x]*(rad[x]^2)/5);
@@ -65,8 +65,8 @@ for x = 2:n
 		inertiapair[i] = rad[y]^2/I[y] + rad[x]^2/I[x];
 		l1[i] = x;
 		l2[i] = y;
-		l3[x,i] = 1;
-		l3[y,i] = -1;
+		l3[i,x] = 1;
+		l3[i,y] = -1;
 	end
 end
 
@@ -74,6 +74,9 @@ initdump = zeros(3,n,2)
 initdump[:,:,1] = r;
 initdump[:,:,2] = v;
 filewrite("init_dump.dat",initdump,"i")
+
+nbuff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=int64([n_el n]));
+bbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(l3));
 
 l1buff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=l1);
 l2buff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=l2);
@@ -89,7 +92,7 @@ I1buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(I));
 I2buff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=inertiapair);
 tbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=stuff);
 
-bugbuff = cl.Buffer(Float64, ctx, :rw, n_el);
+bugbuff = cl.Buffer(Float64, ctx, :rw, n);
 
 rpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(r_pad));
 vpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(v_pad));
@@ -106,11 +109,10 @@ for t_step = 1:max_step
 	tempcount = tempcount + 1;	
 		
 	cl.call(queue, ker2, n_el, nothing, cbuff, r3buff, r4buff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff); 	
-	for a = 2:n_el
-		abuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(a*ones(1)))
-		bbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(l3[:,a]));
-		cl.call(queue, ker3, n, nothing, vincbuff, wincbuff, vindbuff, windbuff, bbuff, I1buff, m1buff, r1buff, abuff, bugbuff);
-	end
+
+
+	cl.call(queue, ker3, n, nothing, vincbuff, wincbuff, vindbuff, windbuff, bbuff, m1buff, I1buff, r1buff, nbuff, bugbuff);
+
 	if (tempcount == floor(max_step/n_frames)) && (framecount < n_frames)
 		tempcount = 0;
 		framecount = framecount + 1;
@@ -134,34 +136,3 @@ filewrite("Particle_tracks.dat",frameset,"r")
 #	local tempn = ["Particle_tracks_"string(i)".dat"]	
 #	filewriteshort(tempn[1],frameset)
 #end
-
-
-			
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-				
-
