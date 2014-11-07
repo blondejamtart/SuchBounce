@@ -2,23 +2,23 @@
 clearvars -except rad 
 file = fopen('Particle_tracks.dat');
 tempstr = 'a';
-i = 0;
+i = 1;
 
-while tempstr ~= -1
-    i = i + 1;
+while tempstr ~= -1    
     tempstr = fgetl(file);
     try
         tempset(i,:,:) = double(eval(tempstr));
+        i = i + 1;
     end
 end
 
-render_warp = 1;
+render_warp = 100;
 start = 1;
 stop = size(tempset,1);
 
 x = 0;
 for i = start:stop
-    if i/render_warp == floor(i/render_warp);
+    if (i-1)/render_warp == floor((i-1)/render_warp);
         x = x + 1;
         frameset(x,:,:) = tempset(i,:,:);
     end
@@ -26,13 +26,13 @@ end
     
 r_scaled_xy = zeros(size(frameset,1),size(frameset,2),2);
 
-xmin = min(min(frameset(1:40,:,1))) - 2*max(rad);
-ymin = min(min(frameset(1:40,:,2))) - 2*max(rad);
-xmax = max(max(frameset(1:40,:,1))) + 2*max(rad);
-ymax = max(max(frameset(1:40,:,2))) + 2*max(rad);
+xmin = min(min(frameset(:,:,1))) - 2*max(rad);
+ymin = min(min(frameset(:,:,2))) - 2*max(rad);
+xmax = max(max(frameset(:,:,1))) + 2*max(rad);
+ymax = max(max(frameset(:,:,2))) + 2*max(rad);
 
-zmin = min(min(frameset(1:40,:,3))) - 2*max(rad);
-zmax = max(max(frameset(1:40,:,3))) + 2*max(rad);
+zmin = min(min(frameset(:,:,3))) - 2*max(rad);
+zmax = max(max(frameset(:,:,3))) + 2*max(rad);
 
 scale_xy = min(1920/(xmax-xmin),1080/(ymax-ymin));
 r_scaled_xy(:,:,2) = int16((frameset(:,:,1) - xmin)*scale_xy);
@@ -80,8 +80,7 @@ for t = 1:size(r_scaled_xy,1)
     
     for i = 1:size(frameset,2)
         balls_xy(i,:) = [r_scaled_xy(t,i,2),r_scaled_xy(t,i,1),ceil(rad(i)*scale_xy)];
-        balls_yz(i,:) = [r_scaled_yz(t,i,2),r_scaled_yz(t,i,1),ceil(rad(i)*scale_yz)];
-        
+        balls_yz(i,:) = [r_scaled_yz(t,i,2),r_scaled_yz(t,i,1),ceil(rad(i)*scale_yz)];        
     end
     
     temp_frame_xy = step(circ,temp_frame_xy(:,:,1),balls_xy);

@@ -118,7 +118,7 @@ for t_step = 1:max_step
 	
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff);
 	
-	if (tempcount == floor(max_step/n_frames)) && (framecount < n_frames)
+	if (t_step == 1 || (tempcount == floor(max_step/n_frames))) && (framecount < n_frames)
 		tempcount = 0;
 		framecount = framecount + 1;
 		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);
