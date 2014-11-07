@@ -65,8 +65,8 @@ for x = 2:n
 		inertiapair[i] = rad[y]^2/I[y] + rad[x]^2/I[x];
 		l1[i] = x;
 		l2[i] = y;
-		l3[i,x] = 1;
-		l3[i,y] = -1;
+		l3[i,x] = -1;
+		l3[i,y] = 1;
 	end
 end
 
@@ -76,7 +76,7 @@ initdump[:,:,2] = v;
 filewrite("init_dump.dat",initdump,"i")
 
 nbuff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=int64([n_el n]));
-bbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(l3));
+l3buff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(l3));
 
 l1buff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=l1);
 l2buff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=l2);
@@ -100,26 +100,30 @@ wpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(w_pad));
 
 vincbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n_el));
 wincbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n_el));
-vindbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n));
-windbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n));
+accelbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n));
+alphabuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n));
 
 p = Progress(max_step,1)
 for t_step = 1:max_step	
 	
 	tempcount = tempcount + 1;	
+	
+	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff);
+	
+	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff, accelbuff, alphabuff);
 		
-	cl.call(queue, ker2, n_el, nothing, cbuff, r3buff, r4buff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff); 	
+	cl.call(queue, ker_F, n_el, nothing, cbuff, r3buff, r4buff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff); 	
 
-
-	cl.call(queue, ker3, n, nothing, vincbuff, wincbuff, vindbuff, windbuff, bbuff, m1buff, I1buff, r1buff, nbuff, bugbuff);
-
+	cl.call(queue, ker_S, n, nothing, vincbuff, wincbuff, accelbuff, alphabuff, l3buff, m1buff, I1buff, r1buff, nbuff);
+	
+	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff);
+	
 	if (tempcount == floor(max_step/n_frames)) && (framecount < n_frames)
 		tempcount = 0;
 		framecount = framecount + 1;
 		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);
 		bug_tracker[:,framecount] = cl.read(queue, bugbuff);
-	end
-	cl.call(queue, ker1, n, nothing, tbuff, vpbuff, rpbuff, wpbuff, vindbuff, windbuff);
+	end	
 	next!(p)
 end
 
