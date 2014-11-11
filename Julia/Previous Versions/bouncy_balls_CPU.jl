@@ -1,5 +1,5 @@
 
-include("F_kernel.jl")
+include("F_kernel_CPU.jl")
 include("fileread.jl")
 include("filewrite.jl")
 using ProgressMeter
@@ -11,10 +11,11 @@ const r_m = 0.3;
 
 fileread("setup.vec");
 
-global const stuff = float64([0,0,0,0,0]);
+global const stuff = float64([0,0,0,0,0,0]);
 
 try
-	global const warp = float64(settings[7]);	
+	global const warp = float64(settings[8]);
+	stuff[6] = float64(settings[7]);
 	stuff[5] = float64(settings[6]);
 	stuff[4] = float64(settings[5]);	
 	global const max_step = int64(settings[1]);
@@ -47,7 +48,7 @@ global massrecip = float64(zeros(n_el,1));
 global inertiapair = float64(zeros(n_el,1));
 global l1 = int64(zeros(n_el,1));
 global l2 = int64(zeros(n_el,1));
-global l3 = int64(zeros(n_el,n));
+global l3 = zeros(Int8,n_el,n);
 
 for x = 1:n
 	I[x] = (2*m[x]*(rad[x]^2)/5);
@@ -76,7 +77,7 @@ initdump[:,:,2] = v;
 filewrite("init_dump.dat",initdump,"i")
 
 nbuff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=int64([n_el n]));
-l3buff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(l3));
+l3buff = cl.Buffer(Int8, ctx, (:rw, :copy), hostbuf=l3);
 
 l1buff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=l1);
 l2buff = cl.Buffer(Int64, ctx, (:r, :copy), hostbuf=l2);
@@ -108,14 +109,10 @@ for t_step = 1:max_step
 	
 	tempcount = tempcount + 1;	
 	
-	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff);
-	
-	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff, accelbuff, alphabuff);
-		
+	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff);	
+	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff, accelbuff, alphabuff);	
 	cl.call(queue, ker_F, n_el, nothing, cbuff, r3buff, r4buff, m1buff, I1buff, l1buff, l2buff, m2buff, r2buff, m3buff, I2buff, r1buff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff); 	
-
-	cl.call(queue, ker_S, n, nothing, vincbuff, wincbuff, accelbuff, alphabuff, l3buff, m1buff, I1buff, r1buff, nbuff);
-	
+	cl.call(queue, ker_S, n, nothing, vincbuff, wincbuff, accelbuff, alphabuff, l3buff, m1buff, I1buff, r1buff, nbuff);	
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff);
 	
 	if (t_step == 1 || (tempcount == floor(max_step/n_frames))) && (framecount < n_frames)

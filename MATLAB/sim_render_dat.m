@@ -12,7 +12,7 @@ while tempstr ~= -1
     end
 end
 
-render_warp = 100;
+render_warp = 20;
 start = 1;
 stop = size(tempset,1);
 
@@ -25,11 +25,12 @@ for i = start:stop
 end
     
 r_scaled_xy = zeros(size(frameset,1),size(frameset,2),2);
+r_scaled_yz = zeros(size(frameset,1),size(frameset,2),2);
 
-xmin = min(min(frameset(:,:,1))) - 2*max(rad);
-ymin = min(min(frameset(:,:,2))) - 2*max(rad);
-xmax = max(max(frameset(:,:,1))) + 2*max(rad);
-ymax = max(max(frameset(:,:,2))) + 2*max(rad);
+xmin = min(min(frameset(1:200,:,1))) - 2*max(rad);
+ymin = min(min(frameset(1:200,:,2))) - 2*max(rad);
+xmax = max(max(frameset(1:200,:,1))) + 2*max(rad);
+ymax = max(max(frameset(1:200,:,2))) + 2*max(rad);
 
 zmin = min(min(frameset(:,:,3))) - 2*max(rad);
 zmax = max(max(frameset(:,:,3))) + 2*max(rad);
@@ -73,27 +74,28 @@ for t = 1:size(r_scaled_xy,1)
     waitbar(t/size(r_scaled_xy,1));
     
     temp_frame_xy = ones(1080,1920,1);
-    temp_frame_yz = ones(1080,1920,1);
+%     temp_frame_yz = ones(1080,1920,1);
     
     balls_xy = zeros(size(frameset,2),3);
-    balls_yz = zeros(size(frameset,2),3);
+%     balls_yz = zeros(size(frameset,2),3);
     
     for i = 1:size(frameset,2)
         balls_xy(i,:) = [r_scaled_xy(t,i,2),r_scaled_xy(t,i,1),ceil(rad(i)*scale_xy)];
-        balls_yz(i,:) = [r_scaled_yz(t,i,2),r_scaled_yz(t,i,1),ceil(rad(i)*scale_yz)];        
+%         balls_yz(i,:) = [r_scaled_yz(t,i,2),r_scaled_yz(t,i,1),ceil(rad(i)*scale_yz)];        
     end
     
     temp_frame_xy = step(circ,temp_frame_xy(:,:,1),balls_xy);
-    temp_frame_yz = step(circ,temp_frame_yz(:,:,1),balls_yz);
+%     temp_frame_yz = step(circ,temp_frame_yz(:,:,1),balls_yz);
     writeVideo(vid_xy,temp_frame_xy);
-    writeVideo(vid_yz,temp_frame_yz);
+%     writeVideo(vid_yz,temp_frame_yz);
     
 end
 
-close(h)
+
 close(vid_xy);
 close(vid_yz);
 fclose('all');
+close(h)
 
 
 

@@ -22,8 +22,8 @@ for i = 2:n
 end    
 
 for i = 1:n
-    v[1:2,i] = 5e-6*(0.5-rand(2,1));
-	v[3,i] = 1e-7*(0.5-rand());
+    v[1:2,i] = 5e-7*(0.5-rand(2,1));
+	v[3,i] = 1e-8*(0.5-rand());
     q[i] = 0*(0.5-rand());
 end
 return r, v, w, q
