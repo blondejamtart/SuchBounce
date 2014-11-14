@@ -20,7 +20,7 @@ end
 
 global const settings = float64(eval(parse(stringdump[7][1:length(stringdump[7])-1])));
 
-if stringdump[1][1:length(stringdump[1])-2] == "Rand" && stringdump[2][1:length(stringdump[2])-1] != "Rand" 
+if stringdump[1][1:length(stringdump[1])-1] == "Rand" && stringdump[2][1:length(stringdump[2])-1] != "Rand" 
 	global const n = int64(eval(parse(stringdump[2][1:length(stringdump[2])-1])));
 	global const m = float64(eval(parse(stringdump[5][1:length(stringdump[5])-1])))*ones(n,1);
 	global const rad = float64(eval(parse(stringdump[6][1:length(stringdump[6])-1])))*ones(n,1);
@@ -38,7 +38,7 @@ global w = zeros(3,n);
 global w_pad = zeros(4,n);
 global q = zeros(1,n);
 
-if stringdump[1][1:length(stringdump[1])-2] == "Rand"
+if stringdump[1][1:length(stringdump[1])-1] == "Rand"
 	r, v, w, q = randseed(r,v,w,q,rad);
 else
 	r = float64(eval(parse(stringdump[1][1:length(stringdump[1])-1])))';
