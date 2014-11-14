@@ -45,4 +45,12 @@ Temporary Items
 *.avi
 *.asv
 *.m4v
-*.mat
+*.mat/Julia/12_Particle_tracks.dat
+/Julia/bouncy_balls_cl.jl~
+/Julia/bouncy_balls.jl~
+/Julia/fileread.jl~
+/Julia/filewrite.jl~
+/Julia/F_kernel.jl~
+/Julia/Particle_tracks.dat~
+/Julia/randseed.jl~
+/Julia/Win_ver/fileread.jl~

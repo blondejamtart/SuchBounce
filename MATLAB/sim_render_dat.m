@@ -1,27 +1,65 @@
-clear frameset
 
+clearvars -except rad
 file = fopen('Particle_tracks.dat');
 tempstr = 'a';
-i = 0;
-
+i = 1;
+d = 0;
+l = -5;
 while tempstr ~= -1
-    i = i + 1;
     tempstr = fgetl(file);
-    try
-        frameset(i,:,:) = double(eval(tempstr));
+    l = l + 1;
+    if d == 0
+        try
+            temp = double(eval(tempstr));
+            d = 1;
+        end
     end
 end
 
-r_scaled = zeros(size(frameset,1),size(frameset,2),2);
+fclose('all');
+file = fopen('Particle_tracks.dat');
+n = size(temp,1);
+tempset = zeros(l,n,3);
+tempstr = 'a';
+while tempstr ~= -1
+    tempstr = fgetl(file);
+    try
+        tempset(i,:,:) = double(eval(tempstr));
+        i = i + 1;
+    end
+end
+
+render_warp = 10;
+start = 1;
+stop = 0.1*size(tempset,1);
+
+frameset = zeros(floor((start-stop)/render_warp),n,3);
+x = 0;
+for i = start:stop
+    if (i-1)/render_warp == floor((i-1)/render_warp);
+        x = x + 1;
+        frameset(x,:,:) = tempset(i,:,:);
+    end
+end
+
+r_scaled_xy = zeros(size(frameset,1),size(frameset,2),2);
+r_scaled_yz = zeros(size(frameset,1),size(frameset,2),2);
 
 xmin = min(min(frameset(:,:,1))) - 2*max(rad);
 ymin = min(min(frameset(:,:,2))) - 2*max(rad);
 xmax = max(max(frameset(:,:,1))) + 2*max(rad);
 ymax = max(max(frameset(:,:,2))) + 2*max(rad);
 
-scale = min(1920/(xmax-xmin),1080/(ymax-ymin));
-r_scaled(:,:,2) = int16((frameset(:,:,1) - xmin)*scale);
-r_scaled(:,:,1) = int16((frameset(:,:,2) - ymin)*scale);
+zmin = min(min(frameset(:,:,3))) - 2*max(rad);
+zmax = max(max(frameset(:,:,3))) + 2*max(rad);
+
+scale_xy = min(1920/(xmax-xmin),1080/(ymax-ymin));
+r_scaled_xy(:,:,2) = int16((frameset(:,:,1) - xmin)*scale_xy);
+r_scaled_xy(:,:,1) = int16((frameset(:,:,2) - ymin)*scale_xy);
+
+scale_yz = min(1920/(ymax-ymin),1080/(zmax-zmin));
+r_scaled_yz(:,:,1) = int16((frameset(:,:,2) - ymin)*scale_yz);
+r_scaled_yz(:,:,2) = int16((frameset(:,:,3) - zmin)*scale_yz);
 %
 % if (1920/(xmax-xmin) < 1080/(ymax-ymin))
 %     scale = 1920/(xmax-xmin);
@@ -42,29 +80,40 @@ circ.Antialiasing = true;
 
 h = waitbar(0,'Rendering...');
 
-vname = ['render_',num2str(length(dir('render*.avi'))+1),'.avi'];
-vid = VideoWriter(vname);
-open(vid);
+vname_xy = ['render_',num2str(0.5*length(dir('render*.avi'))+1),'_xy.avi'];
+vname_yz = ['render_',num2str(0.5*length(dir('render*.avi'))+1),'_yz.avi'];
+vid_xy = VideoWriter(vname_xy);
+vid_yz = VideoWriter(vname_yz);
+open(vid_xy);
+open(vid_yz);
 
-for t = 1:size(frameset,1)
+for t = 1:size(r_scaled_xy,1)
     
-    waitbar(t/size(frameset,1));
+    waitbar(t/size(r_scaled_xy,1));
     
-    temp_frame = ones(1080,1920,1);
+    temp_frame_xy = ones(1080,1920,1);
+    temp_frame_yz = ones(1080,1920,1);
     
-    balls = zeros(size(frameset,2),3);
+    balls_xy = zeros(size(frameset,2),3);
+    balls_yz = zeros(size(frameset,2),3);
     
     for i = 1:size(frameset,2)
-        balls(i,:) = [r_scaled(t,i,2),r_scaled(t,i,1),ceil(rad(i)*scale)];
+        balls_xy(i,:) = [r_scaled_xy(t,i,2),r_scaled_xy(t,i,1),ceil(rad(i)*scale_xy)];
+        balls_yz(i,:) = [r_scaled_yz(t,i,2),r_scaled_yz(t,i,1),ceil(rad(i)*scale_yz)];
     end
     
-    temp_frame = step(circ,temp_frame(:,:,1),balls);
-    writeVideo(vid,temp_frame);
+    temp_frame_xy = step(circ,temp_frame_xy(:,:,1),balls_xy);
+    temp_frame_yz = step(circ,temp_frame_yz(:,:,1),balls_yz);
+    writeVideo(vid_xy,temp_frame_xy);
+    writeVideo(vid_yz,temp_frame_yz);
     
 end
 
+
+close(vid_xy);
+close(vid_yz);
+fclose('all');
 close(h)
-close(vid);
 
 
 

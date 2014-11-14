@@ -1,0 +1,20 @@
+----------------------------------------------------------
+|  Simulation Setup file:                                |
+| - Initial parameters are in order: positions,          |
+|   linear velocities, angular velocities (vectors)  	 |
+|   charges, masses, radii (scalars).              	 |
+| - Run settings are as follows:                         |
+|   [ Max steps, Delta T, Co. of Restitution,            |
+|   A,  B, mu, render warp ].			  	 |
+----------------------------------------------------------
+
+Settings:
+[0 0 0; 1 0 0; 0 1 0; 1 1 0]
+[0 0 0; 0 0 0; 0 0 0; 0 0 0]
+[0 0 0; 0 0 0; 0 0 0; 0 0 0]
+[0 0 0 0]
+[1 1 1 1]
+[0.1 0.1 0.1 0.1]
+[5e3 0.002 1 5e-19 0 0.5 1]
+
+
