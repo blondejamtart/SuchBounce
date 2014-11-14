@@ -31,7 +31,7 @@ end
 
 render_warp = 10;
 start = 1;
-stop = 0.1*size(tempset,1);
+stop = size(tempset,1);
 
 frameset = zeros(floor((start-stop)/render_warp),n,3);
 x = 0;

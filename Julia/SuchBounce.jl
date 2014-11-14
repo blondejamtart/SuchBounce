@@ -89,7 +89,9 @@ p = Progress(max_step,1)
 for t_step = 1:max_step	
 
 	tempcount = tempcount + 1;	
-	
+	cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
+	cl.call(queue, ker_T0, 1, nothing, rpbuff);
+
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
 	
 	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff, accelbuff, alphabuff);	# Drift
@@ -98,7 +100,7 @@ for t_step = 1:max_step
 	
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
 	
- 	#cl.call(queue, ker_T, n, nothing, rpbuff); # Make positions relative to particle 1
+ 	
 		
 	if (t_step == 1 || (tempcount == floor(max_step/n_frames))) && (framecount < n_frames)
 		tempcount = 0;

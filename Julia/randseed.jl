@@ -1,7 +1,7 @@
 function randseed(r::Array{Float64,2},v::Array{Float64,2},w::Array{Float64,2},q::Array{Float64,2},rad::Array{Float64,2})
 
 const n = size(q,2);
-r[1:2,1] = 0.0002*rand(2,1);
+r[1:2,1] = 0.1*rand(2,1);
 r[3,1] = 0;
 
 for i = 2:n
@@ -9,7 +9,7 @@ for i = 2:n
     global occupied = bool(ones(i-1,1));
     while any(occupied)
 		occupied = bool(ones(i-1,1));
-		r[1:2,i] = 0.0002*rand(2,1);
+		r[1:2,i] = 0.1*rand(2,1);
 		r[3,] = 0;       
 		local d = zeros((i-1),1);        
 		for j = 1:(i-1)
