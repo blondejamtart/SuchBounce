@@ -1,5 +1,5 @@
 
-include("F_kernel_SS.jl")
+include("F_kernel_SS_symp.jl")
 include("fileread.jl")
 include("filewrite.jl")
 using ProgressMeter
@@ -89,8 +89,8 @@ p = Progress(max_step,1)
 for t_step = 1:max_step	
 
 	tempcount = tempcount + 1;	
-	cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
-	cl.call(queue, ker_T0, 1, nothing, rpbuff);
+	#cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
+	#cl.call(queue, ker_T0, 1, nothing, rpbuff);
 
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
 	
