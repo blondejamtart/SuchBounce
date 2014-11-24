@@ -1,5 +1,5 @@
 
-include("F_kernel_SS_symp.jl")
+include("F_kernel_SS.jl")
 include("fileread.jl")
 include("filewrite.jl")
 using ProgressMeter
@@ -89,8 +89,7 @@ p = Progress(max_step,1)
 for t_step = 1:max_step	
 
 	tempcount = tempcount + 1;	
-	#cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
-	#cl.call(queue, ker_T0, 1, nothing, rpbuff);
+	
 
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
 	
@@ -100,7 +99,8 @@ for t_step = 1:max_step
 	
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
 	
- 	
+ 	cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
+	cl.call(queue, ker_T0, 1, nothing, rpbuff);
 		
 	if (t_step == 1 || (tempcount == floor(max_step/n_frames))) && (framecount < n_frames)
 		tempcount = 0;
@@ -117,6 +117,12 @@ global frameset = float64(zeros(3,n,int64(floor(max_step*stuff[1]*30/warp))));
 frameset[:,:,:] = float64(r_tracker[1:3,:,:]);
 filewrite("Particle_tracks.dat",frameset,"r")
 
+finaldump = zeros(4,n,3);
+finaldump[:,:,1] = cl.read(queue,rpbuff);
+finaldump[:,:,2] = cl.read(queue,vpbuff);
+finaldump[:,:,3] = cl.read(queue,wpbuff);
+
+filewrite("finaldump.dat",finaldump[1:3,:,:],"i")
    
 #for i = 1:n
 #	frameset[:,:] = r_tracker[1:3,n,:];    

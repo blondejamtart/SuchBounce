@@ -3,6 +3,7 @@
 function fileread(file)
 
 include("randseed.jl")
+include("randseed_part.jl")
 
 initfile = open(file);
 
@@ -20,7 +21,7 @@ end
 
 global const settings = float64(eval(parse(stringdump[7][1:length(stringdump[7])-1])));
 
-if stringdump[1][1:length(stringdump[1])-1] == "Rand" && stringdump[2][1:length(stringdump[2])-1] != "Rand" 
+if stringdump[1][1:4] == "Rand" && stringdump[2][1:length(stringdump[2])-1] != "Rand" 
 	global const n = int64(eval(parse(stringdump[2][1:length(stringdump[2])-1])));
 	global const m = float64(eval(parse(stringdump[5][1:length(stringdump[5])-1])))*ones(n,1);
 	global const rad = float64(eval(parse(stringdump[6][1:length(stringdump[6])-1])))*ones(n,1);
@@ -40,6 +41,10 @@ global q = zeros(1,n);
 
 if stringdump[1][1:length(stringdump[1])-1] == "Rand"
 	r, v, w, q = randseed(r,v,w,q,rad);
+elseif stringdump[1][1:4] == "Rand"
+	r = float64(eval(parse(stringdump[1][6:length(stringdump[1])-3])))';
+	local x = int64(eval(parse(string(stringdump[1][length(stringdump[1])-1]))));	
+	r, v, w, q = randseed_n(r,v,w,q,rad,x);
 else
 	r = float64(eval(parse(stringdump[1][1:length(stringdump[1])-1])))';
 	v = float64(eval(parse(stringdump[2][1:length(stringdump[2])-1])))';
