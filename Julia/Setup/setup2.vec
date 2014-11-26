@@ -1,0 +1,22 @@
+-------------------------------------------------------------
+|  Simulation Setup file:                               	|
+| - Initial parameters are in order: positions,     		|
+|   linear velocities, angular velocities (vectors)  	 	|
+|   charges, masses, radii (scalars).              	     	|
+| - Run settings are as follows:                         	|
+|   [Max steps, Delta T, Co. of Restitution,             	|
+|   A, B, muS, muD, k, render warp]. 				|
+| - For random positions, set 1st line as "Rand";		|
+|	for n identical particles, set 2nd line as n		|
+|	otherwise set as "Rand" and specify radii and masses	|
+|	as normal.						|
+-------------------------------------------------------------
+
+Settings:
+[0 0 0; 3.829545e8 0 0]
+[0 0 0; 0 1.02e3 0]
+zeros(2,3)
+zeros(1,2)
+[5.972e24 7.348e22]
+[6.371e6 1.737e6]
+[1e5 30 1e-8 5e-19 0 0.5 0.5 1e-7 90]

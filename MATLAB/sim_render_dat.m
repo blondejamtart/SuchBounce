@@ -1,38 +1,14 @@
 
 clearvars -except rad
-file = fopen('Particle_tracks.dat');
-tempstr = 'a';
-i = 1;
-d = 0;
-l = -5;
-while tempstr ~= -1
-    tempstr = fgetl(file);
-    l = l + 1;
-    if d == 0
-        try
-            temp = double(eval(tempstr));
-            d = 1;
-        end
-    end
-end
 
-fclose('all');
-file = fopen('Particle_tracks.dat');
-n = size(temp,1);
-tempset = zeros(l,n,3);
-tempstr = 'a';
-while tempstr ~= -1
-    tempstr = fgetl(file);
-    try
-        tempset(i,:,:) = double(eval(tempstr));
-        i = i + 1;
-    end
-end
+tempset = fileread('Particle_tracks.dat');
 
-render_warp = 10;
+ig = 66;
+render_warp = 20;
 start = 1;
-stop = size(tempset,1);
+stop = 0.5*size(tempset,1);
 
+n = size(tempset,2);
 frameset = zeros(floor((start-stop)/render_warp),n,3);
 x = 0;
 for i = start:stop
@@ -43,23 +19,23 @@ for i = start:stop
 end
 
 r_scaled_xy = zeros(size(frameset,1),size(frameset,2),2);
-r_scaled_yz = zeros(size(frameset,1),size(frameset,2),2);
+r_scaled_xz = zeros(size(frameset,1),size(frameset,2),2);
 
-xmin = min(min(frameset(:,:,1))) - 2*max(rad);
-ymin = min(min(frameset(:,:,2))) - 2*max(rad);
-xmax = max(max(frameset(:,:,1))) + 2*max(rad);
-ymax = max(max(frameset(:,:,2))) + 2*max(rad);
+xmin = min(min(frameset(:,1:ig,1))) - 2*max(rad(1:ig));
+ymin = min(min(frameset(:,1:ig,2))) - 2*max(rad(1:ig));
+xmax = max(max(frameset(:,1:ig,1))) + 2*max(rad(1:ig));
+ymax = max(max(frameset(:,1:ig,2))) + 2*max(rad(1:ig));
 
-zmin = min(min(frameset(:,:,3))) - 2*max(rad);
-zmax = max(max(frameset(:,:,3))) + 2*max(rad);
+zmin = min(min(frameset(:,1:ig,3))) - 2*max(rad(1:ig));
+zmax = max(max(frameset(:,1:ig,3))) + 2*max(rad(1:ig));
 
 scale_xy = min(1920/(xmax-xmin),1080/(ymax-ymin));
 r_scaled_xy(:,:,2) = int16((frameset(:,:,1) - xmin)*scale_xy);
 r_scaled_xy(:,:,1) = int16((frameset(:,:,2) - ymin)*scale_xy);
 
-scale_yz = min(1920/(ymax-ymin),1080/(zmax-zmin));
-r_scaled_yz(:,:,1) = int16((frameset(:,:,2) - ymin)*scale_yz);
-r_scaled_yz(:,:,2) = int16((frameset(:,:,3) - zmin)*scale_yz);
+scale_yz = min(1920/(xmax-xmin),1080/(zmax-zmin));
+r_scaled_xz(:,:,1) = int16((frameset(:,:,2) - xmin)*scale_yz);
+r_scaled_xz(:,:,2) = int16((frameset(:,:,3) - zmin)*scale_yz);
 %
 % if (1920/(xmax-xmin) < 1080/(ymax-ymin))
 %     scale = 1920/(xmax-xmin);
@@ -97,9 +73,9 @@ for t = 1:size(r_scaled_xy,1)
     balls_xy = zeros(size(frameset,2),3);
     balls_yz = zeros(size(frameset,2),3);
     
-    for i = 1:size(frameset,2)
+    for i = 1:ig
         balls_xy(i,:) = [r_scaled_xy(t,i,2),r_scaled_xy(t,i,1),ceil(rad(i)*scale_xy)];
-        balls_yz(i,:) = [r_scaled_yz(t,i,2),r_scaled_yz(t,i,1),ceil(rad(i)*scale_yz)];
+        balls_yz(i,:) = [r_scaled_xz(t,i,2),r_scaled_xz(t,i,1),ceil(rad(i)*scale_yz)];
     end
     
     temp_frame_xy = step(circ,temp_frame_xy(:,:,1),balls_xy);

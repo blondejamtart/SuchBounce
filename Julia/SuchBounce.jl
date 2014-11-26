@@ -1,5 +1,5 @@
 
-include("F_kernel_SS.jl")
+include("F_kernel_hybrid.jl")
 include("fileread.jl")
 include("filewrite.jl")
 using ProgressMeter
@@ -9,7 +9,7 @@ const G = 6.67384e-11;
 const epsilon = 0;
 const r_m = 0.3;
 
-fileread("setup.vec");
+fileread("Setup/setup.vec");
 
 global const stuff = float64([0,0,0,0,0,0,G,k,0]);
 
@@ -34,9 +34,18 @@ end
 global t_step = int64(0);
 const n_el = int64(1/2*n*(n-1));
 global n_frames = int64(floor(max_step*stuff[1]*30/warp));
+if n_frames > max_step
+	n_frames = max_step;
+	write(STDOUT,"Insufficient frames for specified warp; using all available frames\r\n")
+end
+
 global framecount = int64(0);
 global tempcount = int64(0);
 global r_tracker = zeros(4,n,n_frames);
+global Tv_tracker = zeros(n,n_frames);
+global Tw_tracker = zeros(n,n_frames);
+global V_tracker = zeros(n,n_frames);
+global Int_tracker = zeros(n,n_frames);
 
 global I = zeros(size(r,2),1);
 global l1 = zeros(Int32,n_el,1);
@@ -84,6 +93,13 @@ accelbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n));
 alphabuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n));
 
 extbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=zeros(4,n));
+Vbuff = cl.Buffer(Float64, ctx, :rw, n);
+Vincbuff = cl.Buffer(Float64, ctx, :rw, n_el);
+Intbuff = cl.Buffer(Float64, ctx, :rw, n);
+Intincbuff = cl.Buffer(Float64, ctx, :rw, n_el);
+Tvbuff = cl.Buffer(Float64, ctx, :rw, n);
+Twbuff = cl.Buffer(Float64, ctx, :rw, n);
+
 
 p = Progress(max_step,1)
 for t_step = 1:max_step	
@@ -93,10 +109,11 @@ for t_step = 1:max_step
 
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
 	
-	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff, accelbuff, alphabuff);	# Drift
-	cl.call(queue, ker_F, n_el, nothing, cbuff, mbuff, Ibuff, l1buff, l2buff, radbuff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff); 	# Compute force
-	cl.call(queue, ker_S, n, nothing, vincbuff, wincbuff, accelbuff, alphabuff, l3buff, mbuff, Ibuff, radbuff, nbuff);	# Contract array
-	
+	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff, accelbuff, alphabuff, Vbuff, Intbuff);	# Drift
+	cl.call(queue, ker_F, n_el, nothing, cbuff, mbuff, Ibuff, l1buff, l2buff, radbuff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff, Vincbuff, Intincbuff); 	# Compute force
+	cl.call(queue, ker_S, n, nothing, vincbuff, wincbuff, accelbuff, alphabuff, l3buff, mbuff, Ibuff, radbuff, nbuff, Vbuff, Vincbuff, Intbuff, Intincbuff);	# Contract array
+	cl.call(queue, ker_kin, n, nothing, vpbuff, wpbuff, Tvbuff, Twbuff, mbuff, Ibuff); # Kinetic energies
+
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
 	
  	cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
@@ -105,27 +122,38 @@ for t_step = 1:max_step
 	if (t_step == 1 || (tempcount == floor(max_step/n_frames))) && (framecount < n_frames)
 		tempcount = 0;
 		framecount = framecount + 1;
-		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);	
+		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);
+		Tv_tracker[:,framecount] = cl.read(queue, Tvbuff);
+		Tw_tracker[:,framecount] = cl.read(queue, Twbuff);
+		V_tracker[:,framecount] = cl.read(queue, Vbuff);	
+		Int_tracker[:,framecount] = cl.read(queue, Intbuff);
 	end	
 	next!(p)
 end
 
 print("Simulation complete!\n")
 
-global frameset = float64(zeros(3,n,int64(floor(max_step*stuff[1]*30/warp))));
+global frameset = float64(zeros(3,n,n_frames));
    
 frameset[:,:,:] = float64(r_tracker[1:3,:,:]);
-filewrite("Particle_tracks.dat",frameset,"r")
+
+filewrite("Outputs/Particle_tracks.dat",frameset,"r")
 
 finaldump = zeros(4,n,3);
 finaldump[:,:,1] = cl.read(queue,rpbuff);
 finaldump[:,:,2] = cl.read(queue,vpbuff);
 finaldump[:,:,3] = cl.read(queue,wpbuff);
 
-filewrite("finaldump.dat",finaldump[1:3,:,:],"i")
-   
-#for i = 1:n
-#	frameset[:,:] = r_tracker[1:3,n,:];    
-#	local tempn = ["Particle_tracks_"string(i)".dat"]	
-#	filewriteshort(tempn[1],frameset)
-#end
+filewrite("Outputs/final_dump.dat",finaldump[1:3,:,:],"i")
+
+filewrite("Outputs/T_v_tracks.dat",Tv_tracker,"r")
+filewrite("Outputs/T_w_tracks.dat",Tw_tracker,"r")
+filewrite("Outputs/V_tracks.dat",V_tracker,"r")
+filewrite("Outputs/E_int_tracks.dat",Int_tracker,"r")
+
+
+
+
+
+
+
