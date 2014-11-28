@@ -4,9 +4,9 @@ clearvars -except rad
 tempset = fileread('Particle_tracks.dat');
 
 ig = 66;
-render_warp = 20;
+render_warp = 1;
 start = 1;
-stop = 0.5*size(tempset,1);
+stop = 0.2*size(tempset,1);
 
 n = size(tempset,2);
 frameset = zeros(floor((start-stop)/render_warp),n,3);

@@ -12,8 +12,11 @@ dev = dev_list[n_choice];
 ctx = cl.Context(dev);
 queue = cl.CmdQueue(ctx); 
 
+
+const F_kernels = ["" "" ""];
+
 # Hybrid
-const F_kernels[3] = "
+F_kernels[3] = "
 		__kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
@@ -39,7 +42,7 @@ const F_kernels[3] = "
 			double d = distance(r[a],r[b]);
 		 	double3 Runit = normalize(r[a] - r[b]);
 			double3 wvec = w[a]*rad[a] + w[b]*rad[b];
-			double3 vtemp = v[a] - v[b]; 
+			double3 vtemp = v[b] - v[a]; 
 			double p = dot(vtemp,Runit);		
 			double collisionflag = step(d,(rad[a]+rad[b]));	
 		
@@ -52,20 +55,22 @@ const F_kernels[3] = "
 			
 			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
 
-			Ipart[x] = 0.5*collisionflag*stuff[8]*pow((rad[a]+rad[b]-d),2);
+			Ipart[x] = 0.25*collisionflag*stuff[8]*pow((rad[a]+rad[b]-d),2);
 				
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);						
-			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0]) + collisionflag*(stuff[1]*p*stuff[0] - stuff[8]*(rad[a]+rad[b]-d)*stuff[0] - 0.5*stuff[8]*p*stuff[0]*stuff[0]);			
-			double jf = (collisionflag/((pow(rad[a],2)/I[a] + pow(rad[b],2)/I[b]) + (1/m[a] + 1/m[b])));
+			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0]) - collisionflag*(stuff[1]*p*stuff[0] + stuff[8]*(rad[a]+rad[b]-d)*stuff[0] + 0.5*stuff[8]*p*stuff[0]*stuff[0]);			
+					
+			double jf = collisionflag*length(v_rel)/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));
+			
 			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
 			if (jf > fdyn*stuff[4]) jf = fdyn*stuff[5];			
-			rddp[x] = j*Runit + jf*v_rel;			
-			oddp[x] = cross(Runit,jf*v_rel);			
+			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel);			
+			oddp[x] = -cross(Runit,jf*v_rel);			
 		}
 "
 
 # Hard Spheres	
-const F_kernel[1] = "
+ F_kernels[1] = "
 		__kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
@@ -84,7 +89,7 @@ const F_kernel[1] = "
 			int x = get_global_id(0);
 			int a = k[x] - 1;
 			int b = l[x] - 1;
-		    double G = stuff[6];
+		   	double G = stuff[6];
 			double e0 = stuff[7];
 			double d = distance(r[a],r[b]);
 		 	double3 Runit = normalize(r[a] - r[b]);
@@ -112,7 +117,7 @@ const F_kernel[1] = "
 "		
 
 # Soft Spheres (Symplectic)
-const F_kernels[2] = "
+F_kernels[2] = "
 		__kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
@@ -124,10 +129,12 @@ const F_kernels[2] = "
 				 	__global double3 *v,
 				 	__global double3 *w,
 					__global double3 *rddp,
-					__global double3 *oddp)
-					
-				  
+					__global double3 *oddp,
+					__global double *Vpart,
+					__global double *Ipart)
+
 		{ 			
+			
 			int x = get_global_id(0);
 			int a = k[x] - 1;
 			int b = l[x] - 1;
@@ -136,21 +143,28 @@ const F_kernels[2] = "
 			double d = distance(r[a],r[b]);
 		 	double3 Runit = normalize(r[a] - r[b]);
 			double3 wvec = w[a]*rad[a] + w[b]*rad[b];
-			double3 vtemp = v[a] - v[b]; 
+			double3 vtemp = v[b] - v[a]; 
 			double p = dot(vtemp,Runit);		
 			double collisionflag = step(d,(rad[a]+rad[b]));	
 		
-			double c = d + (rad[a]+rad[b]);
-			double f = d*(c+rad[a]+rad[b]);		
+			double c = d+(rad[a]+rad[b]);			
+			double f = d*(c+rad[a]+rad[b]);				
+					
+			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d)) - (0.33333333)*stuff[2]*c*((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2));				
 			
-			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d)) - (0.33333333)*stuff[2]*c*((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2));	
-		
+			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
+
+			Ipart[x] = 0.25*collisionflag*stuff[8]*pow((rad[a]+rad[b]-d),2);
+				
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);						
-			double tempF = (F*stuff[0]) + collisionflag*(stuff[1]*p*stuff[0] - stuff[8]*(rad[a]+rad[b]-d)*stuff[0]);			
-			double Ff = collisionflag*step(0,length(v_rel))*(stuff[8]*(rad[a]+rad[b]-d)*stuff[0])*stuff[5];
-			
-			rddp[x] = tempF*Runit + Ff*normalize(v_rel);			
-			oddp[x] = cross(Runit,Ff*normalize(v_rel));			
+			double j = F*stuff[0] - collisionflag*(stuff[1]*p*stuff[0] + stuff[8]*(rad[a]+rad[b]-d)*stuff[0]);					
+
+			double jf = collisionflag*step(0,length(v_rel))*(stuff[8]*(rad[a]+rad[b]-d)*stuff[0])*stuff[5];	
+					
+			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel);			
+			oddp[x] = -cross(Runit,jf*v_rel);			
+					
+					
 		}
 "			
 

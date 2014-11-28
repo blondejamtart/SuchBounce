@@ -108,6 +108,7 @@ for t_step = 1:max_step
 	
 
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
+	#cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
 	
 	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff, accelbuff, alphabuff, Vbuff, Intbuff);	# Drift
 	cl.call(queue, ker_F, n_el, nothing, cbuff, mbuff, Ibuff, l1buff, l2buff, radbuff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff, Vincbuff, Intincbuff); 	# Compute force
@@ -116,8 +117,8 @@ for t_step = 1:max_step
 
 	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
 	
- 	cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
-	cl.call(queue, ker_T0, 1, nothing, rpbuff);
+ 	#cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
+	#cl.call(queue, ker_T0, 1, nothing, rpbuff);
 		
 	if (t_step == 1 || (tempcount == floor(max_step/n_frames))) && (framecount < n_frames)
 		tempcount = 0;
@@ -136,20 +137,24 @@ print("Simulation complete!\n")
 global frameset = float64(zeros(3,n,n_frames));
    
 frameset[:,:,:] = float64(r_tracker[1:3,:,:]);
-
-filewrite("Outputs/Particle_tracks.dat",frameset,"r")
-
 finaldump = zeros(4,n,3);
 finaldump[:,:,1] = cl.read(queue,rpbuff);
 finaldump[:,:,2] = cl.read(queue,vpbuff);
 finaldump[:,:,3] = cl.read(queue,wpbuff);
 
-filewrite("Outputs/final_dump.dat",finaldump[1:3,:,:],"i")
+try
+	filewrite("Outputs/Particle_tracks.dat",frameset,"r")
+catch 
+	mkdir("Outputs");
+	filewrite("Outputs/Particle_tracks.dat",frameset,"r")
+end
 
+filewrite("Outputs/final_dump.dat",finaldump[1:3,:,:],"i")
 filewrite("Outputs/T_v_tracks.dat",Tv_tracker,"r")
 filewrite("Outputs/T_w_tracks.dat",Tw_tracker,"r")
 filewrite("Outputs/V_tracks.dat",V_tracker,"r")
 filewrite("Outputs/E_int_tracks.dat",Int_tracker,"r")
+
 
 
 
