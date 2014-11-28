@@ -65,7 +65,7 @@ F_kernels[3] = "
 			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
 			if (jf > fdyn*stuff[4]) jf = fdyn*stuff[5];			
 			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel);			
-			oddp[x] = -cross(Runit,jf*v_rel);			
+			oddp[x] = cross(Runit,jf*v_rel);			
 		}
 "
 
