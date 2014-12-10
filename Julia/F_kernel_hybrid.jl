@@ -258,18 +258,21 @@ const T_kernel = "
 "
 
 const ext_kernel = " 
-		__kernel void external(__global double *q,
-					__global double3 *ext,
+		__kernel void external(	__global double3 *ext,
 					__global double3 *v,
 					__global double *m,					
 					__global double3 *r,
 					__global double *stuff)
 		{
-			int x = get_global_id(0);	
-			double3 E = (0,0,0);
-			double3 B = (0,0,0);
-			double3 G = (0,0,0); //((0,0,0) - r[x])*stuff[6]*5.972e24/pow(distance(r[x],(0,0,0)),3);
-			ext[x] = stuff[0]*(q[x]*(E + cross(v[x],B))/m[x] + G);
+			int x = get_global_id(0);
+			double3 ri = r[x];
+			double3 b = (0,-1e-1,0);
+			double3 t = (1e-1,1e-1,1e-1);
+			double f_x = 1e-3*(step(ri[0],b[0])*(ri[0]-b[0])+step(t[0],ri[0])*(ri[0]-t[0]));
+			double f_y = 1e-3*(step(ri[1],b[1])*(ri[1]-b[1])+step(t[1],ri[1])*(ri[1]-t[1]));
+			double f_z = 1e-3*(step(ri[2],b[2])*(ri[2]-b[2])+step(t[2],ri[2])*(ri[2]-t[2]));
+
+			ext[x] = stuff[0]*((double3)(0,-9.80665,0)-(double3)(f_x,f_y,f_z)/m[x]);
 		}	
 "
 		
@@ -282,7 +285,7 @@ ker_F = cl.Kernel(dynamics, "Fimp");
 red = cl.Program(ctx, source=red_kernel) |> cl.build!
 ker_S = cl.Kernel(red, "red");
 exter = cl.Program(ctx, source=ext_kernel) |> cl.build!
-ker_ext = cl.Kernel(vstep, "vstep");
+ker_ext = cl.Kernel(exter, "external");
 trans = cl.Program(ctx, source=trans_kernel) |> cl.build!
 ker_T = cl.Kernel(trans, "rmove");
 trans0 = cl.Program(ctx, source=trans0_kernel) |> cl.build!
