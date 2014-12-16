@@ -68,7 +68,7 @@ F_kernels[3] = "
 			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel);			
 			oddp[x] = cross(Runit,jf*v_rel);
 
-			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
+			Vpart[x] = 0;//(-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
 
 			Ipart[x] =  0.25*collisionflag*stuff[8]*pow((rad[a]+rad[b]-d),2);			
 		}
@@ -282,45 +282,32 @@ const ext_kernel = "
 			double3 b = (0,-4e-2,0);
 			double3 t = (8e-2,8e-2,2e-2);
 				
-			dt.x = step((r[x].x-b.x)/v[x].x,stuff[0])*step(0,(r[x].x-b.x)/v[x].x)*(stuff[0]-(r[x].x-b.x)/v[x].x)+step((r[x].x-t.x)/v[x].x,stuff[0])*step(0,(r[x].x-t.x)/v[x].x)*(stuff[0]-(r[x].x-t.x)/v[x].x);						
+			dt.x = fmax(step((-r[x].x+b.x)/v[x].x,stuff[0])*step(0,(-r[x].x+b.x)/v[x].x)*(stuff[0]-(-r[x].x+b.x)/v[x].x)+step((-r[x].x+t.x)/v[x].x,stuff[0])*step(0,(-r[x].x+t.x)/v[x].x)*(stuff[0]-(-r[x].x+t.x)/v[x].x),0);						
 			f.x = (step(r[x].x,b.x)*(r[x].x-b.x)+step(t.x,r[x].x)*(r[x].x-t.x));			
 			d.x = (step(r[x].x,b.x)+step(t.x,r[x].x));
 
 			ext[x].x = -2e-2/m[x]*(f.x*(stuff[0]-dt.x)+0.5*(stuff[0]-dt.x)*(stuff[0]-dt.x)*d.x*v[x].x+step(r[x].x,t.x)*step(b.x,r[x].x)*0.5*v[x].x*dt.x*dt.x);
-			ext[x].y = 0;
-			ext[x].z = 0;
+
+			dt.y = fmax(step((-r[x].y+b.y)/v[x].y,stuff[0])*step(0,(-r[x].y+b.y)/v[x].y)*(stuff[0]-(-r[x].y+b.y)/v[x].y)+step((-r[x].y+t.y)/v[x].y,stuff[0])*step(0,(-r[x].y+t.y)/v[x].y)*(stuff[0]-(-r[x].y+t.y)/v[x].y),0);						
+			f.y = (step(r[x].y,b.y)*(r[x].y-b.y)+step(t.y,r[x].y)*(r[x].y-t.y));			
+			d.y = (step(r[x].y,b.y)+step(t.y,r[x].y));
+
+			ext[x].y = -2e-2/m[x]*(f.y*(stuff[0]-dt.y)+0.5*(stuff[0]-dt.y)*(stuff[0]-dt.y)*d.y*v[x].y+step(r[x].y,t.y)*step(b.y,r[x].y)*0.5*v[x].y*dt.y*dt.y);
+
+			dt.z = fmax(step((-r[x].z+b.z)/v[x].z,stuff[0])*step(0,(-r[x].z+b.z)/v[x].z)*(stuff[0]-(-r[x].z+b.z)/v[x].z)+step((-r[x].z+t.z)/v[x].z,stuff[0])*step(0,(-r[x].z+t.z)/v[x].z)*(stuff[0]-(-r[x].z+t.z)/v[x].z),0);						
+			f.z = (step(r[x].z,b.z)*(r[x].z-b.z)+step(t.z,r[x].z)*(r[x].z-t.z));			
+			d.z = (step(r[x].z,b.z)+step(t.z,r[x].z));
+
+			ext[x].z = -2e-2/m[x]*(f.z*(stuff[0]-dt.z)+0.5*(stuff[0]-dt.z)*(stuff[0]-dt.z)*d.z*v[x].z+step(r[x].z,t.z)*step(b.z,r[x].z)*0.5*v[x].z*dt.z*dt.z);
+		
+		
 
 
 			Internal[x] += 0.5*2e-2*dot(f,f);
-			//V[x] += -0.5*2e-2*stuff[9]*stuff[0]*stuff[0]*d.x*v[x].x;
+			V[x] += dt.y; //-0.5*2e-2*stuff[9]*stuff[0]*stuff[0]*d.x*v[x].x;
 		}	
 "
-const ext1_kernel = " 
-		__kernel void external(	__global double3 *ext,
-					__global double3 *v,
-					__global double *m,					
-					__global double3 *r,
-					__global double *Internal,
-					__global double *V,
-					__global double *stuff)
-		{
-			int x = get_global_id(0);
-			double3 ri = r[x];
-			double3 b = (0,-4e-2,0);
-			double3 t = (8e-2,8e-2,2e-2);
-			double f_x = (step(ri[0],b[0])*(ri[0]-b[0])+step(t[0],ri[0])*(ri[0]-t[0]));
-			double f_y = (step(ri[1],b[1])*(ri[1]-b[1])+step(t[1],ri[1])*(ri[1]-t[1]));
-			double f_z = (step(ri[2],b[2])*(ri[2]-b[2])+step(t[2],ri[2])*(ri[2]-t[2]));
 
-			double d_x = (step(ri[0],b[0])+step(t[0],ri[0]));
-			double d_y = (step(ri[1],b[1])+step(t[1],ri[1]));
-			double d_z = (step(ri[2],b[2])+step(t[2],ri[2]));
-
-			ext[x] = stuff[0]*(-2e-2*(double3)(f_x,f_y,f_z)/m[x] - 0.5*2e-2*stuff[0]*(double3)(d_x*v[x].x,d_y*v[x].y,d_z*v[x].z)/m[x]) ;
-			Internal[x] += 0.5*2e-2*dot((double3)(f_x,f_y,f_z),(double3)(f_x,f_y,f_z));
-			//V[x] += -0.5*2e-2*stuff[9]*stuff[0]*stuff[0]*d_x*v[x].x;
-		}	
-"
 		
 vstep = cl.Program(ctx, source=v_kernel) |> cl.build!
 ker_v = cl.Kernel(vstep, "vstep");
