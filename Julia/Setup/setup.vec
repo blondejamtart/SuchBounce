@@ -5,7 +5,7 @@
 |   charges, masses, radii (scalars).              	     	|
 | - Run settings are as follows:                         	|
 |   [Max steps, Delta T, Co. of Restitution,             	|
-|   A, B, muS, muD, k, render warp]. 				|
+|   A, B, muS, muD, k, render warp, Gradient mode]. 		|
 | - For random positions, set 1st line as "Rand";		|
 |	for n identical particles, set 2nd line as n		|
 |	otherwise set as "Rand" and specify radii and masses	|
@@ -13,10 +13,10 @@
 -------------------------------------------------------------
 
 Settings:
-Rand
-128
-zeros(3,128)
-zeros(1,128)
-1e-1
-4e-3
-[2e4 0.005 0 5e-19 0 0 0 1e-3 0.1]
+[1e-4 0 0; 3e-3 0 0]
+[-4e-3 0 0; 4e-3 0 0]
+zeros(2,3)
+zeros(1,2)
+[1e-4 1e-4]
+[1e-3 1e-3]
+[2e4 0.001 0 0 0 0 0 2e-2 0.1 1]

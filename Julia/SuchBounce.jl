@@ -5,13 +5,11 @@ include("filewrite.jl")
 using ProgressMeter
 
 const k = (4*pi*8.85419e-12)^-1;
-const G = 6.67384e-11;
-const epsilon = 0;
-const r_m = 0.3;
+const G = 0*6.67384e-11;
 
 fileread("Setup/setup.vec");
 
-global const stuff = float64([0,0,0,0,0,0,G,k,0]);
+global const stuff = float64([0,0,0,0,0,0,G,k,0,0]);
 
 try
 	global const warp = float64(settings[9]);
@@ -23,6 +21,7 @@ try
 	stuff[2] = float64(settings[3]);
 	stuff[3] = float64(settings[4]);
 	stuff[9] = float64(settings[8]);
+	stuff[10] = float64(settings[10]);
 catch
 	print("Settings not present or invalid; using defaults\n")
 	global const max_step = int64(5e4);
@@ -104,18 +103,29 @@ Twbuff = cl.Buffer(Float64, ctx, :rw, n);
 p = Progress(max_step,1)
 for t_step = 1:max_step	
 
-	tempcount = tempcount + 1;	
-	
+	tempcount = tempcount + 1;
 
-	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick	
+	cl.call(queue, ker_v, n, nothing, vpbuff, extbuff); # external kick
+	cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff); # translational kick
+	cl.call(queue, ker_v, n, nothing, wpbuff, alphabuff); # rotatational kick		
 	
-	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff, accelbuff, alphabuff, Vbuff, Intbuff);	# Drift
+	cl.call(queue, ker_0, n, nothing, accelbuff, Vbuff); # zero things
+	cl.call(queue, ker_0, n, nothing, alphabuff, Intbuff);
+	
+	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff);	# Drift	
+		
 	cl.call(queue, ker_F, n_el, nothing, cbuff, mbuff, Ibuff, l1buff, l2buff, radbuff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff, Vincbuff, Intincbuff); 	# Compute force
 	cl.call(queue, ker_S, n, nothing, vincbuff, wincbuff, accelbuff, alphabuff, l3buff, mbuff, Ibuff, radbuff, nbuff, Vbuff, Vincbuff, Intbuff, Intincbuff);	# Contract array
-	cl.call(queue, ker_ext,	n, nothing, extbuff, vpbuff, mbuff, rpbuff, tbuff); # Apply external/boundary forces
+	cl.call(queue, ker_ext,	n, nothing, extbuff, vpbuff, mbuff, rpbuff, Intbuff, Vbuff, tbuff); # Apply external/boundary forces
 	cl.call(queue, ker_kin, n, nothing, vpbuff, wpbuff, Tvbuff, Twbuff, mbuff, Ibuff); # Kinetic energies
 
-	cl.call(queue, ker_v, n, nothing, vpbuff, wpbuff, accelbuff, alphabuff, extbuff); # Kick
+	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff);	# Drift	
+	
+	cl.call(queue, ker_v, n, nothing, vpbuff, extbuff); # external kick
+	cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff); # translational kick
+	cl.call(queue, ker_v, n, nothing, wpbuff, alphabuff); # rotatational kick
+	
+	
 	
  	#cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
 	#cl.call(queue, ker_T0, 1, nothing, rpbuff);

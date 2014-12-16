@@ -47,25 +47,30 @@ F_kernels[3] = "
 			double collisionflag = step(d,(rad[a]+rad[b]));	
 		
 			double c = d+(rad[a]+rad[b]);			
-			double f = d*(c+rad[a]+rad[b]);				
+			double f = d*(c+rad[a]+rad[b]);		
+
+				
 					
 			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d)) - (0.33333333)*stuff[2]*c*((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2));	
 		
-			double dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d) + (0.33333333)*stuff[2]*(((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2)) + 2*pow(c,2)*((4*rad[a]*rad[b]-f)/pow(f,3)+(f+8*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),3))))*p;		
-			
-			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
-
-			Ipart[x] = 0.25*collisionflag*stuff[8]*pow((rad[a]+rad[b]-d),2);
+			double dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d) + (0.33333333)*stuff[2]*(((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2)) + 2*pow(c,2)*((4*rad[a]*rad[b]-f)/pow(f,3)+(f+8*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),3))))*p;				
 				
-			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);						
-			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0]) - collisionflag*(stuff[1]*p*stuff[0] + stuff[8]*(rad[a]+rad[b]-d)*stuff[0] + 0.5*stuff[8]*p*stuff[0]*stuff[0]);			
+			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
+			
+			double dt = step((d-rad[a]-rad[b])/p,stuff[0])*step(0,(d-rad[a]-rad[b])/p)*(stuff[0]-(d-rad[a]-rad[b])/p);
+					
+			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0]) - collisionflag*(stuff[1]*p*(stuff[0]-dt) + stuff[8]*(rad[a]+rad[b]-d)*(stuff[0]-dt) + 0.5*stuff[8]*p*(stuff[0]-dt)*(stuff[0]-dt)) -step((rad[a]+rad[b]),d)*(stuff[1]*p*dt+0.5*stuff[8]*p*dt*dt);
 					
 			double jf = collisionflag*length(v_rel)/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));
 			
 			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
 			if (jf > fdyn*stuff[4]) jf = fdyn*stuff[5];			
 			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel);			
-			oddp[x] = cross(Runit,jf*v_rel);			
+			oddp[x] = cross(Runit,jf*v_rel);
+
+			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
+
+			Ipart[x] =  0.25*collisionflag*stuff[8]*pow((rad[a]+rad[b]-d),2);			
 		}
 "
 
@@ -82,7 +87,9 @@ F_kernels[3] = "
 				 	__global double3 *v,
 				 	__global double3 *w,
 					__global double3 *rddp,
-					__global double3 *oddp)
+					__global double3 *oddp,
+					__global double *Vpart,
+					__global double *Ipart)
 					
 				  
 		{ 			
@@ -104,7 +111,7 @@ F_kernels[3] = "
 			
 			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d)) - (0.33333333)*stuff[2]*c*((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2));	
 		
-			double dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d) + (0.33333333)*stuff[2]*(((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2)) + 2*pow(c,2)*((4*rad[a]*rad[b]-f)/pow(f,3)+(f+8*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),3))))*p;			
+			double dF = stuff[9]*((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d) + (0.33333333)*stuff[2]*(((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2)) + 2*pow(c,2)*((4*rad[a]*rad[b]-f)/pow(f,3)+(f+8*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),3))))*p;			
 			
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);			
 			double jf = collisionflag*(-1/((pow(rad[a],2)/I[a] + pow(rad[b],2)/I[b]) + (1/m[a] + 1/m[b])));						 
@@ -112,7 +119,9 @@ F_kernels[3] = "
 			double fdyn = ((F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]));
 			if (jf > fdyn*stuff[4]) jf = fdyn*stuff[5];			
 			rddp[x] = ((1-collisionflag)*(F*Runit*stuff[0] + 0.5*dF*Runit*stuff[0]*stuff[0]) - (j*Runit + jf*v_rel));
-			oddp[x] = -cross(Runit,jf*v_rel);			
+			oddp[x] = -cross(Runit,jf*v_rel);
+			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
+			Ipart[x] = 0;			
 		}
 "		
 
@@ -175,30 +184,19 @@ const F_kernel = F_kernels[n_choice];
 const r_kernel = " 
 		__kernel void rstep(__global const double *stuff,					
 					__global double3 *r,
-					__global double3 *v,
-					__global double3 *accel,
-					__global double3 *alpha,
-					__global double *V,
-					__global double *Internal)
+					__global double3 *v)
 		{
 			int x = get_global_id(0);						
-			r[x] += (v[x]*stuff[0]);
-			accel[x] = (0,0,0);
-			alpha[x] = (0,0,0);
-			V[x] = 0;
-			Internal[x] = 0;
+			r[x] += 0.5*(v[x]*stuff[0]);			
 		}				
 "
 const v_kernel = " 
-		__kernel void vstep(__global double3 *v,			
-					__global double3 *w,
-					__global double3 *accel,
-					__global double3 *alpha,
-					__global double3 *ext)
+		__kernel void vstep(__global double3 *v,					
+					__global double3 *accel)
+					
 		{
 			int x = get_global_id(0);
-			v[x] += 0.5*(accel[x]+ext[x]);
-			w[x] += 0.5*alpha[x];									
+			v[x] += 0.5*accel[x];							
 		}				
 "
 const red_kernel = " 
@@ -220,7 +218,7 @@ const red_kernel = "
 			for (int c = 0; c < n[0]; c++)					
 			{	
 				Internal[x] += b[c+n[0]*x]*b[c+n[0]*x]*Ipart[c];				
-				V[x] += b[c+n[0]*x]*b[c+n[0]*x]*Vpart[c];				
+				V[x] += 0.5*b[c+n[0]*x]*b[c+n[0]*x]*Vpart[c];				
 				accel[x] += b[c+n[0]*x]*rddp[c]/m[x];
 				alpha[x] += b[c+n[0]*x]*b[c+n[0]*x]*oddp[c]*rad[x]/I[x];	
 			}		
@@ -235,10 +233,22 @@ const trans_kernel = "
 			r[x+1] += -r[0];
 		}
 "
+
 const trans0_kernel = "
 		__kernel void rmove0(__global double3 *r)
 		{			
 			r[0] += -r[0];
+		}
+"
+		
+const zero_kernel = "
+		__kernel void zeroer(__global double3 *accel,
+					__global double *V)		
+
+		{	
+			int x = get_global_id(0);
+			accel[x] = (0,0,0);			
+			V[x] = 0;
 		}
 "
 
@@ -256,23 +266,59 @@ const T_kernel = "
 		}
 
 "
-
 const ext_kernel = " 
 		__kernel void external(	__global double3 *ext,
 					__global double3 *v,
 					__global double *m,					
 					__global double3 *r,
+					__global double *Internal,
+					__global double *V,
+					__global double *stuff)
+		{
+			int x = get_global_id(0);
+			double3 f = (0,0,0);
+			double3 d = (0,0,0);			
+			double3 dt = (0,0,0);			
+			double3 b = (0,-4e-2,0);
+			double3 t = (8e-2,8e-2,2e-2);
+				
+			dt.x = step((r[x].x-b.x)/v[x].x,stuff[0])*step(0,(r[x].x-b.x)/v[x].x)*(stuff[0]-(r[x].x-b.x)/v[x].x)+step((r[x].x-t.x)/v[x].x,stuff[0])*step(0,(r[x].x-t.x)/v[x].x)*(stuff[0]-(r[x].x-t.x)/v[x].x);						
+			f.x = (step(r[x].x,b.x)*(r[x].x-b.x)+step(t.x,r[x].x)*(r[x].x-t.x));			
+			d.x = (step(r[x].x,b.x)+step(t.x,r[x].x));
+
+			ext[x].x = -2e-2/m[x]*(f.x*(stuff[0]-dt.x)+0.5*(stuff[0]-dt.x)*(stuff[0]-dt.x)*d.x*v[x].x+step(r[x].x,t.x)*step(b.x,r[x].x)*0.5*v[x].x*dt.x*dt.x);
+			ext[x].y = 0;
+			ext[x].z = 0;
+
+
+			Internal[x] += 0.5*2e-2*dot(f,f);
+			//V[x] += -0.5*2e-2*stuff[9]*stuff[0]*stuff[0]*d.x*v[x].x;
+		}	
+"
+const ext1_kernel = " 
+		__kernel void external(	__global double3 *ext,
+					__global double3 *v,
+					__global double *m,					
+					__global double3 *r,
+					__global double *Internal,
+					__global double *V,
 					__global double *stuff)
 		{
 			int x = get_global_id(0);
 			double3 ri = r[x];
-			double3 b = (0,-1e-1,0);
-			double3 t = (1e-1,1e-1,1e-1);
-			double f_x = 1e-3*(step(ri[0],b[0])*(ri[0]-b[0])+step(t[0],ri[0])*(ri[0]-t[0]));
-			double f_y = 1e-3*(step(ri[1],b[1])*(ri[1]-b[1])+step(t[1],ri[1])*(ri[1]-t[1]));
-			double f_z = 1e-3*(step(ri[2],b[2])*(ri[2]-b[2])+step(t[2],ri[2])*(ri[2]-t[2]));
+			double3 b = (0,-4e-2,0);
+			double3 t = (8e-2,8e-2,2e-2);
+			double f_x = (step(ri[0],b[0])*(ri[0]-b[0])+step(t[0],ri[0])*(ri[0]-t[0]));
+			double f_y = (step(ri[1],b[1])*(ri[1]-b[1])+step(t[1],ri[1])*(ri[1]-t[1]));
+			double f_z = (step(ri[2],b[2])*(ri[2]-b[2])+step(t[2],ri[2])*(ri[2]-t[2]));
 
-			ext[x] = stuff[0]*((double3)(0,-9.80665,0)-(double3)(f_x,f_y,f_z)/m[x]);
+			double d_x = (step(ri[0],b[0])+step(t[0],ri[0]));
+			double d_y = (step(ri[1],b[1])+step(t[1],ri[1]));
+			double d_z = (step(ri[2],b[2])+step(t[2],ri[2]));
+
+			ext[x] = stuff[0]*(-2e-2*(double3)(f_x,f_y,f_z)/m[x] - 0.5*2e-2*stuff[0]*(double3)(d_x*v[x].x,d_y*v[x].y,d_z*v[x].z)/m[x]) ;
+			Internal[x] += 0.5*2e-2*dot((double3)(f_x,f_y,f_z),(double3)(f_x,f_y,f_z));
+			//V[x] += -0.5*2e-2*stuff[9]*stuff[0]*stuff[0]*d_x*v[x].x;
 		}	
 "
 		
@@ -292,3 +338,5 @@ trans0 = cl.Program(ctx, source=trans0_kernel) |> cl.build!
 ker_T0 = cl.Kernel(trans0, "rmove0");
 kinetic = cl.Program(ctx, source=T_kernel) |> cl.build!
 ker_kin = cl.Kernel(kinetic, "Tstep");
+zeroer = cl.Program(ctx, source=zero_kernel) |> cl.build!
+ker_0 = cl.Kernel(zeroer, "zeroer");

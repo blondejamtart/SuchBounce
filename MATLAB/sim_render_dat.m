@@ -3,10 +3,10 @@ clearvars -except rad
 
 tempset = fileread('Particle_tracks.dat');
 
-ig = 128;
-render_warp = 10;
+ig = 2;
+render_warp = 1;
 start = 1;
-stop = 0.4*size(tempset,1);
+stop = size(tempset,1);
 
 n = size(tempset,2);
 frameset = zeros(floor((start-stop)/render_warp),n,3);
@@ -22,7 +22,7 @@ unshifted = frameset;
 for i = [2:size(frameset,2),1]
     frameset(:,i,:) = frameset(:,i,:) - frameset(:,1,:);
 end
-
+frameset = unshifted;
 s = x;
 r_scaled_xy = zeros(size(frameset,1),size(frameset,2),2);
 r_scaled_xz = zeros(size(frameset,1),size(frameset,2),2);
