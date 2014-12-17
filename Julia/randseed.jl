@@ -10,7 +10,7 @@ for i = 2:n
     while any(occupied)
 		occupied = bool(ones(i-1,1));
 		r[1:2,i] = 8e-2*rand(2,1);
-		r[3,i] = 2e-2*rand();       
+		r[3,i] = 4e-2*rand();       
 		local d = zeros((i-1),1);        
 		for j = 1:(i-1)
 			d[j] = norm(r[:,i] - r[:,j]);

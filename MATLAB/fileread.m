@@ -40,7 +40,7 @@ while tempstr ~= -1
     end
 end
 
-
+fclose('all');
 
 end
 

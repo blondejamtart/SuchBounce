@@ -119,7 +119,7 @@ for t_step = 1:max_step
 	cl.call(queue, ker_ext,	n, nothing, extbuff, vpbuff, mbuff, rpbuff, Intbuff, Vbuff, tbuff); # Apply external/boundary forces
 	cl.call(queue, ker_kin, n, nothing, vpbuff, wpbuff, Tvbuff, Twbuff, mbuff, Ibuff); # Kinetic energies
 
-	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff);	# Drift	
+	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff);	# Drift		
 	
 	cl.call(queue, ker_v, n, nothing, vpbuff, extbuff); # external kick
 	cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff); # translational kick

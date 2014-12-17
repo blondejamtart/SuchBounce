@@ -59,7 +59,7 @@ F_kernels[3] = "
 			
 			double dt = step((d-rad[a]-rad[b])/p,stuff[0])*step(0,(d-rad[a]-rad[b])/p)*(stuff[0]-(d-rad[a]-rad[b])/p);
 					
-			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0]) - collisionflag*(stuff[1]*p*(stuff[0]-dt) + stuff[8]*(rad[a]+rad[b]-d)*(stuff[0]-dt) + 0.5*stuff[8]*p*(stuff[0]-dt)*(stuff[0]-dt)) -step((rad[a]+rad[b]),d)*(stuff[1]*p*dt+0.5*stuff[8]*p*dt*dt);
+			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0])-collisionflag*(stuff[1]*p*(stuff[0]-dt)+stuff[8]*(rad[a]+rad[b]-d)*(stuff[0]-dt)+0.5*stuff[8]*p*(stuff[0]-dt)*(stuff[0]-dt))-(1-collisionflag)*(stuff[1]*p*dt+0.5*stuff[8]*p*dt*dt);
 					
 			double jf = collisionflag*length(v_rel)/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));
 			
@@ -279,32 +279,32 @@ const ext_kernel = "
 			double3 f = (0,0,0);
 			double3 d = (0,0,0);			
 			double3 dt = (0,0,0);			
-			double3 b = (0,-4e-2,0);
-			double3 t = (8e-2,8e-2,2e-2);
+			double3 b = (0,0,0);
+			double3 t = (1.6e-2,1.6e-2,1.6e-2);
 				
 			dt.x = fmax(step((-r[x].x+b.x)/v[x].x,stuff[0])*step(0,(-r[x].x+b.x)/v[x].x)*(stuff[0]-(-r[x].x+b.x)/v[x].x)+step((-r[x].x+t.x)/v[x].x,stuff[0])*step(0,(-r[x].x+t.x)/v[x].x)*(stuff[0]-(-r[x].x+t.x)/v[x].x),0);						
 			f.x = (step(r[x].x,b.x)*(r[x].x-b.x)+step(t.x,r[x].x)*(r[x].x-t.x));			
 			d.x = (step(r[x].x,b.x)+step(t.x,r[x].x));
 
-			ext[x].x = -2e-2/m[x]*(f.x*(stuff[0]-dt.x)+0.5*(stuff[0]-dt.x)*(stuff[0]-dt.x)*d.x*v[x].x+step(r[x].x,t.x)*step(b.x,r[x].x)*0.5*v[x].x*dt.x*dt.x);
+			ext[x].x = -stuff[8]/m[x]*(f.x*(stuff[0]-dt.x)+0.5*(stuff[0]-dt.x)*(stuff[0]-dt.x)*d.x*v[x].x+step(r[x].x,t.x)*step(b.x,r[x].x)*0.5*v[x].x*dt.x*dt.x);
 
 			dt.y = fmax(step((-r[x].y+b.y)/v[x].y,stuff[0])*step(0,(-r[x].y+b.y)/v[x].y)*(stuff[0]-(-r[x].y+b.y)/v[x].y)+step((-r[x].y+t.y)/v[x].y,stuff[0])*step(0,(-r[x].y+t.y)/v[x].y)*(stuff[0]-(-r[x].y+t.y)/v[x].y),0);						
 			f.y = (step(r[x].y,b.y)*(r[x].y-b.y)+step(t.y,r[x].y)*(r[x].y-t.y));			
 			d.y = (step(r[x].y,b.y)+step(t.y,r[x].y));
 
-			ext[x].y = -2e-2/m[x]*(f.y*(stuff[0]-dt.y)+0.5*(stuff[0]-dt.y)*(stuff[0]-dt.y)*d.y*v[x].y+step(r[x].y,t.y)*step(b.y,r[x].y)*0.5*v[x].y*dt.y*dt.y);
+			ext[x].y = -stuff[8]/m[x]*(f.y*(stuff[0]-dt.y)+0.5*(stuff[0]-dt.y)*(stuff[0]-dt.y)*d.y*v[x].y+step(r[x].y,t.y)*step(b.y,r[x].y)*0.5*v[x].y*dt.y*dt.y);
 
 			dt.z = fmax(step((-r[x].z+b.z)/v[x].z,stuff[0])*step(0,(-r[x].z+b.z)/v[x].z)*(stuff[0]-(-r[x].z+b.z)/v[x].z)+step((-r[x].z+t.z)/v[x].z,stuff[0])*step(0,(-r[x].z+t.z)/v[x].z)*(stuff[0]-(-r[x].z+t.z)/v[x].z),0);						
 			f.z = (step(r[x].z,b.z)*(r[x].z-b.z)+step(t.z,r[x].z)*(r[x].z-t.z));			
 			d.z = (step(r[x].z,b.z)+step(t.z,r[x].z));
 
-			ext[x].z = -2e-2/m[x]*(f.z*(stuff[0]-dt.z)+0.5*(stuff[0]-dt.z)*(stuff[0]-dt.z)*d.z*v[x].z+step(r[x].z,t.z)*step(b.z,r[x].z)*0.5*v[x].z*dt.z*dt.z);
+			ext[x].z = -stuff[8]/m[x]*(f.z*(stuff[0]-dt.z)+0.5*(stuff[0]-dt.z)*(stuff[0]-dt.z)*d.z*v[x].z+step(r[x].z,t.z)*step(b.z,r[x].z)*0.5*v[x].z*dt.z*dt.z);
 		
 		
 
 
-			Internal[x] += 0.5*2e-2*dot(f,f);
-			V[x] += dt.y; //-0.5*2e-2*stuff[9]*stuff[0]*stuff[0]*d.x*v[x].x;
+			Internal[x] += 0.5*stuff[8]*dot(f,f);
+			//V[x] += //-0.5*2e-2*stuff[9]*stuff[0]*stuff[0]*d.x*v[x].x;
 		}	
 "
 
