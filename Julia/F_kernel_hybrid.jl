@@ -280,7 +280,7 @@ const ext_kernel = "
 			double3 d = (0,0,0);			
 			double3 dt = (0,0,0);			
 			double3 b = (0,0,0);
-			double3 t = (1.6e-2,1.6e-2,1.6e-2);
+			double3 t = (3.2e-1,3.2e-2,1.6e-1);
 				
 			dt.x = fmax(step((-r[x].x+b.x)/v[x].x,stuff[0])*step(0,(-r[x].x+b.x)/v[x].x)*(stuff[0]-(-r[x].x+b.x)/v[x].x)+step((-r[x].x+t.x)/v[x].x,stuff[0])*step(0,(-r[x].x+t.x)/v[x].x)*(stuff[0]-(-r[x].x+t.x)/v[x].x),0);						
 			f.x = (step(r[x].x,b.x)*(r[x].x-b.x)+step(t.x,r[x].x)*(r[x].x-t.x));			
