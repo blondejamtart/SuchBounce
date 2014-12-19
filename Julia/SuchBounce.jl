@@ -5,7 +5,7 @@ include("filewrite.jl")
 using ProgressMeter
 
 const k = (4*pi*8.85419e-12)^-1;
-const G = 0*6.67384e-11;
+const G = 6.67384e-11;
 
 fileread("Setup/setup.vec");
 
@@ -116,7 +116,7 @@ for t_step = 1:max_step
 		
 	cl.call(queue, ker_F, n_el, nothing, cbuff, mbuff, Ibuff, l1buff, l2buff, radbuff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff, Vincbuff, Intincbuff); 	# Compute force
 	cl.call(queue, ker_S, n, nothing, vincbuff, wincbuff, accelbuff, alphabuff, l3buff, mbuff, Ibuff, radbuff, nbuff, Vbuff, Vincbuff, Intbuff, Intincbuff);	# Contract array
-	cl.call(queue, ker_ext,	n, nothing, extbuff, vpbuff, mbuff, rpbuff, Intbuff, Vbuff, tbuff); # Apply external/boundary forces
+	#cl.call(queue, ker_ext,	n, nothing, extbuff, vpbuff, mbuff, rpbuff, Intbuff, Vbuff, tbuff); # Apply external/boundary forces
 	cl.call(queue, ker_kin, n, nothing, vpbuff, wpbuff, Tvbuff, Twbuff, mbuff, Ibuff); # Kinetic energies
 
 	cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff);	# Drift		
