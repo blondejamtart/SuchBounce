@@ -7,10 +7,8 @@ __kernel void test(__global double *a
 			__global double *b)
 
 {
-	
-	a[x] += log(pow(b[x],9000))*b[x];
-	
-	a[x] += -8999*log(b[x]);
+	a[x] += log(pow(b[x],90))*b[x];
+	a[x] += -89*log(b[x]);
 }
 "
 
