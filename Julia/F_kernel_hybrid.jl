@@ -15,7 +15,7 @@ queue = cl.CmdQueue(ctx);
 
 const F_kernels = ["" "" ""];
 
-# Hybrid
+#// Hybrid (Soft normal impulsive friction)
 F_kernels[2] = "
 		__kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
@@ -74,7 +74,7 @@ F_kernels[2] = "
 		}
 "
 
-# Hard Spheres	
+#// Hard Spheres	
  F_kernels[1] = "
 		__kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
@@ -125,13 +125,14 @@ F_kernels[2] = "
 		}
 "		
 
-# Hybrid (Tweaked)
+#// Hybrid (Tweaked)
 F_kernels[3] = "
 		__kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
 				  	__global const int *k,
-					__global const int *l,			  	 				  	 
+					__global const int *l,
+					__global const int *join,			  	 				  	 
 				 	__global const double *rad,	
 				 	__global const double *stuff,			  
 				 	__global double3 *r,
@@ -155,7 +156,7 @@ F_kernels[3] = "
 			double3 vtemp = v[b] - v[a]; 
 			double p = dot(vtemp,Runit);		
 			double collisionflag = step(d,(rad[a]+rad[b]));	
-		
+			double stretchjoinflag = step((rad[a]+rad[b]),d)*join[x];
 			double c = d+(rad[a]+rad[b]);			
 			double f = d*(c+rad[a]+rad[b]);		
 
@@ -169,13 +170,13 @@ F_kernels[3] = "
 			
 			double dt = (stuff[0]-(d-rad[a]-rad[b])/p)*step((d-rad[a]-rad[b])/p,stuff[0])*step(0,(d-rad[a]-rad[b])/p);
 					
-			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0])-m[a]*m[b]/(m[a]+m[b])*(collisionflag*(stuff[1]*p*(stuff[0]-dt)+stuff[8]*(rad[a]+rad[b]-d)*(stuff[0]-dt)+0.5*stuff[8]*p*(stuff[0]-dt)*(stuff[0]-dt))-(collisionflag-1)*(stuff[1]*p*dt+0.5*stuff[8]*p*dt*dt));
+			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0])-m[a]*m[b]/(m[a]+m[b])*(collisionflag*(stuff[1]*p*(stuff[0]-dt)+stuff[8]*(rad[a]+rad[b]-d)*(stuff[0]-dt)+0.5*stuff[8]*p*(stuff[0]-dt)*(stuff[0]-dt))-(collisionflag-1)*(stuff[1]*p*dt+0.5*stuff[8]*p*dt*dt))-m[a]*m[b]/(m[a]+m[b])*stretchjoinflag*(stuff[1]*p*stuff[0]+stuff[8]*(rad[a]+rad[b]-d)*stuff[0]+0.5*stuff[8]*p*stuff[0]*stuff[0]);
 				
 			double jf = collisionflag*length(v_rel)/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));
 			
 			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
 			if (jf > fdyn*stuff[4]) jf = fdyn*stuff[5];			
-			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel);			
+			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel) - stretchjoinflag*collisionflag*v_rel/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));			
 			oddp[x] = cross(Runit,jf*v_rel);
 
 			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
@@ -189,6 +190,7 @@ print("Select kernel:\r\n1. Hard Spheres \r\n2. Hybrid\r\n3. Hybrid (Variable ha
 n_choice = int64(readline(STDIN));
 const F_kernel = F_kernels[n_choice];
 
+#// Position Incrementer
 const r_kernel = " 
 		__kernel void rstep(__global const double *stuff,					
 					__global double3 *r,
@@ -198,6 +200,7 @@ const r_kernel = "
 			r[x] += 0.5*(v[x]*stuff[0]);			
 		}				
 "
+#// Velocity Incrementer
 const v_kernel = " 
 		__kernel void vstep(__global double3 *v,					
 					__global double3 *accel)
@@ -207,6 +210,7 @@ const v_kernel = "
 			v[x] += 0.5*accel[x];							
 		}				
 "
+#// Reduce 
 const red_kernel = " 
 		__kernel void red(__global double3 *rddp,
 					__global double3 *oddp,
@@ -233,7 +237,7 @@ const red_kernel = "
 		}	
 "
 
-
+#// Translate positions to be relative to particle 0 (0th zeroed seperately)
 const trans_kernel = "
 		__kernel void rmove(__global double3 *r)
 		{
@@ -248,7 +252,7 @@ const trans0_kernel = "
 			r[0] += -r[0];
 		}
 "
-		
+#// Zeros a vector and scalar		
 const zero_kernel = "
 		__kernel void zeroer(__global double3 *accel,
 					__global double *V)		
@@ -259,7 +263,7 @@ const zero_kernel = "
 			V[x] = 0;
 		}
 "
-
+#// Calculates kinetic energies
 const T_kernel = " 
 		__kernel void Tstep(__global double3 *v,			
 					__global double3 *w,
@@ -274,6 +278,7 @@ const T_kernel = "
 		}
 
 "
+#!// ext needs update to mass-dependent spring force or simillar!!!  
 const ext_kernel = " 
 		__kernel void external(	__global double3 *ext,
 					__global double3 *v,
@@ -315,7 +320,7 @@ const ext_kernel = "
 			//V[x] += //-0.5*2e-2*stuff[9]*stuff[0]*stuff[0]*d.x*v[x].x;
 		}	
 "
-
+#!// ext needs update to mass-dependent spring force or simillar!!!  
 		
 vstep = cl.Program(ctx, source=v_kernel) |> cl.build!
 ker_v = cl.Kernel(vstep, "vstep");
