@@ -4,7 +4,7 @@ include("fileread.jl")
 include("filewrite.jl")
 using ProgressMeter
 
-const k = (4*pi*8.85419e-12)^-1; # electrostatic force constant
+const k = -6.67384e-11; #(4*pi*8.85419e-12)^-1; # electrostatic force constant
 const G = 6.67384e-11; # Gravitational force constant
 
 fileread("Setup/setup.vec");

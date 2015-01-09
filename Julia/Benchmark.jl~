@@ -115,8 +115,8 @@ Twbuff = cl.Buffer(Float64, ctx, :rw, n);
 
 # Iterate!
 p = Progress(max_step,1)
-#for t_step = 1:max_step	
-t_step = 1;
+for t_step = 1:max_step	
+
 	tempcount = tempcount + 1;
 
 	cl.call(queue, ker_v, n, nothing, vpbuff, extbuff); # external kick
@@ -154,7 +154,7 @@ t_step = 1;
 		Int_tracker[:,framecount] = cl.read(queue, Intbuff);
 	end	
 	next!(p)
-#end
+end
 
 print("Simulation complete!\n")
 

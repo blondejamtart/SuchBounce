@@ -1,16 +1,3 @@
-import OpenCL
-const cl = OpenCL
-
-dev_list = cl.devices();
-print("Select device for computations:\r\n")
-for x = 1:length(dev_list)
-	write(STDOUT,[string(x) ": "  string(dev_list[x])  "\r\n"])
-end
-n_choice = int64(readline(STDIN));
-
-dev = dev_list[n_choice];
-ctx = cl.Context(dev);
-queue = cl.CmdQueue(ctx); 
 
 
 const F_kernels = ["" "" ""];
@@ -156,7 +143,7 @@ F_kernels[3] = "
 			double3 vtemp = v[b] - v[a]; 
 			double p = dot(vtemp,Runit);		
 			double collisionflag = step(d,(rad[a]+rad[b]));	
-			//double stretchjoinflag = step((rad[a]+rad[b]),d)*join[x];
+			double stretchjoinflag = step((rad[a]+rad[b]),d)*join[x];
 			double c = d+(rad[a]+rad[b]);			
 			double f = d*(c+rad[a]+rad[b]);		
 
@@ -170,13 +157,13 @@ F_kernels[3] = "
 			
 			double dt = (stuff[0]-(d-rad[a]-rad[b])/p)*step((d-rad[a]-rad[b])/p,stuff[0])*step(0,(d-rad[a]-rad[b])/p);
 					
-			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0])-m[a]*m[b]/(m[a]+m[b])*(collisionflag*(stuff[1]*p*(stuff[0]-dt)+stuff[8]*(rad[a]+rad[b]-d)*(stuff[0]-dt)+0.5*stuff[8]*p*(stuff[0]-dt)*(stuff[0]-dt))-(collisionflag-1)*(stuff[1]*p*dt+0.5*stuff[8]*p*dt*dt));
+			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0])-m[a]*m[b]/(m[a]+m[b])*(collisionflag*(stuff[1]*p*(stuff[0]-dt)+stuff[8]*(rad[a]+rad[b]-d)*(stuff[0]-dt)+0.5*stuff[8]*p*(stuff[0]-dt)*(stuff[0]-dt))-(collisionflag-1)*(stuff[1]*p*dt+0.5*stuff[8]*p*dt*dt))-m[a]*m[b]/(m[a]+m[b])*stretchjoinflag*(stuff[1]*p*stuff[0]+stuff[8]*(rad[a]+rad[b]-d)*stuff[0]+0.5*stuff[8]*p*stuff[0]*stuff[0]);
 				
 			double jf = collisionflag*length(v_rel)/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));
 			
 			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
 			if (jf > fdyn*stuff[4]) jf = fdyn*stuff[5];			
-			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel); //- stretchjoinflag*collisionflag*v_rel/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));			
+			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel) - stretchjoinflag*collisionflag*v_rel/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));			
 			oddp[x] = cross(Runit,jf*v_rel);
 
 			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
