@@ -4,8 +4,8 @@
 |   linear velocities, angular velocities (vectors)  	 	|
 |   charges, masses, radii (scalars).              	     	|
 | - Run settings are as follows:                         	|
-|   [Max steps, Delta T, Co. of Restitution,             	|
-|   A, B, muS, muD, k, render warp]. 				|
+|   [Max steps, initial dt, Co. of Restitution,             	|
+|   A, Free Space dt, muS, muD, k, render warp]. 				|
 | - For random positions, set 1st line as "Rand";		|
 |	for n identical particles, set 2nd line as n		|
 |	otherwise set as "Rand" and specify radii and masses	|
@@ -13,10 +13,11 @@
 -------------------------------------------------------------
 
 Settings:
-[6.571e6-51 0 0; 6.571e6+51 0 0; 0 0 0]
-[0 11014-0.0108 0; 0 11014+0.0108 0; 0 0 0]
+[-7.031586747494519e7 4.49541758260845e7+51 0.0; -7.031586747494519e7 4.49541758260845e7-51 0.0; 0 0 0]
+[2966.548495961256+0.0216 -867.2467857236877 0.0; 2966.548495961256-0.0216 -867.2467857236877 0.0; 0 0 0]
 [0 0 0; 0 0 0; 0 0 0]
-[0*3.5e8 0*3.5e8 0]
+[3*3.5e8 3*3.5e8 0]
 [3.5e8 3.5e8 5.972e24]
 [50 50 6.371e6] 
-[2e5 0.1 0 5e-19 0 0 0 10 80 1]
+[131072 1 0 5e-19 16 0 0 5 1024]
+
