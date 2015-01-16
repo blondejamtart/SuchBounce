@@ -16,13 +16,12 @@ try
 	global const warp = float64(settings[9]);
 	stuff[6] = float64(settings[7]);
 	stuff[5] = float64(settings[6]);
-	stuff[4] = float64(settings[5]);	
-	global const max_step = int64(settings[1]);
+	stuff[4] = float64(settings[5]);
 	stuff[1] = float64(settings[2]);
 	stuff[2] = float64(settings[3]);
 	stuff[3] = float64(settings[4]);
 	stuff[9] = float64(settings[8]);
-	stuff[10] = float64(settings[10]);
+	global const max_step = int64(settings[1]/stuff[1]);
 catch
 	print("Settings not present or invalid; using defaults\n")
 	global const max_step = int64(5e4);
@@ -35,7 +34,7 @@ end
 # Calculate interval between data samples for output
 global t_step = int64(0);
 const n_el = int64(1/2*n*(n-1));
-global n_frames = int64(floor(max_step*stuff[1]*100/warp));
+global n_frames = int64(floor(max_step*stuff[1]*128/warp));
 if n_frames > max_step
 	n_frames = max_step;
 	write(STDOUT,"Insufficient frames for specified warp; using all available frames\r\n")
