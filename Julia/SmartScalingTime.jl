@@ -36,12 +36,7 @@ end
 # Calculate interval between data samples for output
 global t_step = int64(0);
 const n_el = int64(1/2*n*(n-1));
-global n_frames = int64(floor(max_time*64/warp));
-if n_frames > max_time/stuff[10]
-	write(STDOUT,"Insufficient frames for specified warp; frame intervals will be wierd\r\n")
-
-end
-
+global n_frames = int64(2048*1024*1024/(64*n));
 
 # Preallocation
 global framecount = int64(0);
@@ -51,6 +46,7 @@ global Tv_tracker = zeros(n,n_frames);
 global Tw_tracker = zeros(n,n_frames);
 global V_tracker = zeros(n,n_frames);
 global Int_tracker = zeros(n,n_frames);
+global t_tracker = zeros(n_frames);
 global I = zeros(size(r,2),1);
 global l1 = zeros(Int32,n_el,1);
 global l2 = zeros(Int32,n_el,1);
@@ -73,12 +69,6 @@ for x = 2:n
 		l3[i,x] = -1;
 		l3[i,y] = 1;
 	end
-end
-
-v_norm = zeros(n,1);
-
-for x = 1:n
-	v_norm[x] = norm(v[:,x]);
 end
 
 
@@ -122,29 +112,34 @@ Twbuff = cl.Buffer(Float64, ctx, :rw, n);
 
 cl.call(queue, ker_F, n_el, nothing, cbuff, mbuff, Ibuff, l1buff, l2buff, l4buff, radbuff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff, Vincbuff, Intincbuff, Ftmp); 	# Compute force
 F1 = cl.read(queue,Ftmp)[2];
-Fbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=([F1, F1, maximum(v_norm), maximum(v_norm)]));
+Fbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=([F1, F1]));
 
 # Iterate!
 p = Progress(n_frames,1)
+
 global t_now = 0;
-global t_last = 0;
+global n_last = 0;
+global n_curr = 0;
 
 while t_now < max_time	
+	
+	n_curr = n_curr + 1;
 
 	#cl.call(queue, ker_v, n, nothing, vpbuff, extbuff); # external kick
-	cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff, Fbuff); # translational kick
+	cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff); # translational kick
 	cl.call(queue, ker_v, n, nothing, wpbuff, alphabuff); # rotatational kick	
 	
 	cl.call(queue, ker_kin, n, nothing, vpbuff, wpbuff, Tvbuff, Twbuff, mbuff, Ibuff); # Kinetic energies
 		
-	if (t_now == 0 || t_now - t_last >= (1/64)*warp && framecount < n_frames)
+	if (t_now == 0 || n_curr - n_last >= warp && framecount < n_frames)
 		framecount = framecount + 1;
 		r_tracker[:,:,framecount] = cl.read(queue, rpbuff);
 		Tv_tracker[:,framecount] = cl.read(queue, Tvbuff);
 		Tw_tracker[:,framecount] = cl.read(queue, Twbuff);
 		V_tracker[:,framecount] = cl.read(queue, Vbuff);	
 		Int_tracker[:,framecount] = cl.read(queue, Intbuff);
-		t_last = t_now;
+		t_tracker[framecount] = t_now;
+		n_last = n_curr;
 		next!(p)
 	end	
 	t_now = t_now + cl.read(queue,tbuff)[1]; 
@@ -161,7 +156,7 @@ while t_now < max_time
 	#cl.call(queue, ker_ext,	n, nothing, extbuff, vpbuff, mbuff, rpbuff, Intbuff, Vbuff, tbuff); # Apply external/boundary forces
 	
 	#cl.call(queue, ker_v, n, nothing, vpbuff, extbuff); # external kick
-	cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff, Fbuff); # translational kick
+	cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff); # translational kick
 	cl.call(queue, ker_v, n, nothing, wpbuff, alphabuff); # rotatational kick	
 	
  	#cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
@@ -174,8 +169,8 @@ print("Simulation complete!\n")
 
 
 # Reconfigure data for output
-global frameset = float64(zeros(3,n,n_frames));   
-frameset[:,:,:] = float64(r_tracker[1:3,:,:]);
+global frameset = float64(zeros(3,n,n_curr));   
+frameset[:,:,:] = float64(r_tracker[1:3,:,1:n_curr]);
 finaldump = zeros(4,n,3);
 finaldump[:,:,1] = cl.read(queue,rpbuff);
 finaldump[:,:,2] = cl.read(queue,vpbuff);
@@ -191,10 +186,11 @@ catch
 end
 
 filewrite("Outputs/final_dump.dat",finaldump[1:3,:,:],"i")
-filewrite("Outputs/T_v_tracks.dat",Tv_tracker,"r")
-filewrite("Outputs/T_w_tracks.dat",Tw_tracker,"r")
-filewrite("Outputs/V_tracks.dat",V_tracker,"r")
-filewrite("Outputs/E_int_tracks.dat",Int_tracker,"r")
+filewrite("Outputs/T_v_tracks.dat",Tv_tracker[:,1:n_curr],"r")
+filewrite("Outputs/T_w_tracks.dat",Tw_tracker[:,1:n_curr],"r")
+filewrite("Outputs/V_tracks.dat",V_tracker[:,1:n_curr],"r")
+filewrite("Outputs/E_int_tracks.dat",Int_tracker[:,1:n_curr],"r")
+filewrite("Outputs/t_list.dat",t_tracker[1:n_curr],"r")
 
 
 

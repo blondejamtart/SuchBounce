@@ -1,5 +1,5 @@
 
-include("F_kernel_Scaling.jl")
+include("F_kernel_fixed.jl")
 include("fileread.jl")
 include("filewrite.jl")
 using ProgressMeter
@@ -7,7 +7,7 @@ using ProgressMeter
 const k = -6.67384e-11; #(4*pi*8.85419e-12)^-1; # electrostatic force constant
 const G = 6.67384e-11; # Gravitational force constant
 
-fileread("Setup/setup.vec");
+fileread(setup);
 
 global const stuff = float64([0,0,0,0,0,0,G,k,0,0,0]);
 
@@ -183,19 +183,16 @@ finaldump[:,:,3] = cl.read(queue,wpbuff);
 
 
 # Write Files/Create folder
-try
-	filewrite("Outputs/Particle_tracks.dat",frameset,"r")
-catch 
-	mkdir("Outputs");
-	filewrite("Outputs/Particle_tracks.dat",frameset,"r")
-end
+	
+mkdir("Outputs"string(out_n));
+filewrite("Outputs"string(out_n)"/Particle_tracks.dat",frameset,"r")
 
-filewrite("Outputs/final_dump.dat",finaldump[1:3,:,:],"i")
-filewrite("Outputs/T_v_tracks.dat",Tv_tracker,"r")
-filewrite("Outputs/T_w_tracks.dat",Tw_tracker,"r")
-filewrite("Outputs/V_tracks.dat",V_tracker,"r")
-filewrite("Outputs/E_int_tracks.dat",Int_tracker,"r")
 
+filewrite("Outputs"string(out_n)"/final_dump.dat",finaldump[1:3,:,:],"i")
+filewrite("Outputs"string(out_n)"/T_v_tracks.dat",Tv_tracker,"r")
+filewrite("Outputs"string(out_n)"/T_w_tracks.dat",Tw_tracker,"r")
+filewrite("Outputs"string(out_n)"/V_tracks.dat",V_tracker,"r")
+filewrite("Outputs"string(out_n)"/E_int_tracks.dat",Int_tracker,"r")
 
 
 

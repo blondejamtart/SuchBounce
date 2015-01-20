@@ -1,12 +1,7 @@
 import OpenCL
 const cl = OpenCL
 
-dev_list = cl.devices();
-print("Select device for computations:\r\n")
-for x = 1:length(dev_list)
-	write(STDOUT,[string(x) ": "  string(dev_list[x])  "\r\n"])
-end
-n_choice = int64(readline(STDIN));
+n_choice = 1;
 
 dev = dev_list[n_choice];
 ctx = cl.Context(dev);
