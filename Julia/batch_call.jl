@@ -13,3 +13,20 @@ include("sim_func.jl")
 setup = "Setup/setup3.vec";
 out_n = 3;
 include("sim_func.jl")
+
+setup = "Setup/setup4.vec";
+out_n = 4;
+include("sim_func.jl")
+
+setup = "Setup/setup5.vec";
+out_n = 5;
+include("sim_func.jl")
+
+setup = "Setup/setup6.vec";
+out_n = 6;
+include("sim_func.jl")
+
+setup = "Setup/setup7.vec";
+out_n = 7;
+include("sim_func.jl")
+

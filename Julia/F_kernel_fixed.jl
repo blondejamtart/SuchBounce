@@ -2,8 +2,7 @@ import OpenCL
 const cl = OpenCL
 
 n_choice = 1;
-
-dev = dev_list[n_choice];
+dev = cl.devices()[n_choice];
 ctx = cl.Context(dev);
 queue = cl.CmdQueue(ctx); 
 
