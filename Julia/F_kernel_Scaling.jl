@@ -12,7 +12,7 @@ dev = dev_list[n_choice];
 ctx = cl.Context(dev);
 queue = cl.CmdQueue(ctx); 
 
-#//Scaling Kernel
+#//Timestep scaler
 
 Scale_kernel = "
 		__kernel void Scale(__global double *stuff,
