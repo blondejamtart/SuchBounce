@@ -1,10 +1,13 @@
+#define __CL_ENABLE_EXCEPTIONS
+#define linux
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <cmath>
 #include <CL/cl.hpp>
 
-using namespace std;
+
 
 //Settings:
 const int n = 3;
@@ -14,26 +17,28 @@ const double w[3][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 const double q[3] = {0, 0, 0};
 const double m[3] = {3.5e8, 3.5e8, 5.972e24};
 const double rad[3] = {50, 50, 6.371e6};
-const double settings[9] =  {2^18, 0.5, 0.0, 5e-19, 16, 0.0, 0.0, 5.0, 1024.0};
+const double settings[9] =  {pow(2,18), 0.5, 0.0, 5e-19, 16, 0.0, 0.0, 5.0, 1024.0};
+const double max_time = pow(2,18);
+const double warp = 1024;
 
-//Auto-stuff	
-double warp = settings[8];
+//Auto-stuff
 double stuff[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 double t_step = 0;
-const int n_el = (1/2*n*(n-1));
+const int n_el = (0.5)*n*(n-1);
 
 // Calculate interval between data samples for output	
-const int n_frames = floor(settings[0]*64/warp);
+const int n_frames = floor(max_time*64/warp);
 
 int main() {
+	
 	if (n_frames > settings[0]/stuff[4])
 	{	
-		cout << "Insufficient frames for specified warp; frame intervals will be wierd\r\n";
+		std::cout << "Insufficient frames for specified warp; frame intervals will be wierd\r\n";
 	}
 	stuff[6] = settings[6];
 	stuff[5] = settings[5];
 	stuff[4] = settings[4];	
-	int max_time = settings[0];
+	
 	stuff[1] = settings[1];
 	stuff[2] = settings[2];
 	stuff[3] = settings[3];
@@ -76,23 +81,46 @@ int main() {
 	
 	double v_norm[3] = {0};
 
-	for (x=0; x<n; x++)
+	for (int x=0; x<n; x++)
 	{
-		v_norm[x] = norm(v[:,x]);
+		v_norm[x] = sqrt(pow(v[x][0],2) + pow(v[x][1],2) + pow(v[x][2],2));
 	}
+	// OpenCL Context Sorcery
+	std::vector<cl::Platform> platforms;
+	std::vector<cl::Device> platformDevices, allDevices, ctxDevices;
+	std::string device_name;
+	cl::Device DevChoice;
+
+	cl::Platform::get(&platforms);
+	platforms[0].getDevices(CL_DEVICE_TYPE_ALL, &platformDevices);
+	
+	cl::Context ctx(platformDevices);
+	ctxDevices = ctx.getInfo<CL_CONTEXT_DEVICES>();
+		
+	std::cout << "Please Choose Device:\n\n"
+	for(int i=0; i<ctxDevices.size(); i++)
+	{
+		device_name = ctxDevices[i].getInfo<CL_DEVICE_NAME>();
+		std::cout << "Device " << i << ":"
+		<< device_name
+		<< std::endl;
+	}
+	int nDev;
+	std::cin >> nDev;	
+	cl::CommandQueue queue(ctx, ctxDevices[nDev]);
 
 	//Buffers!
-	nbuff = cl::Buffer buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 2, int {n_el, n}, &error);
-	l4buff = cl::Buffer buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l4, &error);
-	l3buff = cl::Buffer buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l3, &error);
-	l2buff = cl::Buffer buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l2, &error);
-	l1buff = cl::Buffer buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l1, &error);
+	//cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 2, int {n_el, n});
+	cl::Buffer l4buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l4);
+	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l3);
+	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l2);
+	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l1);
 
 
 	double t_now = 0;
 	double t_last = 0;
+  
 
-
-	cout << "Simulation complete!\n";
+	std::cout << "Simulation complete!\n";
 
 }

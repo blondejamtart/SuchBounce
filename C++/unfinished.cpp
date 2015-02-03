@@ -1,6 +1,13 @@
+	cl::NDRange offset(0);
+	cl::NDRange gsize1(n);
+	cl::NDRange gszie2(n_el);
+	cl::NDRange local_size(1);
+	
 	while (t_now < max_time)	
 	{
 		//cl.call(queue, ker_v, n, nothing, vpbuff, extbuff); // external kick
+		queue.enqueueNDRangeKernel(ker_v,offset,gsize1,local_size)
+
 		cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff, Fbuff); // translational kick
 		cl.call(queue, ker_v, n, nothing, wpbuff, alphabuff); // rotatational kick	
 	
@@ -9,6 +16,7 @@
 		if (t_now == 0 || t_now - t_last >= (1/64)*warp && framecount < n_frames)
 		{	
 			framecount++;
+			queue.enqueueReadBuffer(rbuff, 
 			r_tracker[:,:,framecount] = cl.read(queue, rpbuff);
 			Tv_tracker[:,framecount] = cl.read(queue, Tvbuff);
 			Tw_tracker[:,framecount] = cl.read(queue, Twbuff);
@@ -38,3 +46,4 @@
 		//cl.call(queue, ker_T0, 1, nothing, rpbuff);
 
 	}
+git@github.com:space-art/people.git
