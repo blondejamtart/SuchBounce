@@ -1,0 +1,57 @@
+__kernel void Fimp(__global const double *q,			
+				 	__global const double *m,				  
+				  	__global const double *I,
+				  	__global const int *k,
+					__global const int *l,							  	 				  	 
+				 	__global const double *rad,	
+				 	__global const double *stuff,			  
+				 	__global double3 *r,
+				 	__global double3 *v,
+				 	__global double3 *w,
+					__global double3 *rddp,
+					__global double3 *oddp,
+					__global double *Vpart,
+					__global double *Ipart)
+					
+				  
+		{ 			
+			int x = get_global_id(0);
+			int a = k[x];
+			int b = l[x];
+		   	double G = stuff[6];
+			double e0 = stuff[7];
+			double d = distance(r[a],r[b]);
+			double d0 = distance((r[a]-v[a]*0.5*stuff[0]),(r[b]-v[b]*0.5*stuff[0]));
+		 	double3 Runit = normalize(r[a] - r[b]);			
+			double3 wvec = w[a]*rad[a] + w[b]*rad[b];
+			double3 vtemp = v[b] - v[a]; 
+			double p = dot(vtemp,Runit);
+			double p0 = dot(vtemp,normalize((r[a]-v[a]*0.5*stuff[0])-(r[b]-v[b]*0.5*stuff[0])));		
+			double collisionflag = step(d0,(rad[a]+rad[b]));	
+			//double stretchjoinflag = step((rad[a]+rad[b]),d)*join[x];
+			double c = d+(rad[a]+rad[b]);			
+			double f = d*(c+rad[a]+rad[b]);		
+
+				
+					
+			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d)) - (0.33333333)*stuff[2]*c*((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2));	
+		
+			double dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d) + (0.33333333)*stuff[2]*(((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2)) + 2*pow(c,2)*((4*rad[a]*rad[b]-f)/pow(f,3)+(f+8*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),3))))*p;				
+				
+			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
+			
+			double dt = (stuff[0]-(d0-rad[a]-rad[b])/p0)*step((d0-rad[a]-rad[b])/p0,stuff[0])*step(0,(d0-rad[a]-rad[b])/p0);			
+		
+			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0])-m[a]*m[b]/(m[a]+m[b])*(collisionflag*(stuff[1]*p0*(stuff[0]-dt)+stuff[8]*(rad[a]+rad[b]-d0)*(stuff[0]-dt)+0.5*stuff[8]*p0*(stuff[0]-dt)*(stuff[0]-dt))-(collisionflag-1)*(stuff[1]*p0*dt+0.5*stuff[8]*p0*dt*dt));
+				
+			double jf = collisionflag*length(v_rel)/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));
+			
+			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
+			if (jf > fdyn*stuff[4]) jf = fdyn*stuff[5];			
+			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel); //- stretchjoinflag*collisionflag*v_rel/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));			
+			oddp[x] = cross(Runit,jf*v_rel);
+
+			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
+
+			Ipart[x] = 0.25*collisionflag*m[a]*m[b]/(m[a]+m[b])*stuff[8]*pow((rad[a]+rad[b]-d0),2);			
+		}

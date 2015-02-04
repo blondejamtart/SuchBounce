@@ -10,9 +10,9 @@ cl::Kernel kernel_init(std::string file, char* ker_func, cl::Context ctx, std::v
 {
 	std::ifstream programFile(file);
 	std::string programString(std::istreambuf_iterator<char>(programFile), (std::istreambuf_iterator<char>()));
-	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length() + 1));
+	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length()+1));
 	cl::Program program(ctx, source);
-	program.build(ctxdev);
+	program.build(ctxdev, "-cl-finite-math-only");	
 	cl::Kernel kernel(program, ker_func);
 	return kernel;
 }
@@ -25,8 +25,8 @@ double w[3][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 double q[3] = {0, 0, 0};
 double m[3] = {3.5e8, 3.5e8, 5.972e24};
 double rad[3] = {50, 50, 6.371e6};
-const double settings[9] =  {pow(2,15), 0.5, 0.0, 5e-19, 16, 0.0, 0.0, 5.0, 1024.0};
-const double max_time = pow(2,15);
+const double settings[9] =  {pow(2,14), 0.5, 0.0, 5e-19, 16, 0.0, 0.0, 5.0, 1024.0};
+const double max_time = pow(2,14);
 const double warp = 1024;
 
 //Auto-stuff
@@ -43,18 +43,15 @@ int main() {
 	{	
 		std::cout << "Insufficient frames for specified warp; frame intervals will be wierd\r\n";
 	}
-	stuff[6] = settings[6];
-	stuff[5] = settings[5];
-	stuff[4] = settings[4];	
-	
-	stuff[1] = settings[1];
-	stuff[2] = settings[2];
-	stuff[3] = settings[3];
-	stuff[7] = 6.67384e-11;
-	stuff[8] = -6.67384e-11; //(4*pi*8.85419e-12)^-1; // electrostatic force constant
-	stuff[9] = settings[7];
-	stuff[10] = settings[4];
-	stuff[11] = settings[1];
+	stuff[0] = settings[1];
+	stuff[1] = settings[2];
+	stuff[2] = settings[3];
+	stuff[3] = settings[4];
+	stuff[4] = settings[5];
+	stuff[5] = settings[6];
+	stuff[6] = 6.67384e-11;
+	stuff[7] = -6.67384e-11; //(4*pi*8.85419e-12)^-1; // electrostatic force constant
+	stuff[8] = settings[7];	
 
 	int framecount = 0;
 	int tempcount = 0;
@@ -90,7 +87,7 @@ int main() {
 	}
 	// OpenCL Context Sorcery
 	std::vector<cl::Platform> platforms;
-	std::vector<cl::Device> platformDevices, allDevices, ctxDevices;
+	std::vector<cl::Device> platformDevices, allDevices, conDev;
 	std::string device_name;
 	cl::Device DevChoice;
 
@@ -98,19 +95,20 @@ int main() {
 	platforms[0].getDevices(CL_DEVICE_TYPE_ALL, &platformDevices);
 	
 	cl::Context ctx(platformDevices);
-	ctxDevices = ctx.getInfo<CL_CONTEXT_DEVICES>();
+	conDev = ctx.getInfo<CL_CONTEXT_DEVICES>();
 		
 	std::cout << "Please Choose Device:\n\n";
-	for (unsigned int i = 0; i < ctxDevices.size(); i++)
+	for (unsigned int i = 0; i < conDev.size(); i++)
 	{
-		device_name = ctxDevices[i].getInfo<CL_DEVICE_NAME>();
+		device_name = conDev[i].getInfo<CL_DEVICE_NAME>();
 		std::cout << "Device " << i << ": "
 		<< device_name
 		<< std::endl;
 	}
 	int nDev;
-	std::cin >> nDev;	
-	cl::CommandQueue queue(ctx, ctxDevices[nDev]);
+	std::cin >> nDev;
+	std::vector<cl::Device> ctxDevices = { conDev[nDev] };
+	cl::CommandQueue queue(ctx, ctxDevices[0]);
 
 	// Build Kernels
 	cl::Kernel ker_F = kernel_init("F_Hybrid.cl", "Fimp", ctx, ctxDevices);
@@ -219,13 +217,12 @@ int main() {
 		if (t_now == 0 || t_now - t_last >= (1 / 64)*warp && framecount < n_frames)
 		{
 			framecount++;
-			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0) , sizeof(r), r);
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0) , sizeof(r), &r);
 			t_last = t_now;
 
 		}
 		//queue.enqueueReadBuffer(tbuff, CL_TRUE, offset, sizeof(stuff), stuff);
 		t_now += stuff[0];
-
 		//queue.enqueueNDRangeKernel(ker_scale,offset,gsize1,local_size); // Set new time step		
 
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
@@ -240,13 +237,11 @@ int main() {
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//cl.call(queue, ker_t, n-1, nothing, rpbuff); 					// Make positions relative to particle 1
+		//cl.call(queue, ker_t, n-1, nothing, rpbuff); 						// Make positions relative to particle 1
 		//cl.call(queue, ker_t0, 1, nothing, rpbuff);
 
 	}
   
 
 	std::cout << "Simulation complete!\n";
-	std::cout << r;
-	std::cin >> nDev;
 }
