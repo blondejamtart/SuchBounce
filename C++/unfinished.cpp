@@ -1,49 +1,40 @@
 	cl::NDRange offset(0);
 	cl::NDRange gsize1(n);
-	cl::NDRange gszie2(n_el);
+	cl::NDRange gsize2(n_el);
 	cl::NDRange local_size(1);
 	
 	while (t_now < max_time)	
 	{
-		//cl.call(queue, ker_v, n, nothing, vpbuff, extbuff); // external kick
-		queue.enqueueNDRangeKernel(ker_v,offset,gsize1,local_size)
-
-		cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff, Fbuff); // translational kick
-		cl.call(queue, ker_v, n, nothing, wpbuff, alphabuff); // rotatational kick	
-	
-		cl.call(queue, ker_kin, n, nothing, vpbuff, wpbuff, Tvbuff, Twbuff, mbuff, Ibuff); // Kinetic energies
+		queue.enqueueNDRangeKernel(ker_v_0,offset,gsize1,local_size); 	// Translational Kick
+		queue.enqueueNDRangeKernel(ker_v_1,offset,gsize1,local_size);	// Rotational Kick
+		queue.enqueueNDRangeKernel(ker_kin,offset,gsize1,local_size); 	// Evaluate Kinetic Energy
 		
 		if (t_now == 0 || t_now - t_last >= (1/64)*warp && framecount < n_frames)
 		{	
 			framecount++;
-			queue.enqueueReadBuffer(rbuff, 
-			r_tracker[:,:,framecount] = cl.read(queue, rpbuff);
-			Tv_tracker[:,framecount] = cl.read(queue, Tvbuff);
-			Tw_tracker[:,framecount] = cl.read(queue, Twbuff);
-			V_tracker[:,framecount] = cl.read(queue, Vbuff);	
-			Int_tracker[:,framecount] = cl.read(queue, Intbuff);
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, sizeof(r), r);	
 			t_last = t_now;
 		
-		}	
-		t_now += cl.read(queue,tbuff)[1]; 
+		}
+		//queue.enqueueReadBuffer(tbuff, CL_TRUE, offset, sizeof(stuff), stuff);
+		t_now +=  stuff[0]; 
 
-		cl.call(queue, ker_scale, 1, nothing, tbuff, Fbuff);
-
-		cl.call(queue, ker_0, n, nothing, accelbuff, Vbuff); // zero things
-		cl.call(queue, ker_0, n, nothing, alphabuff, Intbuff);
-	
-		cl.call(queue, ker_r, n, nothing, tbuff, rpbuff, vpbuff); // Drift
+		//queue.enqueueNDRangeKernel(ker_scale,offset,gsize1,local_size); // Set new time step		
 		
-		cl.call(queue, ker_F, n_el, nothing, cbuff, mbuff, Ibuff, l1buff, l2buff, l4buff, radbuff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff, Vincbuff, Intincbuff, Fbuff); 	// Compute force
-		cl.call(queue, ker_S, n, nothing, vincbuff, wincbuff, accelbuff, alphabuff, l3buff, mbuff, Ibuff, radbuff, nbuff, Vbuff, Vincbuff, Intbuff, Intincbuff);	// Contract array
-		//cl.call(queue, ker_ext,	n, nothing, extbuff, vpbuff, mbuff, rpbuff, Intbuff, Vbuff, tbuff); # Apply external/boundary forces
+		queue.enqueueNDRangeKernel(ker_0_1,offset,gsize1,local_size); 	// zero things
+		queue.enqueueNDRangeKernel(ker_0_2,offset,gsize1,local_size); 	// zero things
 	
-		//cl.call(queue, ker_v, n, nothing, vpbuff, extbuff); // external kick
-		cl.call(queue, ker_v, n, nothing, vpbuff, accelbuff, Fbuff); // translational kick
-		cl.call(queue, ker_v, n, nothing, wpbuff, alphabuff); // rotatational kick	
-	
- 		//cl.call(queue, ker_T, n-1, nothing, rpbuff); // Make positions relative to particle 1
+		ueue.enqueueNDRangeKernel(ker_r,offset,gsize1,local_size); 		// Drift
+		
+		queue.enqueueNDRangeKernel(ker_F,offset,gsize2,local_size); 	// Compute force
+		queue.enqueueNDRangeKernel(ker_S,offset,gsize1,local_size);		// Reduce
+		
+		
+		queue.enqueueNDRangeKernel(ker_v0,offset,gsize1,local_size); 	// Translational Kick
+		queue.enqueueNDRangeKernel(ker_v1,offset,gsize1,local_size); 	// Rotational Kick
+
+ 		//cl.call(queue, ker_T, n-1, nothing, rpbuff); 					// Make positions relative to particle 1
 		//cl.call(queue, ker_T0, 1, nothing, rpbuff);
 
 	}
-git@github.com:space-art/people.git
+
