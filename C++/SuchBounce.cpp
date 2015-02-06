@@ -2,9 +2,50 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <cmath>
 #include <CL/cl.hpp>
+#include <array>
+#include <stdio.h>
+
+//Settings:
+const int n = 3;
+double r[3][4] = { { -2.9446645349966073e8 + 55, 8.862094573279311e7, 0.0, 0.0 }, { -2.9446645349966073e8 - 55, 8.862094573279311e7, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
+double v[3][4] = { { 1593.528887871104, -231.98833265355293, 0.0, 0.0 }, { 1593.528887871104, -231.98833265355293, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
+double w[3][4] = { { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
+double q[3] = { 0, 0, 0 };
+double m[3] = { 3.5e8, 3.5e8, 5.972e24 };
+double rad[3] = { 50, 50, 6.371e6 };
+const double settings[9] = { pow(2, 18), 0.5, 0.0, 5e-19, 16, 0.0, 0.0, 5.0, 1024.0 };
+const double max_time = pow(2, 18);
+const double warp = 1024;
+
+//Auto-stuff
+double stuff[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+double t_step = 0;
+const int n_el = (0.5)*n*(n - 1);
+
+// Calculate interval between data samples for output	
+const int n_frames = floor(max_time * 64 / warp);
+
+std::string arraytostring(double a[n][4], int n)
+{	
+	std::string out = "[";
+	for (int j = 0; j < n; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{	
+			char temp[25];
+			sprintf(temp, "%+.13e", a[j][k]);
+			out.append(std::string(temp));
+			if (k != 2){out.append(", "); }		
+		}
+		if (j != (n - 1)){ out.append("; "); }
+	}
+	out.append("]\n");
+	return out;
+}
 
 cl::Kernel kernel_init(std::string file, char* ker_func, cl::Context ctx, std::vector<cl::Device> ctxdev)
 {
@@ -17,25 +58,6 @@ cl::Kernel kernel_init(std::string file, char* ker_func, cl::Context ctx, std::v
 	return kernel;
 }
 
-//Settings:
-const int n = 3;
-double r[3][3] = {{-2.9446645349966073e8+55, 8.862094573279311e7, 0.0}, {-2.9446645349966073e8-55, 8.862094573279311e7, 0.0}, {0.0, 0.0, 0.0}};
-double v[3][3] = {{1593.528887871104, -231.98833265355293, 0.0}, {1593.528887871104, -231.98833265355293, 0.0}, {0.0, 0.0, 0.0}};
-double w[3][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
-double q[3] = {0, 0, 0};
-double m[3] = {3.5e8, 3.5e8, 5.972e24};
-double rad[3] = {50, 50, 6.371e6};
-const double settings[9] =  {pow(2,14), 0.5, 0.0, 5e-19, 16, 0.0, 0.0, 5.0, 1024.0};
-const double max_time = pow(2,14);
-const double warp = 1024;
-
-//Auto-stuff
-double stuff[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-double t_step = 0;
-const int n_el = (0.5)*n*(n-1);
-
-// Calculate interval between data samples for output	
-const int n_frames = floor(max_time*64/warp);
 
 int main() {
 	
@@ -50,7 +72,7 @@ int main() {
 	stuff[4] = settings[5];
 	stuff[5] = settings[6];
 	stuff[6] = 6.67384e-11;
-	stuff[7] = -6.67384e-11; //(4*pi*8.85419e-12)^-1; // electrostatic force constant
+	stuff[7] = 1 + 0*pow((4*3.141592654*8.85419e-12),-1); // electrostatic force constant
 	stuff[8] = settings[7];	
 
 	int framecount = 0;
@@ -122,6 +144,7 @@ int main() {
 	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
 
 	// Assign Buffers
+	double zerotemp[n][4] = { 0 };
 	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
 	cl::Buffer l4buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l4);
 	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l3), l3);
@@ -139,8 +162,8 @@ int main() {
 
 	cl::Buffer vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (12*n_el));
 	cl::Buffer wincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (12*n_el));
-	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE, sizeof(r));
-	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE, sizeof(r));
+	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp);
+	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp);
 
 	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n));
 	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n_el));
@@ -148,6 +171,13 @@ int main() {
 	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n_el));
 	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n));
 	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n));
+
+	// Open output streams
+	std::ofstream r_tracker("Particle_tracks.dat", std::ios::out);
+	std::ofstream Tv_tracker("Tv_tracks.dat", std::ios::out);
+	std::ofstream Tw_tracker("Tw_tracks.dat", std::ios::out);
+	std::ofstream E_tracker("Int_tracks.dat", std::ios::out);
+	std::ofstream V_tracker("V_tracks.dat", std::ios::out);
 
 	//Set Kernel Arguments
 
@@ -203,22 +233,30 @@ int main() {
 	
 	double t_now = 0;
 	double t_last = 0;
+	double prog = 0;
 	cl::NDRange offset(0);
 	cl::NDRange gsize1(n);
 	cl::NDRange gsize2(n_el);
 	cl::NDRange local_size(1);
 
+
+	std::cout << "Kernels & Buffers set: beginning simulation\n";
+
 	while (t_now < max_time)
 	{
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
-		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 	// Evaluate Kinetic Energy
+		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 		// Evaluate Kinetic Energy
 
-		if (t_now == 0 || t_now - t_last >= (1 / 64)*warp && framecount < n_frames)
+		if (t_now == 0 || t_now - t_last >= (1.0 / 64.0)*warp && framecount < n_frames)
 		{
 			framecount++;
-			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0) , sizeof(r), &r);
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t(0), sizeof(r), &r);
+			std::string tempstring = arraytostring(r,n);
+			r_tracker << tempstring;			
 			t_last = t_now;
+			prog = 100 * framecount / n_frames;
+			std::cout << prog << "%\r";
 
 		}
 		//queue.enqueueReadBuffer(tbuff, CL_TRUE, offset, sizeof(stuff), stuff);
@@ -243,5 +281,6 @@ int main() {
 	}
   
 
-	std::cout << "Simulation complete!\n";
+	std::cout << "Simulation complete!\n";	
+
 }
