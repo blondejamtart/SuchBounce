@@ -101,7 +101,7 @@ mbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(m));
 radbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(rad));
 Ibuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(I));
 tbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=stuff);
-Ftmp = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=zeros(2,1));
+Ftmp = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=zeros(4,1));
 
 rpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(r_pad));
 vpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(v_pad));
@@ -122,7 +122,7 @@ Twbuff = cl.Buffer(Float64, ctx, :rw, n);
 
 cl.call(queue, ker_F, n_el, nothing, cbuff, mbuff, Ibuff, l1buff, l2buff, l4buff, radbuff, tbuff, rpbuff, vpbuff, wpbuff, vincbuff, wincbuff, Vincbuff, Intincbuff, Ftmp); 	# Compute force
 F1 = cl.read(queue,Ftmp)[2];
-Fbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=([F1, F1, maximum(v_norm), maximum(v_norm)]));
+Fbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=([F1, F1, maximum(v_norm), maximum(v_norm)]));
 
 # Iterate!
 p = Progress(n_frames,1)

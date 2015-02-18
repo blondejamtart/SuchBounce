@@ -8,16 +8,17 @@
 #include <CL/cl.hpp>
 #include <array>
 #include <stdio.h>
+#include <bitset>
 
 //Settings:
 const int n = 3;
-double r[3][4] = { { -2.9446645349966073e8 + 55, 8.862094573279311e7, 0.0, 0.0 }, { -2.9446645349966073e8 - 55, 8.862094573279311e7, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
-double v[3][4] = { { 1593.528887871104, -231.98833265355293, 0.0, 0.0 }, { 1593.528887871104, -231.98833265355293, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
-double w[3][4] = { { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
-double q[3] = { 0, 0, 0 };
+double r[3][4] = { { -2.944663984996607e+08, 8.862094573279311e7, 0.0, 0.0 }, { -2.944665084996607e+08 ,8.862094573279311e+07, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
+double v[3][4] = { { 1.593224683206409e+03, -2.319852625296494e+02, 0.0, 0.0 }, { 1.593224683206409e+03, -2.319028296320494e+02, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
+double w[3][4] = { { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
+double q[3] = { 1.355544171172596e+09, 1.355544171172596e+09, 0 };
 double m[3] = { 3.5e8, 3.5e8, 5.972e24 };
 double rad[3] = { 50, 50, 6.371e6 };
-const double settings[9] = { pow(2, 18), 0.5, 0.0, 5e-19, 16, 0.0, 0.0, 5.0, 1024.0 };
+const double settings[9] = { pow(2, 18), 0.5, 0.0, 5e-19, 16, 0.0, 0.0, 5.0, 1024 };
 const double max_time = pow(2, 18);
 const double warp = 1024;
 
@@ -26,7 +27,7 @@ double stuff[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 double t_step = 0;
 const int n_el = (0.5)*n*(n - 1);
 
-// Calculate interval between data samples for output	
+// Calculated interval between data samples for output	
 const int n_frames = floor(max_time * 64 / warp);
 
 std::string arraytostring(double a[n][4], int n)
@@ -72,8 +73,10 @@ int main() {
 	stuff[4] = settings[5];
 	stuff[5] = settings[6];
 	stuff[6] = 6.67384e-11;
-	stuff[7] = 1 + 0*pow((4*3.141592654*8.85419e-12),-1); // electrostatic force constant
+	stuff[7] = -6.67384e-11 + 0*pow((4*3.141592654*8.85419e-12),-1); // electrostatic force constant
 	stuff[8] = settings[7];	
+	stuff[9] = settings[4];
+	stuff[10] = settings[1];
 
 	int framecount = 0;
 	int tempcount = 0;
@@ -101,12 +104,6 @@ int main() {
 		}
 	}
 	
-	double v_norm[3] = {0};
-
-	for (int x=0; x<n; x++)
-	{
-		v_norm[x] = sqrt(pow(v[x][0],2) + pow(v[x][1],2) + pow(v[x][2],2));
-	}
 	// OpenCL Context Sorcery
 	std::vector<cl::Platform> platforms;
 	std::vector<cl::Device> platformDevices, allDevices, conDev;
@@ -142,9 +139,12 @@ int main() {
 	cl::Kernel ker_v_1 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
 	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
 	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
+	//cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices);
 
 	// Assign Buffers
-	double zerotemp[n][4] = { 0 };
+	double zerotemp_n_4[n][4] = { 0 };
+	double zerotemp_nel_4[n_el][4] = { 0 };
+	double zerotemp_4[4] = { 0 };
 	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
 	cl::Buffer l4buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l4);
 	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l3), l3);
@@ -155,15 +155,16 @@ int main() {
 	cl::Buffer radbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(rad), rad);
 	cl::Buffer Ibuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(I), I);
 	cl::Buffer tbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(stuff), stuff);
+	//cl::Buffer Ftmp(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(double[4]),zerotemp_4);
 
 	cl::Buffer rbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), r);
 	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(v), v);
 	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(w), w);
 
-	cl::Buffer vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (12*n_el));
-	cl::Buffer wincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (12*n_el));
-	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp);
-	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp);
+	cl::Buffer vincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(zerotemp_nel_4), zerotemp_nel_4);
+	cl::Buffer wincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(zerotemp_nel_4), zerotemp_nel_4);
+	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp_n_4);
+	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp_n_4);
 
 	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n));
 	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n_el));
@@ -195,6 +196,7 @@ int main() {
 	ker_F.setArg(11, wincbuff);
 	ker_F.setArg(12, Vincbuff);
 	ker_F.setArg(13, Intincbuff);
+	//ker_F.setArg(14, Ftmp);
 	
 	ker_S.setArg(0, vincbuff);
 	ker_S.setArg(1, wincbuff);
@@ -230,18 +232,40 @@ int main() {
 	ker_T.setArg(3, Twbuff);
 	ker_T.setArg(4, mbuff);
 	ker_T.setArg(5, Ibuff);
-	
-	double t_now = 0;
-	double t_last = 0;
-	double prog = 0;
+
 	cl::NDRange offset(0);
 	cl::NDRange gsize1(n);
 	cl::NDRange gsize2(n_el);
 	cl::NDRange local_size(1);
-
+	// double bugtrack[4][n_el] = { 0 };
+	// Initialise timestep scaler
+	double v_norm[3] = { 0 };
+	double v_max = 0;
+	for (int x = 0; x<n; x++)
+	{
+		v_norm[x] = sqrt(pow(v[x][0], 2) + pow(v[x][1], 2) + pow(v[x][2], 2));
+		if (x > 0){ v_max = max(v_norm[x], v_norm[x - 1]); }
+	}
+	//double F1[4] = { 0 };
+	//queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size);
+	//queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t(0),::size_t(16) , &F1);
+	//double scaleset[4] = { 0*F1[1], 0*F1[1], v_max, v_max };
+	//cl::Buffer Fbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(scaleset), scaleset );
+	//ker_F.setArg(14, Fbuff);
+	//ker_v_0.setArg(2, Fbuff);
+	//ker_v_1.setArg(2, Ftmp);
+	//ker_scale.setArg(0, tbuff);
+	//ker_scale.setArg(1, Fbuff);
+	
+	// Initialise simulation
+	double t_now = 0;
+	double t_last = 0;
+	double prog = 0;
+	long counter = 0;
+	std::string tempstring;
 
 	std::cout << "Kernels & Buffers set: beginning simulation\n";
-
+	
 	while (t_now < max_time)
 	{
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
@@ -251,18 +275,19 @@ int main() {
 		if (t_now == 0 || t_now - t_last >= (1.0 / 64.0)*warp && framecount < n_frames)
 		{
 			framecount++;
-			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t(0), sizeof(r), &r);
-			std::string tempstring = arraytostring(r,n);
-			r_tracker << tempstring;			
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t(0), sizeof(r), &r);			
+			tempstring = arraytostring(r,n);
+			r_tracker << tempstring;					
 			t_last = t_now;
-			prog = 100 * framecount / n_frames;
+			prog = 100 * framecount / n_frames;	
 			std::cout << prog << "%\r";
 
 		}
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, offset, sizeof(stuff), stuff);
+		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
 		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,gsize1,local_size); // Set new time step		
+		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); // Set new time step
 
+		
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
 
@@ -271,7 +296,9 @@ int main() {
 		queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size); 		// Compute force
 		queue.enqueueNDRangeKernel(ker_S, offset, gsize1, local_size);		// Reduce
 
-
+		counter++;
+		//queue.enqueueReadBuffer(vincbuff, CL_TRUE, ::size_t(0), sizeof(bugtrack), &bugtrack);		
+		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
@@ -282,5 +309,12 @@ int main() {
   
 
 	std::cout << "Simulation complete!\n";	
+	//long hold = 0;
+	//while (true)
+	//{
+		//hold++;
+		//hold--;
+	//}
 
+	return 0;
 }
