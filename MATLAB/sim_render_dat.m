@@ -4,12 +4,12 @@ clearvars -except rad
 tempset = fileread('Particle_tracks.dat');
 
 ig = 2;
-render_warp = 5;
-start = 1;
+render_warp = 64;
+start = 1; %0.375*size(tempset,1);
 stop = size(tempset,1);
 
 n = size(tempset,2);
-frameset = zeros(floor((start-stop)/render_warp),n,3);
+frameset = zeros(floor((stop-start)/render_warp),n,3);
 x = 0;
 for i = start:stop
     if (i-1)/render_warp == floor((i-1)/render_warp);
@@ -17,12 +17,13 @@ for i = start:stop
         frameset(x,:,:) = tempset(i,:,:);
     end
 end
-% 
-unshifted = frameset;
-for i = [2:size(frameset,2),1]
-    frameset(:,i,:) = frameset(:,i,:) - frameset(:,1,:);
+%unshifted = frameset;
+offset = mean(frameset(:,1:ig,:),2);
+% offset = framest(:,1,:);
+for i = 1:size(frameset,2)
+    frameset(:,i,:) = frameset(:,i,:) - offset;
 end
-frameset = unshifted;
+%frameset = unshifted;
 s = x;
 r_scaled_xy = zeros(size(frameset,1),size(frameset,2),2);
 r_scaled_xz = zeros(size(frameset,1),size(frameset,2),2);
@@ -39,29 +40,14 @@ scale_xy = min(1920/(xmax-xmin),1080/(ymax-ymin));
 r_scaled_xy(:,:,2) = int16((frameset(:,:,1) - xmin)*scale_xy);
 r_scaled_xy(:,:,1) = int16((frameset(:,:,2) - ymin)*scale_xy);
 
-scale_yz = min(1920/(xmax-xmin),1080/(zmax-zmin));
-r_scaled_xz(:,:,1) = int16((frameset(:,:,2) - xmin)*scale_yz);
-r_scaled_xz(:,:,2) = int16((frameset(:,:,3) - zmin)*scale_yz);
-
-
-%
-% if (1920/(xmax-xmin) < 1080/(ymax-ymin))
-%     scale = 1920/(xmax-xmin);
-%     r_scaled(:,:,2) = int16((frameset(:,:,1) - xmin)*scale);
-%     r_scaled(:,:,1) = int16((frameset(:,:,2) - ymin)*scale);
-%     r_scaled(:,:,1) = r_scaled(:,:,1) + 540 - 0.5*(max(max(r_scaled(:,:,1))-min(min(r_scaled(:,:,1)))));
-% else
-%     scale = 1080/(ymax-ymin);
-%     r_scaled(:,:,2) = int16((frameset(:,:,1) - xmin)*scale);
-%     r_scaled(:,:,1) = int16((frameset(:,:,2) - ymin)*scale);
-%     r_scaled(:,:,2) = r_scaled(:,:,2) + 960 - 0.5*(max(max(r_scaled(:,:,2))-min(min(r_scaled(:,:,2)))));
-% end
+scale_xz = min(1920/(xmax-xmin),1080/(zmax-zmin));
+r_scaled_xz(:,:,1) = int16((frameset(:,:,2) - xmin)*scale_xz);
+r_scaled_xz(:,:,2) = int16((frameset(:,:,3) - zmin)*scale_xz);
 
 circ = vision.ShapeInserter;
 circ.Fill = true;
 circ.Shape = 'Circles';
 circ.Antialiasing = true;
-
 
 vname_xy = ['render_',num2str(0.5*length(dir('render*.avi'))+1),'_xy.avi'];
 vname_yz = ['render_',num2str(0.5*length(dir('render*.avi'))+1),'_yz.avi'];
@@ -75,20 +61,20 @@ for t = 1:size(r_scaled_xy,1)
     waitbar(t/size(r_scaled_xy,1));
     
     temp_frame_xy = ones(1080,1920,1);
-    temp_frame_yz = ones(1080,1920,1);
+    temp_frame_xz = ones(1080,1920,1);
     
     balls_xy = zeros(size(frameset,2),3);
-    balls_yz = zeros(size(frameset,2),3);
+    balls_xz = zeros(size(frameset,2),3);
     
     for i = 1:ig
         balls_xy(i,:) = [r_scaled_xy(t,i,2),r_scaled_xy(t,i,1),ceil(rad(i)*scale_xy)];
-        balls_yz(i,:) = [r_scaled_xz(t,i,2),r_scaled_xz(t,i,1),ceil(rad(i)*scale_yz)];
+        balls_xz(i,:) = [r_scaled_xz(t,i,1),r_scaled_xz(t,i,2),ceil(rad(i)*scale_xz)];
     end
     
     temp_frame_xy = step(circ,temp_frame_xy(:,:,1),balls_xy);
-    temp_frame_yz = step(circ,temp_frame_yz(:,:,1),balls_yz);
+    temp_frame_xz = step(circ,temp_frame_xz(:,:,1),balls_xz);
     writeVideo(vid_xy,temp_frame_xy);
-    writeVideo(vid_yz,temp_frame_yz);
+    writeVideo(vid_yz,temp_frame_xz);
     
 end
 

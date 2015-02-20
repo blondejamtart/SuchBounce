@@ -1,26 +1,4 @@
-#define __CL_ENABLE_EXCEPTIONS
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <cmath>
-#include <CL/cl.hpp>
-#include <array>
-#include <stdio.h>
-#include <bitset>
-
-//Settings:
-const int n = 3;
-double r[3][4] = { { -2.944663984996607e+08, 8.862094573279311e7, 0.0, 0.0 }, { -2.944665084996607e+08 ,8.862094573279311e+07, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
-double v[3][4] = { { 1.593224683206409e+03, -2.319852625296494e+02, 0.0, 0.0 }, { 1.593224683206409e+03, -2.319028296320494e+02, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
-double w[3][4] = { { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
-double q[3] = { 1.355544171172596e+09, 1.355544171172596e+09, 0 };
-double m[3] = { 3.5e8, 3.5e8, 5.972e24 };
-double rad[3] = { 50, 50, 6.371e6 };
-const double settings[9] = { pow(2, 18), 0.5, 0.0, 5e-19, 16, 0.0, 0.0, 5.0, 1024 };
-const double max_time = pow(2, 18);
-const double warp = 1024;
+#include "../Settings.h"
 
 //Auto-stuff
 double stuff[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -28,7 +6,7 @@ double t_step = 0;
 const int n_el = (0.5)*n*(n - 1);
 
 // Calculated interval between data samples for output	
-const int n_frames = floor(max_time * 64 / warp);
+const int n_frames = (max_time * 64 / warp);
 
 std::string arraytostring(double a[n][4], int n)
 {	
@@ -48,61 +26,77 @@ std::string arraytostring(double a[n][4], int n)
 	return out;
 }
 
-cl::Kernel kernel_init(std::string file, char* ker_func, cl::Context ctx, std::vector<cl::Device> ctxdev)
+std::string arraytostring(double a[n], int n)
+{
+	std::string out = "[";
+	for (int j = 0; j < n; j++)
+	{
+			char temp[25];
+			sprintf(temp, "%+.13e", a[j]);
+			out.append(std::string(temp));
+			if (j != (n-1)){ out.append(", "); }
+	}
+	out.append("]\n");
+	return out;
+}
+
+cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, std::vector<cl::Device> ctxdev)
 {
 	std::ifstream programFile(file);
 	std::string programString(std::istreambuf_iterator<char>(programFile), (std::istreambuf_iterator<char>()));
 	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length()+1));
 	cl::Program program(ctx, source);
 	program.build(ctxdev, "-cl-finite-math-only");	
-	cl::Kernel kernel(program, ker_func);
+	cl::Kernel kernel(program, ker_func.c_str());
 	return kernel;
 }
 
 
 int main() {
-	
-	if (n_frames > settings[0]/stuff[4])
-	{	
-		std::cout << "Insufficient frames for specified warp; frame intervals will be wierd\r\n";
-	}
+
 	stuff[0] = settings[1];
 	stuff[1] = settings[2];
 	stuff[2] = settings[3];
-	stuff[3] = settings[4];
+	//stuff[3] = settings[4];
 	stuff[4] = settings[5];
 	stuff[5] = settings[6];
 	stuff[6] = 6.67384e-11;
-	stuff[7] = -6.67384e-11 + 0*pow((4*3.141592654*8.85419e-12),-1); // electrostatic force constant
-	stuff[8] = settings[7];	
+	stuff[7] = -6.67384e-11;// + 0 * pow((4 * 3.141592654*8.85419e-12), -1); // electrostatic force constant
+	stuff[8] = settings[7];
 	stuff[9] = settings[4];
 	stuff[10] = settings[1];
 
+	if (n_frames > max_time/stuff[9])
+	{	
+		std::cout << "Insufficient frames for specified warp; frame intervals will be wierd\r\n";
+	}
+
 	int framecount = 0;
 	int tempcount = 0;
+	double E_temp[n] = { 0 };
 	double I[n];
 	int l1[n];
 	int l2[n];
 	short l3[n][n_el] = {0};
-	short l4[n] = {0};
-	int n0[2] = { n, n_el };
+	//short l4[n] = {0};
+	int n0[2] = { n_el, n };
 
 	for (int x=0; x<n; x++)
 	{
 	I[x] = (2*m[x]*(pow(rad[x],2))/5);
 	}
 	
-	for (int x=2; x<(n+1); x++)
+	for (int x=1; x<n; x++)
 	{
-		for (int y=1; y<x; y++)	
+		for (int y=0; y<x; y++)	
 		{	
-		int i = (0.5*(x-1)*(x-2)+y)-1;	
-		l1[i] = x-1;
-		l2[i] = y-1;
-		l3[i][x-1] = -1;
-		l3[i][y-1] = 1;
+		int i = (0.5*x*(x-1)+y);	
+		l1[i] = x;
+		l2[i] = y;
+		l3[x][i] = -1;
+		l3[y][i] = 1;
 		}
-	}
+	}	
 	
 	// OpenCL Context Sorcery
 	std::vector<cl::Platform> platforms;
@@ -139,14 +133,14 @@ int main() {
 	cl::Kernel ker_v_1 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
 	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
 	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
-	//cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices);
+	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices);
 
 	// Assign Buffers
 	double zerotemp_n_4[n][4] = { 0 };
 	double zerotemp_nel_4[n_el][4] = { 0 };
 	double zerotemp_4[4] = { 0 };
 	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
-	cl::Buffer l4buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l4);
+	//cl::Buffer l4buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l4);
 	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l3), l3);
 	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l2), l2);
 	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l1), l1);
@@ -155,7 +149,7 @@ int main() {
 	cl::Buffer radbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(rad), rad);
 	cl::Buffer Ibuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(I), I);
 	cl::Buffer tbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(stuff), stuff);
-	//cl::Buffer Ftmp(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(double[4]),zerotemp_4);
+	cl::Buffer Ftmp(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(double[4]),zerotemp_4);
 
 	cl::Buffer rbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), r);
 	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(v), v);
@@ -166,19 +160,22 @@ int main() {
 	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp_n_4);
 	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp_n_4);
 
-	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n));
-	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n_el));
-	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n));
-	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n_el));
-	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n));
-	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (4*n));
+	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
+	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
+	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
+	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
+	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
+	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 
 	// Open output streams
-	std::ofstream r_tracker("Particle_tracks.dat", std::ios::out);
-	std::ofstream Tv_tracker("Tv_tracks.dat", std::ios::out);
-	std::ofstream Tw_tracker("Tw_tracks.dat", std::ios::out);
-	std::ofstream E_tracker("Int_tracks.dat", std::ios::out);
-	std::ofstream V_tracker("V_tracks.dat", std::ios::out);
+	std::ofstream r_tracker("../Outputs/Particle_tracks.dat", std::ios::out);
+	std::ofstream Tv_tracker("../Outputs/Tv_tracks.dat", std::ios::out);
+	std::ofstream Tw_tracker("../Outputs/Tw_tracks.dat", std::ios::out);
+	std::ofstream E_tracker("../Outputs/Int_tracks.dat", std::ios::out);
+	std::ofstream V_tracker("../Outputs/V_tracks.dat", std::ios::out);
+	std::ofstream v_tracker("../Outputs/v_tracks.dat", std::ios::out);
+	std::ofstream w_tracker("../Outputs/w_tracks.dat", std::ios::out);
+
 
 	//Set Kernel Arguments
 
@@ -196,7 +193,7 @@ int main() {
 	ker_F.setArg(11, wincbuff);
 	ker_F.setArg(12, Vincbuff);
 	ker_F.setArg(13, Intincbuff);
-	//ker_F.setArg(14, Ftmp);
+	ker_F.setArg(14, Ftmp);
 	
 	ker_S.setArg(0, vincbuff);
 	ker_S.setArg(1, wincbuff);
@@ -237,25 +234,26 @@ int main() {
 	cl::NDRange gsize1(n);
 	cl::NDRange gsize2(n_el);
 	cl::NDRange local_size(1);
-	// double bugtrack[4][n_el] = { 0 };
+
+
 	// Initialise timestep scaler
 	double v_norm[3] = { 0 };
 	double v_max = 0;
 	for (int x = 0; x<n; x++)
 	{
 		v_norm[x] = sqrt(pow(v[x][0], 2) + pow(v[x][1], 2) + pow(v[x][2], 2));
-		if (x > 0){ v_max = max(v_norm[x], v_norm[x - 1]); }
+		if (x > 0){ v_max = std::max(v_norm[x], v_norm[x - 1]); }
 	}
-	//double F1[4] = { 0 };
-	//queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size);
-	//queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t(0),::size_t(16) , &F1);
-	//double scaleset[4] = { 0*F1[1], 0*F1[1], v_max, v_max };
-	//cl::Buffer Fbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(scaleset), scaleset );
-	//ker_F.setArg(14, Fbuff);
-	//ker_v_0.setArg(2, Fbuff);
-	//ker_v_1.setArg(2, Ftmp);
-	//ker_scale.setArg(0, tbuff);
-	//ker_scale.setArg(1, Fbuff);
+	double F1[4] = { 0 };
+	queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size);
+	queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t(0),::size_t(16) , &F1);
+	double scaleset[4] = { F1[1], F1[1], v_max, v_max };
+	cl::Buffer Fbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(scaleset), scaleset);
+	ker_F.setArg(14, Fbuff);
+	ker_v_0.setArg(2, Fbuff);
+	ker_v_1.setArg(2, Ftmp);
+	ker_scale.setArg(0, tbuff);
+	ker_scale.setArg(1, Fbuff);
 	
 	// Initialise simulation
 	double t_now = 0;
@@ -264,7 +262,7 @@ int main() {
 	long counter = 0;
 	std::string tempstring;
 
-	std::cout << "Kernels & Buffers set: beginning simulation\n";
+	std::cout << "Kernels & Buffers set: simulation started.\n";
 	
 	while (t_now < max_time)
 	{
@@ -272,20 +270,46 @@ int main() {
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
 		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 		// Evaluate Kinetic Energy
 
-		if (t_now == 0 || t_now - t_last >= (1.0 / 64.0)*warp && framecount < n_frames)
+		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
 			framecount++;
-			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t(0), sizeof(r), &r);			
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t(0), sizeof(r), &r);
 			tempstring = arraytostring(r,n);
-			r_tracker << tempstring;					
+			r_tracker << tempstring;
+
+			queue.enqueueReadBuffer(Vbuff, CL_TRUE, ::size_t(0), sizeof(E_temp), &E_temp);
+			tempstring = arraytostring(E_temp, n);
+			V_tracker << tempstring;
+
+			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t(0), sizeof(E_temp), &E_temp);
+			tempstring = arraytostring(E_temp, n);
+			E_tracker << tempstring;
+
+			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t(0), sizeof(E_temp), &E_temp);
+			tempstring = arraytostring(E_temp, n);
+			Tv_tracker << tempstring;
+
+			queue.enqueueReadBuffer(Twbuff, CL_TRUE, ::size_t(0), sizeof(E_temp), &E_temp);
+			tempstring = arraytostring(E_temp, n);
+			Tw_tracker << tempstring;
+
+			queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t(0), sizeof(v), &v);
+			tempstring = arraytostring(v, n);
+			v_tracker << tempstring;
+			
+			queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t(0), sizeof(w), &w);
+			tempstring = arraytostring(w, n);
+			w_tracker << tempstring;
+			
+
 			t_last = t_now;
-			prog = 100 * framecount / n_frames;	
+			prog = 100 * framecount / n_frames;				
 			std::cout << prog << "%\r";
 
 		}
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+		queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
 		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); // Set new time step
+		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
 
 		
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
@@ -297,12 +321,11 @@ int main() {
 		queue.enqueueNDRangeKernel(ker_S, offset, gsize1, local_size);		// Reduce
 
 		counter++;
-		//queue.enqueueReadBuffer(vincbuff, CL_TRUE, ::size_t(0), sizeof(bugtrack), &bugtrack);		
 		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//cl.call(queue, ker_t, n-1, nothing, rpbuff); 						// Make positions relative to particle 1
+		//cl.call(queue, ker_t, n-1, nothing, rpbuff); 				// Make positions relative to particle 1
 		//cl.call(queue, ker_t0, 1, nothing, rpbuff);
 
 	}

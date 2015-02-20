@@ -1,27 +1,37 @@
-m = [1e-1*ones(1,128) 3e-3*ones(1,128)];
-Tv=fileread('T_v_tracks.dat');
-Tw=fileread('T_w_tracks.dat');
-V=fileread('V_tracks.dat');
-E=fileread('E_int_tracks.dat');
-r=fileread('Particle_tracks.dat');
-h=r(:,:,2); 
-ii=size(V,1);
-for i = 2:ii
-    E(i,:) = E(i,:) - E(1,:);
-    Tw(i,:) = Tw(i,:) - Tw(1,:);
-    Tv(i,:) = Tv(i,:) - Tv(1,:);
-    V(i,:) = V(i,:) - V(1,:);
-    h(i,:) = h(i,:) - h(1,:);
-end
-E(1,:) = zeros(1,size(V,2));
-Tw(1,:) = zeros(1,size(V,2));
-Tv(1,:) = zeros(1,size(V,2));
-V(1,:) = zeros(1,size(V,2));
-% h(1,:) = zeros(1,size(V,2));
-% G = 9.80665e-2*h.*repmat(m,ii,1);
-T = sum(E,2)+sum(V,2)+sum(Tv,2)+sum(Tw,2);
+do_zero = 1; 
 
-plot(1:ii,sum(E,2),1:ii,sum(V,2),1:ii,sum(Tv,2)+sum(Tw,2),1:ii,T)
+m = [1e-1*ones(1,128) 3e-3*ones(1,128)];
+Tv=fileread('Tv_tracks.dat');
+Tw=fileread('Tw_tracks.dat');
+V=fileread('V_tracks.dat');
+E=fileread('Int_tracks.dat');
+ii=size(V,1);
+T = sum(E,2)+sum(V,2)+sum(Tv,2)+sum(Tw,2);
+T_part = 2*E + 2*V + Tv - (6.67384e-11*3.5e8*3.5e8/110);
+plot(2:ii,T_part(2:ii,1),2:ii,T_part(2:ii,2))
+E0 = zeros(ii,size(V,2));
+T0 = zeros(ii,1);
+V0 = zeros(ii,size(V,2));
+Tw0 = zeros(ii,size(V,2));
+Tv0 = zeros(ii,size(V,2));
+
+if do_zero
+    for i = [3:ii,1]
+        E0(i,:) = E(i,:) - E(2,:);
+        Tw0(i,:) = Tw(i,:) - Tw(2,:);
+        Tv0(i,:) = Tv(i,:) - Tv(2,:);
+        V0(i,:) = V(i,:) - V(2,:);
+        T0(i) = T(i) - T(2);
+    end
+    E0(2,:) = zeros(1,size(V,2));
+    Tw0(2,:) = zeros(1,size(V,2));
+    Tv0(2,:) = zeros(1,size(V,2));
+    V0(2,:) = zeros(1,size(V,2));
+    T0(1:2) = [0 0];
+end
+
+
+plot(1:ii,sum(E0,2),1:ii,sum(V0,2),1:ii,sum(Tv0,2)+sum(Tw0,2),1:ii,T0)
 legend('Internal','Potential','Kinetic','Total')
 
 % plot(1:ii,sum(G,2),1:ii,sum(E,2)+sum(V,2)+sum(Tv,2)+sum(Tw,2))
@@ -30,8 +40,8 @@ legend('Internal','Potential','Kinetic','Total')
 % plot(1:ii,0.5*sum(E,2)+sum(Tv,2)+sum(Tw,2),1:ii,-0.5*sum(V,2))
 % legend('Internal + Kinetic','Potential')
 
-% 
+%
 % for i = 1:3000
-% k(i,:) = T(20*i,:);
+% k(i,:) = Tv(10*i,:);
 % end
-% plot(1:3000,mean(k(:,1:256),2))
+% plot(1:3000,mean(k(:,1:256),2),1:3000,mean(k(:,257:512),2))

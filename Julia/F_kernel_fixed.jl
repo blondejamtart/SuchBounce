@@ -73,7 +73,7 @@ F_kernel = "
 				
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);	
 									
-			double dt = (stuff[0]-(d0-rad[a]-rad[b])/p0)*step((d0-rad[a]-rad[b])/p0,stuff[0])*step(0,(d0-rad[a]-rad[b])/p0);
+			double dt = fmax(0,(stuff[0]-(d0-rad[a]-rad[b])/p0)*step((d0-rad[a]-rad[b])/p0,stuff[0])*step(0,(d0-rad[a]-rad[b])/p0));
 			
 			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0])-m[a]*m[b]/(m[a]+m[b])*(collisionflag*(stuff[1]*p0*(stuff[0]-dt)+stuff[8]*(rad[a]+rad[b]-d0)*(stuff[0]-dt)+0.5*stuff[8]*p0*(stuff[0]-dt)*(stuff[0]-dt))-(collisionflag-1)*(stuff[1]*p0*dt+0.5*stuff[8]*p0*dt*dt));
 				
