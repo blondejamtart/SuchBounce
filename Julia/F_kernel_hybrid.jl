@@ -159,14 +159,13 @@ F_kernels[3] = "
 			double p = dot(vtemp,Runit);
 			double p0 = dot(vtemp,normalize((r[a]-v[a]*0.5*stuff[0])-(r[b]-v[b]*0.5*stuff[0])));		
 			double collisionflag = step(d0,(rad[a]+rad[b]));	
-			double c = d+(rad[a]+rad[b]);			
-			double f = d*(c+rad[a]+rad[b]);		
-
-				
+			double 	fplus = pow(d,2) - pow((rad[a]+rad[b]),2);		
+			double 	fminus = pow(d,2) - pow((rad[b]-rad[a]),2);					
 					
-			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d)) - (0.33333333)*stuff[2]*c*((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2));	
-		
-			double dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d) + (0.33333333)*stuff[2]*(((f-2*rad[a]*rad[b])/pow(f,2)-(f+6*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),2)) + 2*pow(c,2)*((4*rad[a]*rad[b]-f)/pow(f,3)+(f+8*rad[a]*rad[b])/pow((f+4*rad[a]*rad[b]),3))))*p;				
+			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d)) - (1.0/3.0)*stuff[2]*d*(1/fplus - 1/fminus - 2*rad[a]*rad[b]*(pow(fplus,-2) + pow(fminus,-2)));
+								
+				
+			double dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d) + (1.0/3.0)*stuff[2]*((1/fplus - 1/fminus - 2*rad[a]*rad[b]*(pow(fplus,-2) + pow(fminus,-2)))+d*(2*rad[a]*rad[b]*(pow(fplus,-3) + pow(fminus,-3))+pow(fminus,-2)-pow(fplus,-2))))*p;	
 				
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
 			
@@ -181,7 +180,7 @@ F_kernels[3] = "
 			rddp[x] = j*Runit - collisionflag*jf*normalize(v_rel); 
 			oddp[x] = cross(Runit,jf*v_rel);
 
-			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (0.1666666)*stuff[2]*((2*rad[a]*rad[b])*(1/f+1/(f+4*rad[a]*rad[b]))+log(f)-log(f+4*rad[a]*rad[b]));
+			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - (1.0/6.0)*stuff[2]*(2*rad[a]*rad[b]*(1/fplus + 1/fminus) + log(fplus) - log(fminus));
 
 			Ipart[x] = 0.25*collisionflag*m[a]*m[b]/(m[a]+m[b])*stuff[8]*pow((rad[a]+rad[b]-d0),2);			
 		}
