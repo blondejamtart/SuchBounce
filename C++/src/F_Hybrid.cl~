@@ -29,14 +29,39 @@ __kernel void Fimp(__global const double *q,
 			double p = dot(vtemp,Runit);
 			double p0 = dot(vtemp,normalize((r[a]-v[a]*0.5*stuff[0])-(r[b]-v[b]*0.5*stuff[0])));		
 			double collisionflag = step(d0,(rad[a]+rad[b]));				
-			double 	fplus = pow(d,2) - pow((rad[a]+rad[b]),2);		
-			double 	fminus = pow(d,2) - pow((rad[b]-rad[a]),2);	
-
-			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d)) - (0.33333333)*stuff[2]*d*(1/fplus - 1/fminus - 2*rad[a]*rad[b]*(pow(fplus,-2) + pow(fminus,-2)));
-								
-				
-			double dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d) + (0.33333333)*stuff[2]*((1/fplus - 1/fminus - 2*rad[a]*rad[b]*(pow(fplus,-2) + pow(fminus,-2)))+d*(2*rad[a]*rad[b]*(pow(fplus,-3) + pow(fminus,-3))+pow(fminus,-2)-pow(fplus,-2))))*p;				
+		
+			double d_e = 1.01*(rad[a]+rad[b]);	
+			double 	fplus = 1/(pow(d,2) - pow((rad[a]+rad[b]),2));		
+			double 	fminus = 1/(pow(d,2) - pow((rad[b]-rad[a]),2));
+			double 	fpe = 1/(pow(d_e,2) - pow((rad[a]+rad[b]),2));		
+			double 	fme = 1/(pow(d_e,2) - pow((rad[b]-rad[a]),2));					
+					
+			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d));
+			double dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d))*p;
 			
+			double Fham = (1.0/3.0)*stuff[2]*d*(fplus-fminus-2*rad[a]*rad[b]*(pow(fplus,2)+pow(fminus,2)));
+			double dFham = (1.0/3.0)*stuff[2]*((fplus-fminus-2*rad[a]*rad[b]*(pow(fplus,2)+pow(fminus,2)))+2*pow(d,2)*(2*rad[a]*rad[b]*(pow(fplus,3)+pow(fminus,3))+pow(fminus,2)-pow(fplus,2)))*p; 			
+			double Fdisp = (1.0/3.0)*stuff[2]*(d_e*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2)))+(d-d_e)*((fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2)))+2*pow(d_e,2)*(2*rad[a]*rad[b]*(pow(fpe,3)+pow(fme,3))+pow(fme,2)-pow(fpe,2))));
+			double dFdisp = (1.0/3.0)*stuff[2]*((fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2)))+2*pow(d_e,2)*(2*rad[a]*rad[b]*(pow(fpe,3)+pow(fme,3))+pow(fme,2)-pow(fpe,2)))*p;
+			
+			double Vham = (1.0/6.0)*stuff[2]*(2*rad[a]*rad[b]*(fplus+fminus)-log(fplus)+log(fminus));
+			double Vdisp = (1.0/3.0)*stuff[2]*((1.0/2.0)*(2*rad[a]*rad[b]*(fpe+fme)-log(fpe)+log(fme))+d_e*(d-d_e)*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2)))+0.5*pow((d-d_e),2)*((fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2)))+2*pow(d_e,2)*(2*rad[a]*rad[b]*(pow(fpe,3)+pow(fme,3))+pow(fme,2)-pow(fpe,2))));
+
+			if (d > d_e) 
+			{
+				Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - Vham;
+				F -= Fham;
+				dF -= Fham;
+			}
+			else 
+			{
+				Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d - Vdisp;
+				F -= Fdisp;
+				dF -= Fdisp;
+			}
+
+	
+
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
 			
 			double dt = fmax((stuff[0]-(d0-rad[a]-rad[b])/p0)*step((d0-rad[a]-rad[b])/p0,stuff[0])*step(0,(d0-rad[a]-rad[b])/p0),0);			
