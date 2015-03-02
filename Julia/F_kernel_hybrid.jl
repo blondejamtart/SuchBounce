@@ -154,27 +154,28 @@ F_kernels[3] = "
 			int b = l[x] - 1;
 		   	double G = stuff[6];
 			double e0 = stuff[7];
-			double d = distance(r[a],r[b]);
-			double d0 = distance((r[a]-v[a]*0.5*stuff[0]),(r[b]-v[b]*0.5*stuff[0]));
+			double 	d = distance(r[a],r[b]);
+			double 	d0 = distance((r[a]-v[a]*0.5*stuff[0]),(r[b]-v[b]*0.5*stuff[0]));
 		 	double3 Runit = normalize(r[a] - r[b]);			
 			double3 wvec = w[a]*rad[a] + w[b]*rad[b];
 			double3 vtemp = v[b] - v[a]; 
-			double p = dot(vtemp,Runit);
-			double p0 = dot(vtemp,normalize((r[a]-v[a]*0.5*stuff[0])-(r[b]-v[b]*0.5*stuff[0])));		
-			double collisionflag = step(d0,(rad[a]+rad[b]));
+			double 	p = dot(vtemp,Runit);
+			double 	p0 = dot(vtemp,normalize((r[a]-v[a]*0.5*stuff[0])-(r[b]-v[b]*0.5*stuff[0])));		
+			double 	collisionflag = step(d0,(rad[a]+rad[b]));
 
-			double d_e = 1.005*(rad[a]+rad[b]);	
+			double 	cut_off = 1.01*(rad[a]+rad[b]);
+			double 	hard_rad = 0.99*(rad[a]+rad[b]);	
 			double 	fplus = 1/(pow(d,2) - pow((rad[a]+rad[b]),2));		
 			double 	fminus = 1/(pow(d,2) - pow((rad[b]-rad[a]),2));
-			double 	fpe = 1/(pow(d_e,2) - pow((rad[a]+rad[b]),2));		
-			double 	fme = 1/(pow(d_e,2) - pow((rad[b]-rad[a]),2));					
+			double 	fpe = 1/(pow(cut_off,2) - pow((rad[a]+rad[b]),2));		
+			double 	fme = 1/(pow(cut_off,2) - pow((rad[b]-rad[a]),2));					
 					
 			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d;			
-			double F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d));
-			double dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d))*p;	
+			double 	F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d));
+			double 	dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d))*p;	
 		
 
-			if (d > d_e) 
+			if (d > cut_off) 
 			{
 				Vpart[x] -= (1.0/6.0)*stuff[2]*(2*rad[a]*rad[b]*(fplus+fminus)-log(fplus)+log(fminus));
 				F -= (1.0/3.0)*stuff[2]*d*(fplus-fminus-2*rad[a]*rad[b]*(pow(fplus,2)+pow(fminus,2)));
@@ -182,9 +183,9 @@ F_kernels[3] = "
 			}
 			else 
 			{
-				Vpart[x] -= ((1.0/6.0)*stuff[2]*d_e*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*(pow((d-0.98*(rad[a]+rad[b])),2)/(d_e-0.98*(rad[a]+rad[b])) - (d_e-0.98*(rad[a]+rad[b]))) + (1.0/6.0)*stuff[2]*(2*rad[a]*rad[b]*(fpe+fme)-log(fpe)+log(fme));
-				F -=  ((1.0/3.0)*stuff[2]*d_e*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*(d-0.98*(rad[a]+rad[b]))/(d_e-0.98*(rad[a]+rad[b]));
-				//dF -= ((1.0/3.0)*stuff[2]*d_e*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*p/(d_e-0.99*(rad[a]+rad[b]));
+				Vpart[x] -= ((1.0/6.0)*stuff[2]*cut_off*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*(pow((d-hard_rad),2)/(cut_off-hard_rad) - (cut_off-hard_rad)) + (1.0/6.0)*stuff[2]*(2*rad[a]*rad[b]*(fpe+fme)-log(fpe)+log(fme));
+				F -=  ((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*(d-hard_rad)/(cut_off-hard_rad);
+				//dF -= ((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*p/(cut_off-hard_rad);
 			}
 
 

@@ -79,7 +79,14 @@ end
 initdump = zeros(3,n,2)
 initdump[:,:,1] = r;
 initdump[:,:,2] = v;
-filewrite("init_dump.dat",initdump,"i")
+
+try
+	filewrite("Outputs/init_dump.dat",initdump,"i")
+catch 
+	mkdir("Outputs");
+	filewrite("Outputs/init_dump.dat",initdump,"i")
+end
+
 
 
 # Write data to OpenCL buffer
@@ -166,13 +173,8 @@ finaldump[:,:,3] = cl.read(queue,wpbuff);
 
 
 # Write Files/Create folder
-try
-	filewrite("Outputs/Particle_tracks.dat",frameset,"r")
-catch 
-	mkdir("Outputs");
-	filewrite("Outputs/Particle_tracks.dat",frameset,"r")
-end
 
+filewrite("Outputs/Particle_tracks.dat",frameset,"r")
 filewrite("Outputs/final_dump.dat",finaldump[1:3,:,:],"i")
 filewrite("Outputs/T_v_tracks.dat",Tv_tracker,"r")
 filewrite("Outputs/T_w_tracks.dat",Tw_tracker,"r")
