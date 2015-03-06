@@ -1,4 +1,4 @@
-cd Source
+cd src
 g++ -std=c++11 SuchBounce.cpp -lOpenCL
 ./a.out
 rm a.out

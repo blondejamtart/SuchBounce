@@ -34,7 +34,7 @@ end
 # Calculate interval between data samples for output
 global t_step = int64(0);
 const n_el = int64(1/2*n*(n-1));
-global n_frames = int64(floor(max_step*stuff[1]*128/warp));
+global n_frames = int64(floor(max_step*stuff[1]*64/warp));
 if n_frames > max_step
 	n_frames = max_step;
 	write(STDOUT,"Insufficient frames for specified warp; using all available frames\r\n")

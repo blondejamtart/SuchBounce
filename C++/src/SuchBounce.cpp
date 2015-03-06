@@ -61,7 +61,7 @@ int main() {
 	stuff[4] = settings[5];
 	stuff[5] = settings[6];
 	stuff[6] = 6.67384e-11;
-	stuff[7] = -6.67384e-11;// + 0 * pow((4 * 3.141592654*8.85419e-12), -1); // electrostatic force constant
+	stuff[7] = pow((4 * 3.141592654*8.85419e-12), -1); // electrostatic force constant
 	stuff[8] = settings[7];
 	stuff[9] = settings[4];
 	stuff[10] = settings[1];
