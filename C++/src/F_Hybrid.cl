@@ -1,4 +1,4 @@
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+
 __kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
@@ -56,6 +56,7 @@ __kernel void Fimp(__global const double *q,
 				//dF -= ((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*p/(cut_off-hard_rad);
 			}
 
+			F_track[1] = maxmag(F_track[1],F);
 
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
 			
@@ -68,12 +69,9 @@ __kernel void Fimp(__global const double *q,
 			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
 			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}			
 			rddp[x] = j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel); 
-			oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);			
+			oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);
 			
-
-			Ipart[x] = 0.25*collisionflag*m[a]*m[b]/(m[a]+m[b])*stuff[8]*pow((rad[a]+rad[b]-d0),2);	
-
-			F_track[1] = maxmag(F_track[1],F);			
+			Ipart[x] = 0.25*collisionflag*m[a]*m[b]/(m[a]+m[b])*stuff[8]*pow((rad[a]+rad[b]-d0),2);					
 
 						
 		}

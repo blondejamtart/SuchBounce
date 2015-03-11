@@ -9,7 +9,7 @@ const int n_el = (0.5)*n*(n - 1);
 // Calculated interval between data samples for output	
 const int n_frames = (max_time * 64 / warp);
 
-std::string arraytostring(double a[n][4], int n)
+std::string arraytostring(double a[n][3], int n)
 {	
 	std::string out = "[";
 	for (int j = 0; j < n; j++)
@@ -47,7 +47,7 @@ cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, 
 	std::string programString(std::istreambuf_iterator<char>(programFile), (std::istreambuf_iterator<char>()));
 	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length()+1));
 	cl::Program program(ctx, source);
-	program.build(ctxdev, "-cl-finite-math-only");		
+	program.build(ctxdev, "-cl-finite-math-only");	
 	cl::Kernel kernel(program, ker_func.c_str());
 	return kernel;
 }
@@ -76,8 +76,8 @@ int main() {
 	int tempcount = 0;
 	double E_temp[n] = { 0 };
 	double I[n];
-	int l1[n_el];
-	int l2[n_el];
+	int l1[n];
+	int l2[n];
 	short l3[n][n_el] = {0};
 	//short l4[n] = {0};
 	int n0[2] = { n_el, n };
@@ -94,6 +94,7 @@ int main() {
 		int i = (0.5*x*(x-1)+y);	
 		l1[i] = x;
 		l2[i] = y;
+		//std::cout << x << y << "\n";
 		l3[x][i] = -1;
 		l3[y][i] = 1;
 		}
@@ -150,7 +151,7 @@ int main() {
 	cl::Buffer mbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(m), m);
 	cl::Buffer radbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(rad), rad);
 	cl::Buffer Ibuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(I), I);
-	cl::Buffer tbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(stuff), stuff);
+	cl::Buffer tbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(stuff), stuff);
 	cl::Buffer Ftmp(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (32), zerotemp_4);
 
 	cl::Buffer rbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), r);
@@ -234,9 +235,8 @@ int main() {
 
 	cl::NDRange offset(0);
 	cl::NDRange gsize1(n);
-	cl::NDRange gsize2(n_el);
+	cl::NDRange gsize2(5);
 	cl::NDRange local_size(1);
-
 
 	// Initialise timestep scaler	
 	double v_norm[n] = { 0 };
@@ -259,102 +259,4 @@ int main() {
 	queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t (0), ::size_t (32), &F1);
 	
 	double scaleset[4] = { F1[1], F1[1], v_max, v_max };
-	
-	
-	cl::Buffer Fbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(scaleset), scaleset);
-	ker_F.setArg(14, Fbuff);
-	ker_v_0.setArg(2, Fbuff);
-	ker_v_1.setArg(2, Ftmp);
-	ker_scale.setArg(0, tbuff);
-	ker_scale.setArg(1, Fbuff);
-	
-	
-	// Initialise simulation
-	double t_now = 0;
-	double t_last = 0;
-	double prog = 0;
-	long counter = 0;
-	std::string tempstring;
-
-	std::cout << "Kernels & Buffers set: simulation started.\n";
-	
-	while (t_now < max_time)
-	{
-		
-		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
-
-		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
-
-		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 		// Evaluate Kinetic Energy
-
-		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
-		{
-			framecount++;
-			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), sizeof(r), &r);
-			tempstring = arraytostring(r,n);
-			r_tracker << tempstring;
-
-			queue.enqueueReadBuffer(Vbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
-			tempstring = arraytostring(E_temp, n);
-			V_tracker << tempstring;
-
-			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
-			tempstring = arraytostring(E_temp, n);
-			E_tracker << tempstring;
-
-			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
-			tempstring = arraytostring(E_temp, n);
-			Tv_tracker << tempstring;
-
-			queue.enqueueReadBuffer(Twbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
-			tempstring = arraytostring(E_temp, n);
-			Tw_tracker << tempstring;
-
-			queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t (0), sizeof(l1), &v);
-			tempstring = arraytostring(v, n);
-			v_tracker << tempstring;
-			
-			queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), sizeof(w), &w);
-			tempstring = arraytostring(w, n);
-			w_tracker << tempstring;
-			
-
-			t_last = t_now;
-			prog = 100 * framecount / n_frames;				
-			std::cout << prog << "%\r";
-
-		}
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
-		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
-		
-		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
-		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
-		
-	
-		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
-
-		queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size); 		// Compute force
-		queue.enqueueNDRangeKernel(ker_S, offset, gsize1, local_size);		// Reduce
-	
-		counter++;
-		
-		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
-		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
-
-		//cl.call(queue, ker_t, n-1, nothing, rpbuff); 				// Make positions relative to particle 1
-		//cl.call(queue, ker_t0, 1, nothing, rpbuff);
-
-	}
-  
-
-	std::cout << "Simulation complete!\n";	
-	//long hold = 0;
-	//while (true)
-	//{
-		//hold++;
-		//hold--;
-	//}
-
-	return 0;
 }

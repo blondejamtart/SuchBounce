@@ -1,4 +1,4 @@
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+
 __kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
@@ -38,24 +38,25 @@ __kernel void Fimp(__global const double *q,
 			double 	fpe = 1/(pow(cut_off,2) - pow((rad[a]+rad[b]),2));		
 			double 	fme = 1/(pow(cut_off,2) - pow((rad[b]-rad[a]),2));					
 					
-			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d;			
+			//Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d;			
 			double 	F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d));
 			double 	dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d))*p;	
 		
 
 			if (d > cut_off) 
 			{
-				Vpart[x] -= (1.0/6.0)*stuff[2]*(2*rad[a]*rad[b]*(fplus+fminus)-log(fplus)+log(fminus));
+				//Vpart[x] -= (1.0/6.0)*stuff[2]*(2*rad[a]*rad[b]*(fplus+fminus)-log(fplus)+log(fminus));
 				F -= (1.0/3.0)*stuff[2]*d*(fplus-fminus-2*rad[a]*rad[b]*(pow(fplus,2)+pow(fminus,2)));
 				//dF -= (1.0/3.0)*stuff[2]*((fplus-fminus-2*rad[a]*rad[b]*(pow(fplus,2)+pow(fminus,2)))+2*pow(d,2)*(4*rad[a]*rad[b]*(pow(fplus,3)+pow(fminus,3))+pow(fminus,2)-pow(fplus,2)))*p; 		
 			}
 			else 
 			{
-				Vpart[x] -= ((1.0/6.0)*stuff[2]*cut_off*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*(pow((d-hard_rad),2)/(cut_off-hard_rad) - (cut_off-hard_rad)) + (1.0/6.0)*stuff[2]*(2*rad[a]*rad[b]*(fpe+fme)-log(fpe)+log(fme));
+				//Vpart[x] -= ((1.0/6.0)*stuff[2]*cut_off*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*(pow((d-hard_rad),2)/(cut_off-hard_rad) - (cut_off-hard_rad)) + (1.0/6.0)*stuff[2]*(2*rad[a]*rad[b]*(fpe+fme)-log(fpe)+log(fme));
 				F -=  ((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*(d-hard_rad)/(cut_off-hard_rad);
 				//dF -= ((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad[a]*rad[b]*(pow(fpe,2)+pow(fme,2))))*p/(cut_off-hard_rad);
 			}
 
+			//F_track[1] = maxmag(F_track[1],F);
 
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
 			
@@ -67,13 +68,10 @@ __kernel void Fimp(__global const double *q,
 			
 			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
 			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}			
-			rddp[x] = j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel); 
-			oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);			
+			//rddp[x] = j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel); 
+			//oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);
 			
-
-			Ipart[x] = (m[a]*m[b]*G); //0.25*collisionflag*m[a]*m[b]/(m[a]+m[b])*stuff[8]*pow((rad[a]+rad[b]-d0),2);	
-
-			F_track[1] = maxmag(F_track[1],F);			
+			Ipart[x] = 0; //0.25*collisionflag*m[a]*m[b]/(m[a]+m[b])*stuff[8]*pow((rad[a]+rad[b]-d0),2);					
 
 						
 		}

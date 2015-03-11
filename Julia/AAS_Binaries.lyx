@@ -1,0 +1,560 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand{
+\backslash
+abstractname}{}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+title{Fragmentation of Earth-Crossing Rotating Contact Binary Asteroids}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+author{Bryan Tester
+\backslash
+footnote{PhD student at University of Strathclyde, United Kingdom}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+and
+\end_layout
+
+\begin_layout Plain Layout
+
+Prof.
+ Massimiliano Vasile
+\backslash
+footnote{Professor at University of Strathclyde, United Kingdom}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+date{March 11th 2015}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+maketitle
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{abstract}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this paper we consider the behaviour of rotating binary asteroids as
+ they pass through the sphere of influence of Earth, with primary interest
+ in the effect the tidal force has on the interaction between the two components
+ of the binary and the post-encounter trajectories of the binary components.
+ Our work focuses on contact binary asteroids bound by a regolith bridge.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{abstract}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+section{Introduction}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Radar obesrvations suggest that a significant portion of Asteroids with
+ Earth-crossing orbits are binary systems, consisting of two componets in
+ contact with or in close proximity to eachother.
+ As shown by work such as that of Farinella 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+textit{et al}
+\backslash
+cite{binaryevo}
+\end_layout
+
+\end_inset
+
+ in the early 1990s, gravitational encounters can significantly alter the
+ orbits and integrity of binary asteroids.
+ Clearly it is important to be able to accurately predict the motion of
+ these bodies to give maximum warning of any possible Earth collision event.
+ The work presented here is inspired by that of Borum 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+textit{et al}
+\backslash
+cite{grrr}
+\end_layout
+
+\end_inset
+
+.
+ However, in our work we consider purely contact binaries; both gravitationally
+ bound and those bound by a regolith bridge as discussed by Scheeres 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+textit{et al}
+\backslash
+cite{dustbound}
+\end_layout
+
+\end_inset
+
+.
+ The system shall be modelled both by an analytical approach and numerical
+ simulations.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+section{Equations of Motion}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The analytical approach to characterising the system is based upon the full
+ equations of motion in a rotating reference frame, with the rotation of
+ the reference frame such that the barycentre of the system remains at a
+ constant angle to the Earth.
+ The resulting equations can be split into two separeate equations, detailing
+ the motion of the barycentre and the other the relative motion of the binary
+ components respectively.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{equation}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+ddot{
+\backslash
+vec{R}} = 
+\backslash
+frac{-GM_
+\backslash
+oplus}{
+\backslash
+|
+\backslash
+vec{R}
+\backslash
+|^{3}}
+\backslash
+vec{R}+
+\backslash
+vec{
+\backslash
+omega}
+\backslash
+times(2
+\backslash
+dot{
+\backslash
+vec{R}}+
+\backslash
+vec{
+\backslash
+omega}
+\backslash
+times
+\backslash
+vec{R})+
+\backslash
+dot{
+\backslash
+vec{
+\backslash
+omega}}
+\backslash
+times
+\backslash
+vec{R}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{equation}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{equation}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+ddot{
+\backslash
+vec{
+\backslash
+rho}} = 
+\backslash
+frac{Gm^{2}}{8
+\backslash
+|
+\backslash
+vec{
+\backslash
+rho}
+\backslash
+|^{3}}
+\backslash
+vec{
+\backslash
+rho}+
+\backslash
+vec{
+\backslash
+omega}
+\backslash
+times(2
+\backslash
+dot{
+\backslash
+vec{
+\backslash
+rho}}+
+\backslash
+vec{
+\backslash
+omega}
+\backslash
+times
+\backslash
+vec{
+\backslash
+rho})+
+\backslash
+dot{
+\backslash
+vec{
+\backslash
+omega}}
+\backslash
+times
+\backslash
+vec{
+\backslash
+rho}+{GM_
+\backslash
+oplus}(
+\backslash
+frac{
+\backslash
+vec{R}}{
+\backslash
+|
+\backslash
+vec{R}
+\backslash
+|^{3}}-
+\backslash
+frac{
+\backslash
+vec{R}+
+\backslash
+vec{
+\backslash
+rho}}{
+\backslash
+|
+\backslash
+vec{R}+
+\backslash
+vec{
+\backslash
+rho}
+\backslash
+|^{3}})
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{equation}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+vec{R}$
+\end_layout
+
+\end_inset
+
+ denotes the position of barycentre of the system; the binary components
+ considered are identical, both with mass 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$m$
+\end_layout
+
+\end_inset
+
+ and positions given by 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+vec{R}
+\backslash
+pm
+\backslash
+vec{
+\backslash
+rho}$
+\end_layout
+
+\end_inset
+
+.
+ A selection of limits, approximations and assumptions will be imposed upon
+ the equations to gain qualitative information on the system (since an exact
+ analytical solution does not exist in principle).
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+section{Numerical Simulations}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The numerical simulations shall be run using a custom multi-body code, which
+ includes full interparticle gravitational interactions, London dispersion
+ forces and Soft-Body collisions similar to those implemented in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+textit{PKDGRAV}
+\end_layout
+
+\end_inset
+
+ by Schwartz 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+textit{et al}
+\backslash
+cite{soft}
+\end_layout
+
+\end_inset
+
+.
+ We shall consider encounters with a range of Earth-Asteroid two-body energies
+ and varying binary asteroid rotation speeds; the binary components shall
+ be in a mutual circular orbit in each case, with the force between them
+ artificially varied to simulate the effects of a regolith “bridge” binding
+ the two components.
+ Additionally, numerical simulations of two boulders bound by such a regolith
+ bridge on a Hyperbolic trajectory shall be performed and the effect of
+ the tidal forces on the integrity of the bridge shall be investigated.
+\end_layout
+
+\end_body
+\end_document

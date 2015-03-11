@@ -1,4 +1,4 @@
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+
 __kernel void rstep(__global const double *stuff,					
 					__global double3 *r,
 					__global double3 *v)
