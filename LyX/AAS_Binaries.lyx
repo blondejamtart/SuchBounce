@@ -3,6 +3,9 @@
 \begin_document
 \begin_header
 \textclass article
+\begin_preamble
+\usepackage{graphicx}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -25,6 +28,7 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -65,6 +69,10 @@ status open
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 
 \backslash
 renewcommand{
@@ -76,14 +84,33 @@ abstractname}{}
 
 
 \backslash
-title{Fragmentation of Earth-Crossing Rotating Contact Binary Asteroids}
+renewcommand{
+\backslash
+sfdefault}{phv}
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
 
 
 \backslash
-author{Bryan Tester
+title{
+\backslash
+textsf{
+\backslash
+textbf{Fragmentation of Earth-Crossing Contact Binary Asteroids}}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+author{
+\backslash
+textsf{Bryan Tester}
 \backslash
 footnote{PhD student at University of Strathclyde, United Kingdom}
 \end_layout
@@ -97,8 +124,10 @@ and
 
 \begin_layout Plain Layout
 
-Prof.
- Massimiliano Vasile
+
+\backslash
+textsf{Prof.
+ Massimiliano Vasile}
 \backslash
 footnote{Professor at University of Strathclyde, United Kingdom}
 \end_layout
@@ -112,7 +141,7 @@ footnote{Professor at University of Strathclyde, United Kingdom}
 
 
 \backslash
-date{March 11th 2015}
+date{}
 \end_layout
 
 \begin_layout Plain Layout
@@ -140,15 +169,11 @@ begin{abstract}
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
 In this paper we consider the behaviour of rotating binary asteroids as
- they pass through the sphere of influence of Earth, with primary interest
- in the effect the tidal force has on the interaction between the two components
- of the binary and the post-encounter trajectories of the binary components.
- Our work focuses on contact binary asteroids bound by a regolith bridge.
+ they pass through Earth's Hill sphere, with primary interest in the effect
+ the tidal force has on the interaction between the two components of the
+ binary and their post-encounter trajectories.
+ We focus on contact binary asteroids bound by a regolith bridge.
 \end_layout
 
 \begin_layout Standard
@@ -214,7 +239,8 @@ cite{grrr}
 
 .
  However, in our work we consider purely contact binaries; both gravitationally
- bound and those bound by a regolith bridge as discussed by Scheeres 
+ bound and those bound by a regolith bridge (simmilar to the mechanism discussed
+ by Scheeres 
 \begin_inset ERT
 status open
 
@@ -224,19 +250,75 @@ status open
 \backslash
 textit{et al}
 \backslash
-cite{dustbound}
+cite{dustbound}, see fig.
+ ~
+\backslash
+ref{fig:regolith}
 \end_layout
 
 \end_inset
 
-.
+).
  The system shall be modelled both by an analytical approach and numerical
  simulations.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{figure}[here]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+centerline{
+\backslash
+includegraphics[width=0.8
+\backslash
+textwidth]{scheeres_2013.png}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+caption{Simulation results for a regolith bridge by Scheeres 
+\backslash
+textit{et al}
+\backslash
+cite{dustbound}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+label{fig:regolith}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{figure}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 \begin_inset ERT
 status open
+
+\begin_layout Plain Layout
+
+\end_layout
 
 \begin_layout Plain Layout
 
@@ -355,9 +437,9 @@ ddot{
 \backslash
 vec{
 \backslash
-rho}} = 
+rho}} = [
 \backslash
-frac{Gm^{2}}{8
+frac{-Gm}{8
 \backslash
 |
 \backslash
@@ -365,7 +447,11 @@ vec{
 \backslash
 rho}
 \backslash
-|^{3}}
+|^{3}}+F(
+\backslash
+vec{
+\backslash
+rho})]
 \backslash
 vec{
 \backslash
@@ -405,7 +491,7 @@ vec{
 \backslash
 rho}+{GM_
 \backslash
-oplus}(
+oplus}[
 \backslash
 frac{
 \backslash
@@ -433,7 +519,7 @@ vec{
 \backslash
 rho}
 \backslash
-|^{3}})
+|^{3}}]
 \end_layout
 
 \begin_layout Plain Layout
@@ -446,9 +532,6 @@ end{equation}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -493,9 +576,25 @@ rho}$
 \end_inset
 
 .
- A selection of limits, approximations and assumptions will be imposed upon
- the equations to gain qualitative information on the system (since an exact
- analytical solution does not exist in principle).
+ For complexity reasons we choose to neglect the individual effect of the
+ particles in the regolith bridge but opt instead to incorporate their net
+ effect on the force between the main binary components into the term 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$F(
+\backslash
+vec{
+\backslash
+rho})$
+\end_layout
+
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -549,11 +648,133 @@ cite{soft}
  We shall consider encounters with a range of Earth-Asteroid two-body energies
  and varying binary asteroid rotation speeds; the binary components shall
  be in a mutual circular orbit in each case, with the force between them
- artificially varied to simulate the effects of a regolith “bridge” binding
+ artificially varied to simulate the effects of a regolith bridge binding
  the two components.
- Additionally, numerical simulations of two boulders bound by such a regolith
- bridge on a Hyperbolic trajectory shall be performed and the effect of
- the tidal forces on the integrity of the bridge shall be investigated.
+ Additionally, full numerical simulations of two boulders bound by such
+ a regolith bridge on a Hyperbolic trajectory shall be performed and the
+ effect of the tidal forces on the integrity of the bridge shall be investigated.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+section{Conclusion}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We present a methodology to model contact binary asteroids bound by regolith
+ during an encounter with a large body such as Earth.
+ Any conclusions drawn from this research will allow for enhanced accuracy
+ in the prediction of asteroid trajectories and allow for better planning
+ in any mission to capture or deflect such an object.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{thebibliography}{9}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+bibitem{binaryevo}Farinella P.
+ 
+\backslash
+& Chauvineau B., 
+\backslash
+emph{On the Evolution of binary Earth-approaching asteroids}, Astron.
+ Astrophys.
+ 
+\backslash
+textbf{279}, 251-259 (1993).
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+bibitem{grrr}Borum A.
+ 
+\backslash
+textit{et al}, 
+\backslash
+emph{Capturing Near-Earth Asteroids Using A Binary Exchange Mechanism},
+ Virginia Tech (online) (2012).
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+bibitem{dustbound}Sanchez P.
+ 
+\backslash
+& Scheeres D.J., 
+\backslash
+emph{Granular Cohesion and Fast Rotators in the NEA Population}, AIP Proceedings
+ 
+\backslash
+textbf{1542}, 955 (2013).
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+bibitem{soft}Schwartz R.S., Richard D.C.
+ 
+\backslash
+& Michel P., 
+\backslash
+emph{An Implementation of the Soft-Sphere Discrete Element Method in a high-perf
+ormance parallel gravity tree-code}, Granular Matter 
+\backslash
+textbf{14}, 363-380 (2012).
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{thebibliography}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body
