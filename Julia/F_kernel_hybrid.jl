@@ -164,7 +164,7 @@ F_kernels[3] = "
 			double 	collisionflag = step(d0,(rad[a]+rad[b]));
 
 			double 	cut_off = 1.01*(rad[a]+rad[b]);
-			double 	hard_rad = 0.99*(rad[a]+rad[b]);	
+			double 	hard_rad = 0.995*(rad[a]+rad[b]);	
 			double 	fplus = 1/(pow(d,2) - pow((rad[a]+rad[b]),2));		
 			double 	fminus = 1/(pow(d,2) - pow((rad[b]-rad[a]),2));
 			double 	fpe = 1/(pow(cut_off,2) - pow((rad[a]+rad[b]),2));		

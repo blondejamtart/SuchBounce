@@ -101,7 +101,7 @@ title{
 \backslash
 textsf{
 \backslash
-textbf{Fragmentation of Earth-Crossing Contact Binary Asteroids}}}
+textbf{Fragmentation of Earth-crossing Contact Binary Asteroids}}}
 \end_layout
 
 \begin_layout Plain Layout
@@ -169,11 +169,12 @@ begin{abstract}
 
 \end_inset
 
-In this paper we consider the behaviour of rotating binary asteroids as
- they pass through Earth's Hill sphere, with primary interest in the effect
- the tidal force has on the interaction between the two components of the
- binary and their post-encounter trajectories.
- We focus on contact binary asteroids bound by a regolith bridge.
+We consider the behaviour of rotating binary asteroids as they pass through
+ Earth's Hill sphere, with primary interest in the effect the tidal force
+ has on the interaction between the two components of the binary and their
+ post-encounter trajectories.
+ We focus on contact binary asteroids bound by a regolith bridge, using
+ both direct numerical simulation and an analytical approach.
 \end_layout
 
 \begin_layout Standard
@@ -240,15 +241,13 @@ cite{grrr}
 .
  However, in our work we consider purely contact binaries; both gravitationally
  bound and those bound by a regolith bridge (simmilar to the mechanism discussed
- by Scheeres 
+ by Sanchez & Scheeres 
 \begin_inset ERT
 status open
 
 \begin_layout Plain Layout
 
 
-\backslash
-textit{et al}
 \backslash
 cite{dustbound}, see fig.
  ~
@@ -268,7 +267,7 @@ status open
 
 
 \backslash
-begin{figure}[here]
+begin{figure}
 \end_layout
 
 \begin_layout Plain Layout
@@ -277,7 +276,7 @@ begin{figure}[here]
 \backslash
 centerline{
 \backslash
-includegraphics[width=0.8
+includegraphics[width=0.75
 \backslash
 textwidth]{scheeres_2013.png}}
 \end_layout
@@ -286,9 +285,9 @@ textwidth]{scheeres_2013.png}}
 
 
 \backslash
-caption{Simulation results for a regolith bridge by Scheeres 
+caption{Simulation results for a regolith bridge by Sanchez 
 \backslash
-textit{et al}
+& Scheeres 
 \backslash
 cite{dustbound}}
 \end_layout
@@ -315,10 +314,6 @@ end{figure}
 \begin_layout Standard
 \begin_inset ERT
 status open
-
-\begin_layout Plain Layout
-
-\end_layout
 
 \begin_layout Plain Layout
 
@@ -437,9 +432,11 @@ ddot{
 \backslash
 vec{
 \backslash
-rho}} = [
+rho}} = 
 \backslash
-frac{-Gm}{8
+left[
+\backslash
+frac{-Gm}{4
 \backslash
 |
 \backslash
@@ -451,7 +448,9 @@ rho}
 \backslash
 vec{
 \backslash
-rho})]
+rho})
+\backslash
+right]
 \backslash
 vec{
 \backslash
@@ -491,7 +490,9 @@ vec{
 \backslash
 rho}+{GM_
 \backslash
-oplus}[
+oplus}
+\backslash
+left[
 \backslash
 frac{
 \backslash
@@ -519,7 +520,9 @@ vec{
 \backslash
 rho}
 \backslash
-|^{3}}]
+|^{3}}
+\backslash
+right]
 \end_layout
 
 \begin_layout Plain Layout
@@ -576,9 +579,10 @@ rho}$
 \end_inset
 
 .
- For complexity reasons we choose to neglect the individual effect of the
- particles in the regolith bridge but opt instead to incorporate their net
- effect on the force between the main binary components into the term 
+ For obvious complexity reasons we choose to neglect the individual effect
+ of the particles in the regolith bridge but opt instead to incorporate
+ their net effect on the force between the main binary components into the
+ term 
 \begin_inset ERT
 status open
 
