@@ -242,76 +242,10 @@ cite{grrr}
  However, in our work we consider purely contact binaries; both gravitationally
  bound and those bound by a regolith bridge (simmilar to the mechanism discussed
  by Sanchez & Scheeres 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
 \backslash
-cite{dustbound}, see fig.
- ~
-\backslash
-ref{fig:regolith}
-\end_layout
-
-\end_inset
-
-).
+cite{dustbound}).
  The system shall be modelled both by an analytical approach and numerical
  simulations.
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{figure}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-centerline{
-\backslash
-includegraphics[width=0.75
-\backslash
-textwidth]{scheeres_2013.png}}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-caption{Simulation results for a regolith bridge by Sanchez 
-\backslash
-& Scheeres 
-\backslash
-cite{dustbound}}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-label{fig:regolith}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{figure}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset ERT
 status open
 
