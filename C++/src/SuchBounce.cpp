@@ -1,13 +1,26 @@
 #include "../Settings.h"
+#include <limits>
 
 //Auto-stuff
 double stuff[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 double t_step = 0;
-const int n_el = (0.5)*n*(n - 1);
+const long long int n_el = (0.5)*n*(n - 1);
 
 
 // Calculated interval between data samples for output	
 const int n_frames = (max_time * 64 / warp);
+
+
+int string2array(std::string str, double arr[4])
+{
+	std::string::size_type end0;
+	std::string::size_type end1;
+	arr[0] = std::stod(str,&end0);
+	std::string c = str.substr(end0+1);
+	arr[1] = std::stod(c,&end1);
+	arr[2] = std::stod(c.substr(end1+2));
+	return 1;
+}
 
 std::string arraytostring(double a[n][4], int n)
 {	
@@ -53,8 +66,65 @@ cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, 
 }
 
 
-int main() {
+int main() 
+{
+	auto r = new double[n][4];
+	auto v = new double[n][4];
+	auto w = new double[n][4];	
+	auto q = new double[n];
+	auto m = new double[n];
+	auto rad = new double[n];
+
+	std::ifstream r_in("../Setup/r_set.vec");
+	std::ifstream v_in("../Setup/v_set.vec");
+	std::ifstream w_in("../Setup/w_set.vec");
+	std::ifstream rad_in("../Setup/rad_set.vec");	
+	std::ifstream q_in("../Setup/q_set.vec");
+	std::ifstream m_in("../Setup/m_set.vec");
 	
+	for (int i = 0; i < n; i++)
+	{
+		std::string r_str = "";
+		std::string v_str = "";
+		std::string w_str = "";
+		std::string q_str = "";
+		std::string m_str = "";
+		std::string rad_str = "";				
+		double r_temp[4] = {0.0, 0.0, 0.0, 0.0};
+		double v_temp[4] = {0.0, 0.0, 0.0, 0.0};
+		double w_temp[4] = {0.0, 0.0, 0.0, 0.0};
+		double q_temp = 0.0;
+		double rad_temp = 0.0;
+		double m_temp = 0.0;		
+
+		std::getline(r_in,r_str);
+		std::getline(v_in,v_str);
+		std::getline(w_in,w_str);
+		std::getline(q_in,q_str);
+		std::getline(m_in,m_str);
+		std::getline(rad_in,rad_str);
+		
+		string2array(r_str,r_temp);
+		string2array(v_str,v_temp);
+		string2array(w_str,w_temp);
+		
+		q_temp = std::stod(q_str);		
+		m_temp = std::stod(m_str);		
+		rad_temp = std::stod(rad_str);	
+		
+		q[i] = q_temp;
+		rad[i] = rad_temp;
+		m[i] = m_temp;
+		
+		for (int j = 0; j < 4; j++)
+		{		
+		r[i][j] = r_temp[j];
+		v[i][j] = v_temp[j];
+		w[i][j] = w_temp[j];		
+		}
+	}
+
+		
 	stuff[0] = settings[1];
 	stuff[1] = settings[2];
 	stuff[2] = settings[3];
@@ -74,13 +144,15 @@ int main() {
 
 	int framecount = 0;
 	int tempcount = 0;
-	double E_temp[n] = { 0 };
-	double I[n];
-	int l1[n_el];
-	int l2[n_el];
-	short l3[n][n_el] = {0};
+	auto E_temp = new double[n];
+	auto I = new double[n];
+	auto l1 = new int[n_el];
+	auto l2 = new int[n_el];
+	auto l3 = new short int[n][n_el];
 	//short l4[n] = {0};
-	int n0[2] = { n_el, n };
+	long long int n0[2] = { n_el, n };
+	l3 = { 0 };
+	E_temp = { 0 };
 
 	for (int x=0; x<n; x++)
 	{
@@ -138,9 +210,18 @@ int main() {
 	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices);
 	
 	// Assign Buffers
-	double zerotemp_n_4[n][4] = { 0 };
-	double zerotemp_nel_4[n_el][4] = { 0 };
-	double zerotemp_4[4] = { 0 };
+	auto zerotemp_n_4 = new double[n][4];
+	auto zerotemp_nel_4 = new double[n_el][4];
+	auto zerotemp_n = new double[n];
+	auto zerotemp_n_el = new double[n_el];
+	auto zerotemp_4 = new double[4];
+	
+	zerotemp_n_4[n][4] = { 0 };
+	zerotemp_nel_4[n_el][4] = { 0 };
+	zerotemp_4[4] = { 0 };
+	zerotemp_n[n] = { 0 }; 
+	zerotemp_n_el[n_el] = { 0 };
+
 	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
 	//cl::Buffer l4buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l4);
 	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l3), l3);
@@ -162,18 +243,25 @@ int main() {
 	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp_n_4);
 	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp_n_4);
 
-	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
-	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
-	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
-	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
-	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
-	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
+	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n), zerotemp_n);
+	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n_el), zerotemp_n_el);
+	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n), zerotemp_n);
+	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n_el), zerotemp_n_el);
+	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n), zerotemp_n);
+	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n), zerotemp_n);
+	
+
+	delete [] zerotemp_n_4;
+	delete [] zerotemp_nel_4;
+	delete [] zerotemp_n;
+	delete [] zerotemp_n_el;
+	delete [] zerotemp_4;
 
 	// Open output streams
 	std::ofstream r_tracker("../Outputs/Particle_tracks.dat", std::ios::out);
-	std::ofstream Tv_tracker("../Outputs/Tv_tracks.dat", std::ios::out);
-	std::ofstream Tw_tracker("../Outputs/Tw_tracks.dat", std::ios::out);
-	std::ofstream E_tracker("../Outputs/Int_tracks.dat", std::ios::out);
+	std::ofstream Tv_tracker("../Outputs/T_v_tracks.dat", std::ios::out);
+	std::ofstream Tw_tracker("../Outputs/T_w_tracks.dat", std::ios::out);
+	std::ofstream E_tracker("../Outputs/E_int_tracks.dat", std::ios::out);
 	std::ofstream V_tracker("../Outputs/V_tracks.dat", std::ios::out);
 	std::ofstream v_tracker("../Outputs/v_tracks.dat", std::ios::out);
 	std::ofstream w_tracker("../Outputs/w_tracks.dat", std::ios::out);
@@ -238,6 +326,7 @@ int main() {
 	cl::NDRange local_size(1);
 
 
+
 	// Initialise timestep scaler	
 	double v_norm[n] = { 0 };
 
@@ -290,6 +379,7 @@ int main() {
 		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
 			framecount++;
+		
 			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), sizeof(r), &r);
 			tempstring = arraytostring(r,n);
 			r_tracker << tempstring;
@@ -305,15 +395,15 @@ int main() {
 			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
 			tempstring = arraytostring(E_temp, n);
 			Tv_tracker << tempstring;
-
+		
 			queue.enqueueReadBuffer(Twbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
 			tempstring = arraytostring(E_temp, n);
 			Tw_tracker << tempstring;
 
-			queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t (0), sizeof(l1), &v);
+			queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t (0), sizeof(v), &v);
 			tempstring = arraytostring(v, n);
 			v_tracker << tempstring;
-			
+		
 			queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), sizeof(w), &w);
 			tempstring = arraytostring(w, n);
 			w_tracker << tempstring;
@@ -348,7 +438,13 @@ int main() {
 	}
   
 
-	std::cout << "Simulation complete!\n";	
+	std::cout << "Simulation complete!\n";
+	delete [] r;
+	delete [] v;
+	delete [] w;
+	delete [] q;
+	delete [] m;
+	delete [] rad;	
 	//long hold = 0;
 	//while (true)
 	//{

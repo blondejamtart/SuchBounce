@@ -1,10 +1,10 @@
 do_zero = 1; 
 
 m = [1e-1*ones(1,128) 3e-3*ones(1,128)];
-Tv=fileread('Tv_tracks.dat');
-Tw=fileread('Tw_tracks.dat');
+Tv=fileread('T_v_tracks.dat');
+Tw=fileread('T_w_tracks.dat');
 V=fileread('V_tracks.dat');
-E=fileread('Int_tracks.dat');
+E=fileread('E_int_tracks.dat');
 ii=size(V,1);
 T = sum(E,2)+sum(V,2)+sum(Tv,2)+sum(Tw,2);
 T_part = 2*E + 2*V + Tv - (6.67384e-11*3.5e8*3.5e8/110);
