@@ -45,29 +45,31 @@ elseif strcmp(lang,'init')
         
     end
     
-else
+elseif strcmp(lang,'Julia')
     
-    %     if ndims(var) == 3
-    %         for i = 1:size(var,1)
-    %             tempstr = num2str(var(i,1,:));
-    %             writestr = tempstr(1:length(num2str(var(:,1,i)))-1);
-    %             for j = 2:size(var,2)-1
-    %                 tempstr = num2str(var(i,j,:));
-    %                 writepart = tempstr(2:length(num2str(var(i,j,:)))-1);
-    %                 writestr = [writestr ';' writepart];
-    %             end
-    %             tempstr = num2str(var(i,size(var,2),:));
-    %             writepart = tempstr(2:length(string(var(:,j,i)))-1);
-    %             writestr = [writestr ';' writepart ']\n'];
-    %             write(dumpfile,writestr);
-    %         end
-    %     else
-    %          for i = 1:size(var,2)
-    %             writestr = string(var(:,i)')(1:length(string(var(:,i)])));
-    %             writestr = [writestr '\n'];
-    %             write(dumpfile,writestr);
-    %         end
-    %     end
+        if ndims(var) == 3
+        for i = 1:size(var,1)
+            i
+            tempstr = num2str(var(i,1,:),'%+10.13e ');
+            writestr = ['[' tempstr];
+            for j = 2:size(var,2)-1
+                tempstr = num2str(var(i,j,:),'%+10.13e ');
+                writepart = [' ' tempstr];
+                writestr = [writestr ';' writepart];
+            end
+            tempstr = num2str(var(i,size(var,2),:),'%+10.13e ');
+            writepart = [' ' tempstr];
+            writestr = [writestr ';' writepart ']'];
+            fprintf(dumpfile,'%s\n',writestr);
+        end
+    else
+        for i = 1:size(var,1)
+            tempstr = num2str(var(i,:),'%+10.13e, ');
+            writestr = ['[' tempstr(1:length(tempstr) - 1) ']'];
+            fprintf(dumpfile,'%s\n',writestr);
+        end
+        
+    end
     
 end
 

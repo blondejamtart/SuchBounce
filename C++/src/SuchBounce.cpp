@@ -4,7 +4,7 @@
 //Auto-stuff
 double stuff[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 double t_step = 0;
-const long long int n_el = (0.5)*n*(n - 1);
+const int n_el = (0.5)*n*(n - 1);
 
 
 // Calculated interval between data samples for output	
@@ -74,6 +74,7 @@ int main()
 	auto q = new double[n];
 	auto m = new double[n];
 	auto rad = new double[n];
+	
 
 	std::ifstream r_in("../Setup/r_set.vec");
 	std::ifstream v_in("../Setup/v_set.vec");
@@ -150,9 +151,7 @@ int main()
 	auto l2 = new int[n_el];
 	auto l3 = new short int[n][n_el];
 	//short l4[n] = {0};
-	long long int n0[2] = { n_el, n };
-	l3 = { 0 };
-	E_temp = { 0 };
+	int n0[2] = { n_el, n };
 
 	for (int x=0; x<n; x++)
 	{
@@ -163,9 +162,10 @@ int main()
 	{
 		for (int y=0; y<x; y++)	
 		{	
-		int i = (0.5*x*(x-1)+y);	
+		int i = (0.5*x*(x-1)+y);			
 		l1[i] = x;
 		l2[i] = y;
+		//std::cout << x << "/" << y << "/" << i << "\n";		
 		l3[x][i] = -1;
 		l3[y][i] = 1;
 		}
@@ -182,7 +182,7 @@ int main()
 	
 	cl::Context ctx(platformDevices);
 	conDev = ctx.getInfo<CL_CONTEXT_DEVICES>();
-		
+	
 	std::cout << "Please Choose Device:\n\n";
 	for (unsigned int i = 0; i < conDev.size(); i++)
 	{
@@ -215,33 +215,28 @@ int main()
 	auto zerotemp_n = new double[n];
 	auto zerotemp_n_el = new double[n_el];
 	auto zerotemp_4 = new double[4];
+	auto vecsize = ::size_t(4*8*n);
 	
-	zerotemp_n_4[n][4] = { 0 };
-	zerotemp_nel_4[n_el][4] = { 0 };
-	zerotemp_4[4] = { 0 };
-	zerotemp_n[n] = { 0 }; 
-	zerotemp_n_el[n_el] = { 0 };
-
 	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
 	//cl::Buffer l4buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l4);
-	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l3), l3);
-	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l2), l2);
-	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l1), l1);
-	cl::Buffer cbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(q), q);
-	cl::Buffer mbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(m), m);
-	cl::Buffer radbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(rad), rad);
-	cl::Buffer Ibuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(I), I);
+	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(2*n*n_el), l3);
+	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l2);
+	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l1);
+	cl::Buffer cbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
+	cl::Buffer mbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), m);
+	cl::Buffer radbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), rad);
+	cl::Buffer Ibuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), I);
 	cl::Buffer tbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(stuff), stuff);
 	cl::Buffer Ftmp(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (32), zerotemp_4);
 
-	cl::Buffer rbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), r);
-	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(v), v);
-	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(w), w);
+	cl::Buffer rbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, r);
+	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, v);
+	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, w);
 
-	cl::Buffer vincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(zerotemp_nel_4), zerotemp_nel_4);
-	cl::Buffer wincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(zerotemp_nel_4), zerotemp_nel_4);
-	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp_n_4);
-	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(r), zerotemp_n_4);
+	cl::Buffer vincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n_el*4), zerotemp_nel_4);
+	cl::Buffer wincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n_el*4), zerotemp_nel_4);
+	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, zerotemp_n_4);
+	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, zerotemp_n_4);
 
 	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n), zerotemp_n);
 	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n_el), zerotemp_n_el);
@@ -380,31 +375,31 @@ int main()
 		{
 			framecount++;
 		
-			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), sizeof(r), &r);
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
 			r_tracker << tempstring;
 
-			queue.enqueueReadBuffer(Vbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
+			queue.enqueueReadBuffer(Vbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
 			V_tracker << tempstring;
 
-			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
+			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
 			E_tracker << tempstring;
 
-			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
+			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
 			Tv_tracker << tempstring;
 		
-			queue.enqueueReadBuffer(Twbuff, CL_TRUE, ::size_t (0), sizeof(E_temp), &E_temp);
+			queue.enqueueReadBuffer(Twbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
 			Tw_tracker << tempstring;
 
-			queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t (0), sizeof(v), &v);
+			queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t (0), vecsize, v);
 			tempstring = arraytostring(v, n);
 			v_tracker << tempstring;
 		
-			queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), sizeof(w), &w);
+			queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 			tempstring = arraytostring(w, n);
 			w_tracker << tempstring;
 			

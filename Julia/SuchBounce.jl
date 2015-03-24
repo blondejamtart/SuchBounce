@@ -44,18 +44,23 @@ end
 # Preallocation
 global framecount = int64(0);
 global tempcount = int64(0);
-global r_tracker = zeros(4,n,n_frames);
-global Tv_tracker = zeros(n,n_frames);
-global Tw_tracker = zeros(n,n_frames);
-global V_tracker = zeros(n,n_frames);
-global Int_tracker = zeros(n,n_frames);
-global I = zeros(size(r,2),1);
-global l1 = zeros(Int32,n_el,1);
-global l2 = zeros(Int32,n_el,1);
-global l3 = zeros(Int8,n_el,n);
-global l4 = zeros(Int8,n_el,1);
-global external = zeros(4,n);
-
+const tracker_size = 32*n*n_frames;
+if tracker_size > 2^32
+	write(STDOUT,"NO!")
+	break
+else
+	global r_tracker = zeros(4,n,n_frames);
+	global Tv_tracker = zeros(n,n_frames);
+	global Tw_tracker = zeros(n,n_frames);
+	global V_tracker = zeros(n,n_frames);
+	global Int_tracker = zeros(n,n_frames);
+	global I = zeros(size(r,2),1);
+	global l1 = zeros(Int32,n_el,1);
+	global l2 = zeros(Int32,n_el,1);
+	global l3 = zeros(Int8,n_el,n);
+	global l4 = zeros(Int8,n_el,1);
+	global external = zeros(4,n);
+end
 # Calculate Inertia (spheres)
 for x = 1:n
 	I[x] = (2*m[x]*(rad[x]^2)/5);
