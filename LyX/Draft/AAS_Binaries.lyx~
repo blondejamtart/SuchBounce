@@ -1,0 +1,491 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+
+\usepackage{graphicx}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine natbib_authoryear
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand{
+\backslash
+abstractname}{}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand{
+\backslash
+sfdefault}{phv}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+title{
+\backslash
+textsf{
+\backslash
+textbf{Induced Fragmentation of Asteroids during Close Encounters}}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+author{
+\backslash
+textsf{Bryan Tester}
+\backslash
+footnote{PhD student at University of Strathclyde, United Kingdom}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+and
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+textsf{Prof.
+ Massimiliano Vasile}
+\backslash
+footnote{Professor at University of Strathclyde, United Kingdom}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+date{}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+maketitle
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{abstract}
+\end_layout
+
+\end_inset
+
+We consider the behaviour of rotating binary asteroids as they pass through
+ Earth's Hill sphere, with primary interest in the effect the tidal force
+ has on the interaction between the two components of the binary and their
+ post-encounter trajectories.
+ We focus on contact binary asteroids bound by a regolith bridge, using
+ both direct numerical simulation and an analytical approach.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{abstract}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+section{Introduction}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Radar obesrvations suggest that a significant portion of Asteroids with
+ Earth-crossing orbits are binary systems, consisting of two componets in
+ contact with or in close proximity to eachother.
+ As shown by work such as that of Farinella 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+textit{et al}
+\backslash
+cite{binaryevo}
+\end_layout
+
+\end_inset
+
+ in the early 1990s, gravitational encounters can significantly alter the
+ orbits and integrity of binary asteroids.
+ Clearly it is important to be able to accurately predict the motion of
+ these bodies to give maximum warning of any possible Earth collision event.
+ The work presented here is inspired by that of Borum 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+textit{et al}
+\backslash
+cite{grrr}
+\end_layout
+
+\end_inset
+
+.
+ In our work we revisit some of the previously discussed cases and then
+ expand to include 
+\begin_inset Quotes eld
+\end_inset
+
+Contact Binaries
+\begin_inset Quotes erd
+\end_inset
+
+ (single asteroids formed primarily by two large boulders); we consider
+ both gravitationally bound pairs and those bound by a regolith bridge (simmilar
+ to the mechanism discussed by Sanchez & Scheeres 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cite{dustbound}
+\end_layout
+
+\end_inset
+
+).
+ We also model an attempted deflection of the asteroid prior to the close
+ encounter.
+ Our analysis has been performed using both numerical simulations and by
+ taking an analytical approach.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+section{Equations of Motion}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The analytical approach to characterising the system is based upon the full
+ equations of motion in a rotating reference frame, with the rotation of
+ the reference frame such that the barycentre of the system remains at a
+ constant angle to the Earth.
+ The resulting equations can be split into two separeate parts, detailing
+ the motion of the barycentre and the relative motion of the binary components
+ respectively.
+ For obvious complexity reasons we choose to neglect the individual effect
+ of the particles in the regolith bridge but opt instead to incorporate
+ their net effect on the force between the main binary components into a
+ single term.
+ Figure 2 shows the break-up time predicted by the analytical approach for
+ an example binary pair during a close encounter, compared to the actual
+ break-up seen in numerical simulations.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+section{Numerical Simulations}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The numerical simulations are run using a custom multi-body code, which
+ includes full interparticle gravitational interactions, London dispersion
+ forces and Soft-Body collisions similar to those implemented in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+textit{PKDGRAV}
+\end_layout
+
+\end_inset
+
+ by Schwartz 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+textit{et al}
+\backslash
+cite{soft}
+\end_layout
+
+\end_inset
+
+.
+ Previous work considering the orbits of binary and rubble pile asteroid
+ has only considered gravitatonal interactions between the components.
+ We consider encounters with a range of Earth-Asteroid two-body energies
+ and varying binary asteroid rotation speeds; the binary components are
+ plaed in a mutual circular orbit in each case with the force between them
+ artificially varied to simulate the effects of a regolith bridge binding
+ the two components.
+ Additionally, full numerical simulations of two boulders bound by such
+ a regolith bridge on a Hyperbolic trajectory are performed and the effect
+ of the tidal forces on the integrity of the bridge is investigated.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+section{Conclusion}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We present a methodology to model contact binary asteroids bound by regolith
+ during an encounter with a large body such as Earth.
+ Any conclusions drawn from this research will allow for enhanced accuracy
+ in the prediction of asteroid trajectories and allow for better planning
+ in any mission to capture or deflect such an object.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{thebibliography}{9}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+bibitem{binaryevo}Farinella P.
+ 
+\backslash
+& Chauvineau B., 
+\backslash
+emph{On the Evolution of binary Earth-approaching asteroids}, Astron.
+ Astrophys.
+ 
+\backslash
+textbf{279}, 251-259 (1993).
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+bibitem{grrr}Borum A.
+ 
+\backslash
+textit{et al}, 
+\backslash
+emph{Capturing Near-Earth Asteroids Using A Binary Exchange Mechanism},
+ Virginia Tech (online) (2012).
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+bibitem{dustbound}Sanchez P.
+ 
+\backslash
+& Scheeres D.J., 
+\backslash
+emph{Granular Cohesion and Fast Rotators in the NEA Population}, AIP Proceedings
+ 
+\backslash
+textbf{1542}, 955 (2013).
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+bibitem{soft}Schwartz R.S., Richard D.C.
+ 
+\backslash
+& Michel P., 
+\backslash
+emph{An Implementation of the Soft-Sphere Discrete Element Method in a high-perf
+ormance parallel gravity tree-code}, Granular Matter 
+\backslash
+textbf{14}, 363-380 (2012).
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{thebibliography}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
