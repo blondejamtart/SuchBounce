@@ -18,8 +18,8 @@ __kernel void Fimp(__global const double *q,
 				  
 		{ 			
 			int x = get_global_id(0);
-			int a = k[x];
-			int b = l[x];
+			int a = k[x] - 1;
+			int b = l[x] - 1;
 		   	double G = stuff[6];
 			double e0 = stuff[7];
 			double 	d = distance(r[a],r[b]);
@@ -31,16 +31,16 @@ __kernel void Fimp(__global const double *q,
 			double 	p0 = dot(vtemp,normalize((r[a]-v[a]*0.5*stuff[0])-(r[b]-v[b]*0.5*stuff[0])));		
 			double 	collisionflag = step(d0,(rad[a]+rad[b]));
 
-			double 	cut_off = 1.01*(rad[a]+rad[b]);
-			double 	hard_rad = 0.99*(rad[a]+rad[b]);	
+			double 	cut_off = (rad[a]+rad[b]) + 0.01*min(rad[a],rad[b]);
+			double 	hard_rad = (rad[a]+rad[b]) - 0.005*min(rad[a],rad[b]);	
 			double 	fplus = 1/(pow(d,2) - pow((rad[a]+rad[b]),2));		
 			double 	fminus = 1/(pow(d,2) - pow((rad[b]-rad[a]),2));
 			double 	fpe = 1/(pow(cut_off,2) - pow((rad[a]+rad[b]),2));		
 			double 	fme = 1/(pow(cut_off,2) - pow((rad[b]-rad[a]),2));					
 					
 			Vpart[x] = (-(m[a]*m[b]*G)+(q[a]*q[b]*e0))/d;			
-			double 	F = (((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d));
-			double 	dF = ((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d))*p;	
+			double 	F = 0; //(((m[a]*m[b]*G) - (q[a]*q[b]*e0))/(d*d));
+			double 	dF = 0; //((-2*(m[a]*m[b]*G) + 2*(q[a]*q[b]*e0))/(d*d*d))*p;	
 		
 
 			if (d > cut_off) 
@@ -69,9 +69,8 @@ __kernel void Fimp(__global const double *q,
 			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
 			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}			
 			rddp[x] = j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel); 
-			oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);
+			oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);			
 			
-			Ipart[x] = 0.25*collisionflag*m[a]*m[b]/(m[a]+m[b])*stuff[8]*pow((rad[a]+rad[b]-d0),2);					
 
-						
+			Ipart[x] = 0.25*collisionflag*m[a]*m[b]/(m[a]+m[b])*stuff[8]*pow((rad[a]+rad[b]-d0),2);			
 		}

@@ -1,0 +1,32 @@
+
+\documentclass[letterpaper, preprint, paper,11pt]{AAS}	
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{subfigure}
+
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=black, citecolor= black, urlcolor= black]{hyperref}
+\usepackage{overcite}
+\usepackage{footnpag}			      	
+\usepackage{float}
+
+
+
+\PaperNumber{XX-XXX}
+
+
+
+\begin{document}
+\begin{equation}
+E = \sum\left[\frac{-Gm_im_j}{\|\vec{r_{ij}}\|}+\frac{q_iq_j}{4\pi\epsilon_0\|\vec{r_{ij}}\|}+V(\|\vec{r_{ij}}\|)\right]
+\end{equation}
+\begin{equation}
+V(r) = \left\{
+\begin{array}{lr}
+-\frac{A}{6}\left(\frac{2R_iR_j}{r^2-[R_i+R_j]^2}+\frac{2R_iR_j}{r^2-[R_i-R_j]^2}+\log\frac{r^2-[R_i+R_j]^2}{r^2-[R_i-R_j]^2}\right) & : r > r_{cutoff}\\
+\frac{V'_{cutoff}}{2(r_{cutoff}-r_{min})}(r-r_{min})^2+V_{cutoff} - \frac{V'_{cutoff}(r_{cutoff}-r_{min})}{2} & : r \leq r_{cutoff}
+\end{array}
+\right.
+\end{equation}
+
+$V_{cutoff} := V(r_{cutoff})$,  $V'_{cutoff} := V'(r_{cutoff})$; minimum value of pseudopotential located at $r_{min}$; Inter-particle distance $\vec{r_{ij}}$; Particle radii $R_i$, charges $q_i$ \& masses $m_i$; Gravitational constant $G = 6.6734*10^{-11} Nm^2kg^{-2} $; Free-space permittivity $\epsilon_0 = 8.85419*10^{-12} Fm^{-1}$; Material-dependent Hamaker constant $A$. 
+\end{document}

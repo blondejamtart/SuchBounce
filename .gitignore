@@ -1127,3 +1127,209 @@ Temporary Items
 /Julia/Setup/setup_circ_big2small.vec
 /Julia/Setup/setup_circ_smalltight.vec
 /Julia/Outputs/sim_render_avi.m
+/Julia/Outputs/Changing_Circle/setup_circ_big2small.vec
+/Julia/Outputs/Changing_Circle/setup_circ_small2big_loose.vec
+/Julia/Outputs/Changing_Circle/setup_circ_smalltight.vec
+/LyX/AAS_Binaries.pdf
+/LyX/AAS_Binaries.lyx~
+/MATLAB/Job1.common.mat
+/MATLAB/Job1.diary.txt
+/MATLAB/Job1.in.mat
+/MATLAB/Job1.jobout.mat
+/MATLAB/Job1.out.mat
+/MATLAB/Job1.state.mat
+/MATLAB/Job2.common.mat
+/MATLAB/Job2.diary.txt
+/MATLAB/Job2.in.mat
+/MATLAB/Job2.jobout.mat
+/MATLAB/Job2.out.mat
+/MATLAB/Job2.state.mat
+/MATLAB/Job3.common.mat
+/MATLAB/Job3.diary.txt
+/MATLAB/Job3.in.mat
+/MATLAB/Job3.jobout.mat
+/MATLAB/Job3.out.mat
+/MATLAB/Job3.state.mat
+/MATLAB/Job4.common.mat
+/MATLAB/Job4.diary.txt
+/MATLAB/Job4.in.mat
+/MATLAB/Job4.jobout.mat
+/MATLAB/Job4.out.mat
+/MATLAB/Job4.state.mat
+/MATLAB/matlab_metadata.mat
+/C++/a.out
+/C++/Outputs/E_int_tracks.dat
+/C++/Outputs/T_v_tracks.dat
+/C++/Outputs/T_w_tracks.dat
+/C++/Setup/m_set.vec
+/C++/Setup/q_set.vec
+/C++/Setup/rad_set.vec
+/C++/Setup/r_set.vec
+/C++/Setup/v_set.vec
+/C++/Setup/w_set.vec
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/batch_read.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/E_int_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/E_plot.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/E_plot.m~
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/fileread.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/final_dump.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/init_dump.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/orbit_plot.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/Particle_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/Particle_tracks.dat~
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/setup.vec
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/sim_render_dat.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/T_v_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/T_w_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_rotating/V_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/batch_read.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/E_int_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/E_plot.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/fileread.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/final_dump.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/init_dump.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/orbit_plot.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/Particle_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/Particle_tracks.dat~
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/setup.vec
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/sim_render_dat.m
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/T_v_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/T_w_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Dustbound_binary_static/V_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/batch_read.m
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/E_int_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/E_plot.m
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/E_plot.m~
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/fileread.m
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/final_dump.dat
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/init_dump.dat
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/Particle_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/sim_render_dat.m
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/T_v_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/T_w_tracks.dat
+/Julia/DATA/Large_Binary_stationary/Unbound_rotating/V_tracks.dat
+/Julia/Outputs/mCpp.dat
+/Julia/Outputs/m_set.vec
+/Julia/Outputs/q_set.vec
+/Julia/Outputs/rad_set.vec
+/Julia/Outputs/rCpp.dat
+/Julia/Outputs/r_set.vec
+/Julia/Outputs/setup.dat
+/Julia/Outputs/tempCpp.dat
+/Julia/Outputs/v_set.vec
+/Julia/Outputs/w_set.vec
+/C++/src/log.txt
+/C++/test.cpp
+/Julia/DATA/Dustbound_smaller/E_int_tracks.dat
+/Julia/DATA/Dustbound_smaller/final_dump.dat
+/Julia/DATA/Dustbound_smaller/init_dump.dat
+/Julia/DATA/Dustbound_smaller/Int_tracks.dat
+/Julia/DATA/Dustbound_smaller/Particle_tracks.dat
+/Julia/DATA/Dustbound_smaller/T_v_tracks.dat
+/Julia/DATA/Dustbound_smaller/T_w_tracks.dat
+/Julia/DATA/Dustbound_smaller/V_tracks.dat
+/Julia/Outputs/dump.dat
+/Julia/Outputs/filewrite.m~
+/Julia/Outputs/r.vec
+/Julia/Outputs/r.vec~
+/Julia/Outputs/v.vec
+/Julia/Outputs.tar.gz
+/C++/src _nvidia/a.out
+/C++/src _nvidia/F_Hybrid.cl
+/C++/src _nvidia/F_Hybrid.cl~
+/C++/src _nvidia/Int_tracks.dat
+/C++/src _nvidia/kinetic.cl
+/C++/src _nvidia/kinetic.cl~
+/C++/src _nvidia/log.txt
+/C++/src _nvidia/Particle_tracks.dat
+/C++/src _nvidia/position.cl
+/C++/src _nvidia/position.cl~
+/C++/src _nvidia/reduce.cl
+/C++/src _nvidia/reduce.cl~
+/C++/src _nvidia/SuchBounce.cpp
+/C++/src _nvidia/SuchBounce.cpp~
+/C++/src _nvidia/SuchBounce.sh~
+/C++/src _nvidia/test.cpp
+/C++/src _nvidia/test.cpp~
+/C++/src _nvidia/time_scaler.cl
+/C++/src _nvidia/time_scaler.cl~
+/C++/src _nvidia/translate_0.cl
+/C++/src _nvidia/translate_0.cl~
+/C++/src _nvidia/translate.cl
+/C++/src _nvidia/translate.cl~
+/C++/src _nvidia/Tv_tracks.dat
+/C++/src _nvidia/Tw_tracks.dat
+/C++/src _nvidia/velocity.cl
+/C++/src _nvidia/velocity.cl~
+/C++/src _nvidia/V_tracks.dat
+/C++/src _nvidia/zero.cl
+/C++/src _nvidia/zero.cl~
+/Julia/DATA/Dustbound_smaller/1/E_int_tracks.dat
+/Julia/DATA/Dustbound_smaller/1/final_dump.dat
+/Julia/DATA/Dustbound_smaller/1/init_dump.dat
+/Julia/DATA/Dustbound_smaller/1/Int_tracks.dat
+/Julia/DATA/Dustbound_smaller/1/Particle_tracks.dat
+/Julia/DATA/Dustbound_smaller/1/T_v_tracks.dat
+/Julia/DATA/Dustbound_smaller/1/T_w_tracks.dat
+/Julia/DATA/Dustbound_smaller/1/V_tracks.dat
+/Julia/DATA/Dustbound_smaller/2/E_int_tracks.dat
+/Julia/DATA/Dustbound_smaller/2/final_dump.dat
+/Julia/DATA/Dustbound_smaller/2/Particle_tracks.dat
+/Julia/DATA/Dustbound_smaller/2/T_v_tracks.dat
+/Julia/DATA/Dustbound_smaller/2/T_w_tracks.dat
+/Julia/DATA/Dustbound_smaller/2/V_tracks.dat
+/Julia/DATA/Dustbound_smaller/3/E_int_tracks.dat
+/Julia/DATA/Dustbound_smaller/3/final_dump.dat
+/Julia/DATA/Dustbound_smaller/3/Particle_tracks.dat
+/Julia/DATA/Dustbound_smaller/3/T_v_tracks.dat
+/Julia/DATA/Dustbound_smaller/3/T_w_tracks.dat
+/Julia/DATA/Dustbound_smaller/3/V_tracks.dat
+/Julia/Outputs/Changing_Circle/Particle_tracks_0.dat
+/Julia/Outputs/Changing_Circle/Particle_tracks_1.dat
+/Julia/Outputs/Changing_Circle/Particle_tracks_2.dat
+/Julia/Outputs/Changing_Circle/Particle_tracks_3.dat
+/LyX/AAS_Template/AAStemplatev2_0_6.aux
+/LyX/AAS_Template/AAStemplatev2_0_6.bbl
+/LyX/AAS_Template/AAStemplatev2_0_6.blg
+/LyX/AAS_Template/AAStemplatev2_0_6.fot
+/LyX/AAS_Template/AAStemplatev2_0_6.log
+/LyX/AAS_Template/AAStemplatev2_0_6.out
+/LyX/AAS_Template/AAStemplatev2_0_6.pdf
+/LyX/AAS_Template/AAStemplatev2_0_6.synctex.gz
+/LyX/AAS_Template/AAStemplatev2_0_6.tex
+/LyX/AAS_Template/Figures/test.eps
+/LyX/AAS_Template/Figures/test.jpg
+/LyX/AAS_Template/Figures/test.pdf
+/LyX/AAS_Template/references.bib
+/Julia/Outputs/spinup.m
+/Julia/DATA/Dustbound_smaller/4/E_int_tracks.dat
+/Julia/DATA/Dustbound_smaller/4/final_dump.dat
+/Julia/DATA/Dustbound_smaller/4/Particle_tracks.dat
+/Julia/DATA/Dustbound_smaller/4/T_v_tracks.dat
+/Julia/DATA/Dustbound_smaller/4/T_w_tracks.dat
+/Julia/DATA/Dustbound_smaller/4/V_tracks.dat
+/C++/prof.txt
+/C++/Setup/m.vec
+/C++/Setup/q.vec
+/C++/Setup/rad.vec
+/C++/Setup/r.vec
+/C++/Setup/v.vec
+/C++/Setup/w.vec
+/C++/src/hello.c~
+/C++/src/hello.cpp
+/C++/src/hello.cpp~
+/Julia/DATA/Regolith_0/E_int_tracks.dat
+/Julia/DATA/Regolith_0/final_dump.dat
+/Julia/DATA/Regolith_0/init_dump.dat
+/Julia/DATA/Regolith_0/Particle_tracks.dat
+/Julia/DATA/Regolith_0/setup_0.vec
+/Julia/DATA/Regolith_0/T_v_tracks.dat
+/Julia/DATA/Regolith_0/T_w_tracks.dat
+/Julia/DATA/Regolith_0/V_tracks.dat
+/Julia/Outputs/binary_analy.fig
+/Julia/Outputs/binary_num.fig
+/Julia/Outputs/m.vec~
+/Julia/Outputs/rad.vec~
+/Julia/Outputs/system_energy.m
+/Julia/Outputs/system_energy.m~
+/Julia/Outputs/untitled.m

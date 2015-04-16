@@ -1,5 +1,4 @@
 #include "../Settings.h"
-#include <limits>
 
 //Auto-stuff
 double stuff[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -76,12 +75,12 @@ int main()
 	auto rad = new double[n];
 	
 
-	std::ifstream r_in("../Setup/r_set.vec");
-	std::ifstream v_in("../Setup/v_set.vec");
-	std::ifstream w_in("../Setup/w_set.vec");
-	std::ifstream rad_in("../Setup/rad_set.vec");	
-	std::ifstream q_in("../Setup/q_set.vec");
-	std::ifstream m_in("../Setup/m_set.vec");
+	std::ifstream r_in("../Setup/r.vec");
+	std::ifstream v_in("../Setup/v.vec");
+	std::ifstream w_in("../Setup/w.vec");
+	std::ifstream rad_in("../Setup/rad.vec");	
+	std::ifstream q_in("../Setup/q.vec");
+	std::ifstream m_in("../Setup/m.vec");
 	
 	for (int i = 0; i < n; i++)
 	{
@@ -149,7 +148,7 @@ int main()
 	auto I = new double[n];
 	auto l1 = new int[n_el];
 	auto l2 = new int[n_el];
-	auto l3 = new short int[n][n_el];
+	auto l3 = new short[n][n_el];
 	//short l4[n] = {0};
 	int n0[2] = { n_el, n };
 
@@ -162,15 +161,34 @@ int main()
 	{
 		for (int y=0; y<x; y++)	
 		{	
-		int i = (0.5*x*(x-1)+y);			
-		l1[i] = x;
-		l2[i] = y;
-		//std::cout << x << "/" << y << "/" << i << "\n";		
-		l3[x][i] = -1;
-		l3[y][i] = 1;
+			int i = (0.5*x*(x-1)+y);			
+			l1[i] = x;
+			l2[i] = y;
+			//std::cout << x << "/" << y << "/" << i << "\n";		
+			for (int h=0; h<n; h++)
+			{
+				if (h==x){l3[x][i] = -1;}	
+				if (h==y){l3[y][i] = 1;}							
+				if (h!=x & h!=y){l3[h][i] = 0;}
+			}
 		}
+		
 	}	
 	
+	for (int x = 0; x<n; x++)
+	{
+		int num = 0;
+		for (int y = 0; y<n_el; y++)
+		{
+			//std::cout << l3[x][y];
+			num += pow(l3[x][y],2);
+		}
+		//std::cout << l3[x][n] << "\n\n";
+		if (num != n-1) {std::cout << "fizz" << x << "\n";}
+		
+	}
+
+
 	// OpenCL Context Sorcery
 	std::vector<cl::Platform> platforms;
 	std::vector<cl::Device> platformDevices, allDevices, conDev;
@@ -210,16 +228,11 @@ int main()
 	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices);
 	
 	// Assign Buffers
-	auto zerotemp_n_4 = new double[n][4];
-	auto zerotemp_nel_4 = new double[n_el][4];
-	auto zerotemp_n = new double[n];
-	auto zerotemp_n_el = new double[n_el];
-	auto zerotemp_4 = new double[4];
-	auto vecsize = ::size_t(4*8*n);
-	
+	double zerotemp_4[4] = { 0.0, 0.0, 0.0, 0.0 }; 
+	::size_t vecsize = ::size_t(4*n*8);
+
 	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
-	//cl::Buffer l4buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(l4), l4);
-	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(2*n*n_el), l3);
+	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(2*(n)*n_el), l3);
 	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l2);
 	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l1);
 	cl::Buffer cbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
@@ -233,24 +246,18 @@ int main()
 	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, v);
 	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, w);
 
-	cl::Buffer vincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n_el*4), zerotemp_nel_4);
-	cl::Buffer wincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n_el*4), zerotemp_nel_4);
-	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, zerotemp_n_4);
-	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, zerotemp_n_4);
+	cl::Buffer vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el*4));
+	cl::Buffer wincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el*4));
+	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE, vecsize);
+	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE, vecsize);
 
-	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n), zerotemp_n);
-	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n_el), zerotemp_n_el);
-	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n), zerotemp_n);
-	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n_el), zerotemp_n_el);
-	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n), zerotemp_n);
-	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (8*n), zerotemp_n);
-	
+	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
+	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
+	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
+	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
+	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
+	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));	
 
-	delete [] zerotemp_n_4;
-	delete [] zerotemp_nel_4;
-	delete [] zerotemp_n;
-	delete [] zerotemp_n_el;
-	delete [] zerotemp_4;
 
 	// Open output streams
 	std::ofstream r_tracker("../Outputs/Particle_tracks.dat", std::ios::out);
@@ -321,7 +328,6 @@ int main()
 	cl::NDRange local_size(1);
 
 
-
 	// Initialise timestep scaler	
 	double v_norm[n] = { 0 };
 
@@ -329,11 +335,9 @@ int main()
 
 
 	for (int z = 0; z < n; z++)
-	{
-		
+	{		
 		v_norm[z] = sqrt(pow(v[z][0], 2) + pow(v[z][1], 2) + pow(v[z][2], 2));
-		if (z > 0){ v_max = std::max(v_norm[z], v_norm[z - 1]); }
-		
+		if (z > 0){ v_max = std::max(v_norm[z], v_norm[z - 1]); }		
 	}
 	
 	double F1[4] = { 0 };
@@ -356,11 +360,16 @@ int main()
 	// Initialise simulation
 	double t_now = 0;
 	double t_last = 0;
-	double prog = 0;
+	short int prog = 0;
 	long counter = 0;
 	std::string tempstring;
 
+	queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
+	queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
+
 	std::cout << "Kernels & Buffers set: simulation started.\n";
+	//for (int i=0; i<100; i++){std::cout << "-";}
+	std::cout << "\n";
 	
 	while (t_now < max_time)
 	{
@@ -374,7 +383,9 @@ int main()
 		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
 			framecount++;
-		
+			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}		
+			
+			
 			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
 			r_tracker << tempstring;
@@ -405,8 +416,7 @@ int main()
 			
 
 			t_last = t_now;
-			prog = 100 * framecount / n_frames;				
-			std::cout << prog << "%\r";
+		
 
 		}
 		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
@@ -433,13 +443,19 @@ int main()
 	}
   
 
-	std::cout << "Simulation complete!\n";
+	std::cout << "\nSimulation complete!\n\n";
 	delete [] r;
 	delete [] v;
 	delete [] w;
 	delete [] q;
 	delete [] m;
 	delete [] rad;	
+	delete [] E_temp;
+	delete [] I;
+	delete [] l1;
+	delete [] l2; 
+	delete [] l3;
+
 	//long hold = 0;
 	//while (true)
 	//{

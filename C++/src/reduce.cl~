@@ -1,4 +1,4 @@
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+
 __kernel void red(__global double3 *rddp,
 					__global double3 *oddp,
 					__global double3 *accel,
@@ -16,9 +16,9 @@ __kernel void red(__global double3 *rddp,
 			int x = get_global_id(0);			
 			for (int c = 0; c < n[0]; c++)					
 			{	
-				Internal[x] += b[c+n[0]*x]*b[c+n[0]*x]*Ipart[c];				
+				Internal[x] += b[c+(n[0])*x]*b[c+n[0]*x]*Ipart[c];				
 				V[x] += 0.5*b[c+n[0]*x]*b[c+n[0]*x]*Vpart[c];				
-				accel[x] += b[c+n[0]*x]*rddp[c]/m[x];
-				alpha[x] += b[c+n[0]*x]*b[c+n[0]*x]*oddp[c]*rad[x]/I[x];	
-			}		
+				accel[x] += b[c+(n[0])*x]*rddp[c]/m[x];
+				alpha[x] += b[c+(n[0])*x]*b[c+n[0]*x]*oddp[c]*rad[x]/I[x];	
+			}	
 		}	

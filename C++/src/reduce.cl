@@ -20,5 +20,5 @@ __kernel void red(__global double3 *rddp,
 				V[x] += 0.5*b[c+n[0]*x]*b[c+n[0]*x]*Vpart[c];				
 				accel[x] += b[c+n[0]*x]*rddp[c]/m[x];
 				alpha[x] += b[c+n[0]*x]*b[c+n[0]*x]*oddp[c]*rad[x]/I[x];	
-			}		
+			}	
 		}	
