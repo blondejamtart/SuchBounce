@@ -1,4 +1,4 @@
-
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 __kernel void Scale(__global double *stuff,
 					__global double *F_track)
 

@@ -1,0 +1,32 @@
+m1 = [NaN 1 2*ones(1,1998)];
+m2 = [NaN 0 1 2*ones(1,1997)];
+m3 = [NaN 0 0 1 2*ones(1,1996)];
+theta(1) = NaN;
+a(1) = NaN;
+D1(1) = NaN;
+D2(1) = NaN;
+p1(1) = NaN;
+p2(1) = NaN;
+F1(1) = NaN;
+F2(1) = NaN;
+F3(1) = NaN;
+for i = 2:2000
+    N = 2*i;
+    theta(i) = pi*(0.5-1/N);
+    D1(i) = 2*(1+2*sin(pi*(0.5-2/N)));
+    a(i) = pi*(1-4/N);
+    p1(i) = 2*pi/N;
+    D2(i) = sqrt(4 + D1(i)^2 - 4*D1(i)*cos(a(i)));
+    p2(i) = p1(i) + asin(2*sin(a(i))/D2(i));
+    F1(i) = m1(i)*cos(theta(i))/(4*sin(theta(i)))^2;
+    F2(i) = m2(i)*sin(p1(i))/D1(i)^2;
+    F3(i) = m3(i)*sin(p2(i))/D2(i)^2;
+end
+a(2) = NaN;
+D1(2) = NaN;
+D2(2) = NaN;
+p1(2) = NaN;
+p2(2) = NaN;
+F3(2) = 0;
+F2(2) = NaN;
+

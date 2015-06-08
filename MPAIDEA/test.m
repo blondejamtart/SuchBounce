@@ -36,7 +36,7 @@ pop_number = 4;
 
 % Maximum number of function evaluation - The maximum number of function
 % evaluations can be changed
-nFeValMax = 1000 * D;
+nFeValMax = 50 * D;
 
 
 
@@ -113,7 +113,7 @@ end
 for k = 1 : size(memories,1)
     for kk = 1 : pop_number
         [minimum,where] = min(memories(k,D+1,:));
-        minima(k,1:D+1) = [0.1*ones(1,D) 1e-18].*memories(k,1:D+1,where);
+        minima(k,1:D+1) = [0.1*ones(1,D) 1e-20].*memories(k,1:D+1,where);
     end
 end
 

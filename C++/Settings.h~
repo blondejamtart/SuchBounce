@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 //Settings:
-const int n = 400;
-const double settings[9] = {pow(2,10), pow(2.0,-4), 1.0e-011, 5e-18, 0, 0.3, 0.3, 1.0e+01, pow(2.0,5)};
-const double max_time = pow(2,10);
-const double warp = pow(2.0,5);
+const int n = 512;
+const double settings[9] = {pow(2,9), pow(2.0,-4), 0, 8e-19, 0, 0, 0, 1e-02, pow(2.0,4)};
+const double max_time = pow(2,9);
+const double warp = pow(2.0,4);

@@ -73,14 +73,16 @@ int main()
 	auto q = new double[n];
 	auto m = new double[n];
 	auto rad = new double[n];
-	
+	std::string path;
+	std::string root = "../Setup";
 
-	std::ifstream r_in("../Setup/r.vec");
-	std::ifstream v_in("../Setup/v.vec");
-	std::ifstream w_in("../Setup/w.vec");
-	std::ifstream rad_in("../Setup/rad.vec");	
-	std::ifstream q_in("../Setup/q.vec");
-	std::ifstream m_in("../Setup/m.vec");
+	path = root + "/";
+	std::ifstream r_in(path + "r.vec");
+	std::ifstream v_in(path + "v.vec");
+	std::ifstream w_in(path + "w.vec");
+	std::ifstream rad_in(path + "rad.vec");	
+	std::ifstream q_in(path + "q.vec");
+	std::ifstream m_in(path + "m.vec");
 	
 	for (int i = 0; i < n; i++)
 	{
@@ -123,6 +125,8 @@ int main()
 		w[i][j] = w_temp[j];		
 		}
 	}
+	//for (int i = 0; i<n; i++){std::cout << q[i] << "; "; }
+	//std::cout <<"\n";
 
 		
 	stuff[0] = settings[1];
@@ -175,19 +179,27 @@ int main()
 		
 	}	
 	
-	for (int x = 0; x<n; x++)
-	{
-		int num = 0;
-		for (int y = 0; y<n_el; y++)
-		{
-			//std::cout << l3[x][y];
-			num += pow(l3[x][y],2);
-		}
-		//std::cout << l3[x][n] << "\n\n";
-		if (num != n-1) {std::cout << "fizz" << x << "\n";}
+	//for (int x = 0; x<n; x++)
+	//{
+	//	int num = 0;
+	//	for (int y = 0; y<n_el; y++)
+	//	{
+	//		//std::cout << l3[x][y];
+	//		num += pow(l3[x][y],2);
+	//	}
+	//	//std::cout << "\n";
+	//	if (num != n-1) {std::cout << "fizz" << x << "\n";}
 		
-	}
-
+	//}
+	//for (int x = 0; x<n_el; x++)
+	//{
+	//	for (int y = 0; y<n; y++)
+	//	{
+	//		std::cout << l3[y][x];
+	//		
+	//	}
+	//	std::cout << "\n";		
+	//}
 
 	// OpenCL Context Sorcery
 	std::vector<cl::Platform> platforms;
@@ -232,7 +244,7 @@ int main()
 	::size_t vecsize = ::size_t(4*n*8);
 
 	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
-	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(2*(n)*n_el), l3);
+	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(2*n*n_el), l3);
 	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l2);
 	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l1);
 	cl::Buffer cbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
@@ -260,13 +272,14 @@ int main()
 
 
 	// Open output streams
-	std::ofstream r_tracker("../Outputs/Particle_tracks.dat", std::ios::out);
-	std::ofstream Tv_tracker("../Outputs/T_v_tracks.dat", std::ios::out);
-	std::ofstream Tw_tracker("../Outputs/T_w_tracks.dat", std::ios::out);
-	std::ofstream E_tracker("../Outputs/E_int_tracks.dat", std::ios::out);
-	std::ofstream V_tracker("../Outputs/V_tracks.dat", std::ios::out);
-	std::ofstream v_tracker("../Outputs/v_tracks.dat", std::ios::out);
-	std::ofstream w_tracker("../Outputs/w_tracks.dat", std::ios::out);
+	path = "../Outputs" + "/";
+	std::ofstream r_tracker(path + "Particle_tracks.dat", std::ios::out);
+	std::ofstream Tv_tracker(path + "T_v_tracks.dat", std::ios::out);
+	std::ofstream Tw_tracker(path + "T_w_tracks.dat", std::ios::out);
+	std::ofstream E_tracker(path + "E_int_tracks.dat", std::ios::out);
+	std::ofstream V_tracker(path + "V_tracks.dat", std::ios::out);
+	std::ofstream v_tracker(path + "v_tracks.dat", std::ios::out);
+	std::ofstream w_tracker(path + "w_tracks.dat", std::ios::out);
 
 
 	//Set Kernel Arguments
@@ -367,7 +380,7 @@ int main()
 	queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 	queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
 
-	//std::cout << "Kernels & Buffers set: simulation started.\n";
+	std::cout << "Kernels & Buffers set: simulation started.\n";
 	//for (int i=0; i<100; i++){std::cout << "-";}
 	std::cout << "\n";
 	

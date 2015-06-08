@@ -1,4 +1,4 @@
-
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 __kernel void zeroer(__global double3 *accel,
 					__global double *V)		
 

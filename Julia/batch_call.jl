@@ -1,32 +1,7 @@
-global setup = "Setup/setup0.vec";
-global out_n = 0;
-include("sim_func.jl")
 
-setup = "Setup/setup1.vec";
-out_n = 1;
-include("sim_func.jl")
-
-setup = "Setup/setup2.vec";
-out_n = 2;
-include("sim_func.jl")
-
-setup = "Setup/setup3.vec";
-out_n = 3;
-include("sim_func.jl")
-
-setup = "Setup/setup4.vec";
-out_n = 4;
-include("sim_func.jl")
-
-setup = "Setup/setup5.vec";
-out_n = 5;
-include("sim_func.jl")
-
-setup = "Setup/setup6.vec";
-out_n = 6;
-include("sim_func.jl")
-
-setup = "Setup/setup7.vec";
-out_n = 7;
-include("sim_func.jl")
+include("SuchBounce.jl")
+BounceyTiem("Regolith_6.5","Regolith_6.5")
+BounceyTiem("Regolith_7","Regolith_7")
+BounceyTiem("Regolith_8","Regolith_8")
+BounceyTiem("Regolith_9","Regolith_9")
 

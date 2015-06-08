@@ -1,4 +1,4 @@
-
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 __kernel void red(__global double3 *rddp,
 					__global double3 *oddp,
 					__global double3 *accel,

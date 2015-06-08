@@ -31,14 +31,14 @@ if strcmp(lang,'C++')
 elseif strcmp(lang,'init')
     
     if ndims(var) == 3
-        for i = 1:size(var,2)            
+        for i = 1:size(var,2)
             tempstr_0 = num2str(var(1,i,1:2),'%+10.13e, ');
             tempstr_1 = num2str(var(1,i,3),'%+10.13e');
             writestr = [tempstr_0 ' ' tempstr_1];
             fprintf(dumpfile,'%s\n',writestr);
-        end        
+        end
     elseif ndims(var) == 2
-        for i = 1:size(var,2)           
+        for i = 1:size(var,2)
             tempstr= num2str(var(1,i),'%+10.13e');
             fprintf(dumpfile,'%s\n',tempstr);
         end
@@ -47,7 +47,7 @@ elseif strcmp(lang,'init')
     
 elseif strcmp(lang,'Julia')
     
-        if ndims(var) == 3
+    if ndims(var) == 3
         for i = 1:size(var,1)
             i
             tempstr = num2str(var(i,1,:),'%+10.13e ');

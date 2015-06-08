@@ -1,12 +1,17 @@
 import OpenCL
 const cl = OpenCL
+ask = bool(0);
 
 dev_list = cl.devices();
-print("Select device for computations:\r\n")
-for x = 1:length(dev_list)
-	write(STDOUT,[string(x) ": "  string(dev_list[x])  "\r\n"])
+if ask
+	print("Select device for computations:\r\n")
+	for x = 1:length(dev_list)
+		write(STDOUT,[string(x) ": "  string(dev_list[x])  "\r\n"])
+	end
+	n_choice = int64(readline(STDIN));
+else
+	n_choice = 1;
 end
-n_choice = int64(readline(STDIN));
 
 dev = dev_list[n_choice];
 ctx = cl.Context(dev);
@@ -221,10 +226,13 @@ F_kernels[3] = "
 		}
 "
 	
-
-print("Select kernel:\r\n1. Hard Spheres \r\n2. Hybrid (no grad)\r\n3. Hybrid (Variable hardness)\r\n")
-n_choice = int64(readline(STDIN));
-const F_kernel = F_kernels[n_choice];
+if ask
+	print("Select kernel:\r\n1. Hard Spheres \r\n2. Hybrid (no grad)\r\n3. Hybrid (Variable hardness)\r\n")
+	n_choice = int64(readline(STDIN));
+	const F_kernel = F_kernels[n_choice];
+else
+	const F_kernel = F_kernels[3];
+end
 
 #// Position Incrementer
 const r_kernel = " 
