@@ -1,13 +1,15 @@
+using ProgressMeter
+function BounceyTiem(Setup_dir,Output_dir)
 
 include("F_kernel_hybrid.jl")
 include("fileread.jl")
 include("filewrite.jl")
-using ProgressMeter
+# 
 
 const k = (4*pi*8.85419e-12)^-1; # electrostatic force constant
 const G = 6.67384e-11; # Gravitational force constant
 
-fileread("Setup/setup.vec");
+fileread(string(Setup_dir, "/setup.vec"));
 
 global const stuff = float64([0,0,0,0,0,0,G,k,0,0]);
 
@@ -55,7 +57,7 @@ end
 	global Tw_tracker = zeros(n,n_frames);
 	global V_tracker = zeros(n,n_frames);
 	global Int_tracker = zeros(n,n_frames);
-	global I = zeros(size(r,2),1);
+	global Iner = zeros(size(r,2),1);
 	global l1 = zeros(Int32,n_el,1);
 	global l2 = zeros(Int32,n_el,1);
 	global l3 = zeros(Int8,n_el,n);
@@ -64,7 +66,7 @@ end
 
 # Calculate Inertia (spheres)
 for x = 1:n
-	I[x] = (2*m[x]*(rad[x]^2)/5);
+	Iner[x] = (2*m[x]*(rad[x]^2)/5);
 end
 
 
@@ -87,10 +89,10 @@ initdump[:,:,1] = r;
 initdump[:,:,2] = v;
 
 try
-	filewrite("Outputs/init_dump.dat",initdump,"i")
+	filewrite(string(Output_dir, "/init_dump.dat"),initdump,"i")
 catch 
-	mkdir("Outputs");
-	filewrite("Outputs/init_dump.dat",initdump,"i")
+	mkdir(Output_dir);
+	filewrite(string(Output_dir, "/init_dump.dat"),initdump,"i")
 end
 
 
@@ -104,7 +106,7 @@ l1buff = cl.Buffer(Int32, ctx, (:r, :copy), hostbuf=l1);
 cbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=q);
 mbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(m));
 radbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(rad));
-Ibuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(I));
+Ibuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=float64(Iner));
 tbuff = cl.Buffer(Float64, ctx, (:r, :copy), hostbuf=stuff);
 
 rpbuff = cl.Buffer(Float64, ctx, (:rw, :copy), hostbuf=float64(r_pad));
@@ -151,8 +153,8 @@ for t_step = 1:max_step
 	
 	
 	
- 	#cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
-	#cl.call(queue, ker_T0, 1, nothing, rpbuff);
+ 	cl.call(queue, ker_T, n-1, nothing, rpbuff); # Make positions relative to particle 1
+	cl.call(queue, ker_T0, 1, nothing, rpbuff);
 		
 	if (t_step == 1 || (tempcount == floor(max_step/n_frames))) && (framecount < n_frames)
 		tempcount = 0;
@@ -180,14 +182,14 @@ finaldump[:,:,3] = cl.read(queue,wpbuff);
 
 # Write Files/Create folder
 
-filewrite("Outputs/Particle_tracks.dat",frameset,"r")
-filewrite("Outputs/final_dump.dat",finaldump[1:3,:,:],"i")
-filewrite("Outputs/T_v_tracks.dat",Tv_tracker,"r")
-filewrite("Outputs/T_w_tracks.dat",Tw_tracker,"r")
-filewrite("Outputs/V_tracks.dat",V_tracker,"r")
-filewrite("Outputs/E_int_tracks.dat",Int_tracker,"r")
+filewrite(string(Output_dir, "/Particle_tracks.dat"),frameset,"r")
+filewrite(string(Output_dir, "/final_dump.dat"),finaldump[1:3,:,:],"i")
+filewrite(string(Output_dir, "/T_v_tracks.dat"),Tv_tracker,"r")
+filewrite(string(Output_dir, "/T_w_tracks.dat"),Tw_tracker,"r")
+filewrite(string(Output_dir, "/V_tracks.dat"),V_tracker,"r")
+filewrite(string(Output_dir,"/E_int_tracks.dat"),Int_tracker,"r")
 
-
+end
 
 
 

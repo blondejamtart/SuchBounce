@@ -1,4 +1,4 @@
-
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 __kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
@@ -65,12 +65,12 @@ __kernel void Fimp(__global const double *q,
 			
 			double j = (F*stuff[0]+0.5*dF*stuff[0]*stuff[0])-m[a]*m[b]/(m[a]+m[b])*(collisionflag*(stuff[1]*p0*(stuff[0]-dt)+stuff[8]*(rad[a]+rad[b]-d0)*(stuff[0]-dt)+0.5*stuff[8]*p0*(stuff[0]-dt)*(stuff[0]-dt))-(collisionflag-1)*(stuff[1]*p0*dt+0.5*stuff[8]*p0*dt*dt));
 				
-			double jf = collisionflag*length(v_rel)/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));
+			//double jf = collisionflag*length(v_rel)/((pow(rad[a],2)/I[a]+pow(rad[b],2)/I[b])+(1/m[a]+1/m[b]));
 			
-			double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
-			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}			
+			//double fdyn = (F*stuff[0] + 0.5*dF*stuff[0]*stuff[0]);
+			//if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}			
 			rddp[x] = j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel); 
-			oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);			
+			//oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);			
 			
 
 			Ipart[x] = 0.25*collisionflag*m[a]*m[b]/(m[a]+m[b])*stuff[8]*pow((rad[a]+rad[b]-d0),2);				

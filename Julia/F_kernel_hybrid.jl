@@ -181,8 +181,8 @@ F_kernels[3] = "
 			double 	p0 = dot(vtemp,normalize((r[a]-v[a]*0.5*stuff[0])-(r[b]-v[b]*0.5*stuff[0])));		
 			double 	collisionflag = step(d0,(rad[a]+rad[b]));
 
-			double 	cut_off = (rad[a]+rad[b]) + 0.01*min(rad[a],rad[b]);
-			double 	hard_rad = (rad[a]+rad[b]) - 0.005*min(rad[a],rad[b]);		
+			double 	cut_off = (rad[a]+rad[b]) + 0.01*1e-04; //0.01*min(rad[a],rad[b]);
+			double 	hard_rad = (rad[a]+rad[b]) - 0.005*1e-04; //0.005*min(rad[a],rad[b]);		
 			double 	fplus = 1/(pow(d,2) - pow((rad[a]+rad[b]),2));		
 			double 	fminus = 1/(pow(d,2) - pow((rad[b]-rad[a]),2));
 			double 	fpe = 1/(pow(cut_off,2) - pow((rad[a]+rad[b]),2));		
