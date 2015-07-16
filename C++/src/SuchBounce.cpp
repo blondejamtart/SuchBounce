@@ -130,20 +130,21 @@ int main()
 
 		
 	stuff[0] = settings[1];
-	stuff[1] = settings[2];
-	stuff[2] = settings[3];
-	//stuff[3] = settings[4];
-	stuff[4] = settings[5];
-	stuff[5] = settings[6];
+	stuff[1] = settings[3];
+	stuff[2] = settings[4];
+	//stuff[3] = settings[5];
+	stuff[4] = settings[6];
+	stuff[5] = settings[7];
 	stuff[6] = 6.67384e-11;
 	stuff[7] = pow((4 * 3.141592654*8.85419e-12), -1); // electrostatic force constant
-	stuff[8] = settings[7];
-	stuff[9] = settings[4];
+	stuff[8] = settings[8];
+	stuff[9] = settings[2];
 	stuff[10] = settings[1];
 
 	if (n_frames > max_time/stuff[9])
 	{	
 		std::cout << "Insufficient frames for specified warp; frame intervals will be wierd\r\n";
+		std::cout << n_frames << "; " << (max_time/stuff[9]) << "\n";
 	}
 
 	int framecount = 0;
@@ -221,8 +222,8 @@ int main()
 		<< device_name
 		<< std::endl;
 	}
-	int nDev;
-	std::cin >> nDev;
+	int nDev = 0;
+	//std::cin >> nDev;
 	std::vector<cl::Device> ctxDevices = { conDev[nDev] };
 	cl::CommandQueue queue(ctx, ctxDevices[0]);
 	
@@ -367,9 +368,9 @@ int main()
 	queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t (0), ::size_t (32), &F1);
 	
 	double scaleset[4] = { F1[1], F1[1], v_max, v_max };
+
 	
-	
-	cl::Buffer Fbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(scaleset), scaleset);
+	cl::Buffer Fbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(32), scaleset);
 	ker_F.setArg(14, Fbuff);
 	ker_v_0.setArg(2, Fbuff);
 	ker_v_1.setArg(2, Ftmp);
@@ -402,7 +403,11 @@ int main()
 		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
 			framecount++;
-			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}		
+			if (floor(100 * framecount / n_frames) > 4+floor(prog))
+			{
+				prog = floor(100 * framecount / n_frames); 
+				std::cout << prog << "%; dt = " << stuff[0] << "s\n";
+			}		
 			
 			
 			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
@@ -437,7 +442,9 @@ int main()
 			t_last = t_now;
 			
 		}
+
 		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+		//std::cout << stuff[0] << ", ";
 		t_now += stuff[0];
 		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
 		
