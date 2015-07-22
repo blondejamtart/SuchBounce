@@ -35,67 +35,58 @@ We consider the behaviour of rotating binary asteroids as they pass through Eart
 \end{abstract}
 
 \section{Introduction}
-Radar observations suggest that a significant portion of Asteroids with Earth-crossing orbits are binary systems, consisting of two components in contact with or in close proximity to each other. As shown by work such as that of Farinella \textit{et al} \cite{binaryevo} in the early 1990s, gravitational encounters can significantly alter the orbits and integrity of binary asteroids. Clearly it is important to be able to accurately predict the motion of these bodies to give maximum warning of any possible Earth collision event. The work presented here is inspired by that of Borum \textit{et al}\cite{exchange}. In our work we revisit some of the previously discussed cases and then expand to include “Contact Binaries” (single asteroids formed primarily by two large boulders); we consider both gravitationally bound pairs and those bound by a regolith bridge, as illustrated in Figure ~\ref{fig:Pic} (this mechanism is similar to that discussed by Sanchez \& Scheeres \cite{dustbound}). We also model an attempted deflection of the asteroid prior to the close encounter. Our analysis has been performed using both numerical simulations and by taking an analytical approach.
+Radar observations suggest that a significant portion of Asteroids with Earth-crossing orbits are binary systems, consisting of two components in contact with or in close proximity to each other. As shown by work such as that of Farinella \textit{et al} \cite{binaryevo} in the early 1990s, gravitational encounters can significantly alter the orbits and integrity of binary asteroids. Clearly it is important to be able to accurately predict the motion of these bodies to give maximum warning of any possible Earth collision event. The work presented here is inspired by that of Borum \textit{et al}\cite{exchange}. In our work we revisit some of the previously discussed cases and then expand to include “Contact Binaries” (single asteroids formed primarily by two large boulders); we consider both gravitationally bound pairs and those bound by a regolith bridge, as illustrated in Figure ~\ref{fig:Pic}. The bridge is comprised of many small dust particles; due to their size there are non-negligble Van-Der Waals cohesive forces acting between them and the larger components. This mechanism is similar to that discussed by Sanchez \& Scheeres \cite{dustbound}). We also model an attempted deflection of the asteroid prior to the close encounter. Our analysis has been performed using both numerical simulations and by taking an analytical approach.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\textwidth]{binary_3d.eps} 
 \caption{Simulation of two 10 cm diameter spheres joined by a finer regolith bridge.} 
 \label{fig:Pic}
 \end{figure} 
+The numerical simulations are run using a custom multi-body code, which includes full inter-particle gravitational interactions, London dispersion forces and Soft-Body collisions similar to those implemented in \textit{PKDGRAV} by Schwartz \textit{et al}\cite{soft}.
+Previous work considering the orbits of binary and rubble pile asteroid has only considered gravitational interactions between the components. 
+Initially, we ran simulations comprised only of the two binary components and Earth. Encounters with a range of Earth-Asteroid two-body energies and varying binary asteroid rotation speed were simulated. The binary components are initially placed in a mutual circular orbit in each case with the force between them artificially varied to simulate the effects of a regolith bridge binding the two components.
+
+
 
 \section{Equations of Motion}
 
-The analytical approach to characterising the system is based upon the full equations of motion in a rotating reference frame, with the angular velocity of the reference frame $\vec{\omega}$ varying such that the barycentre of the system remains at a constant angle to the Earth. The resulting equations can be split into two separate parts, detailing the motion of the barycentre and the relative motion of the binary components respectively. $\vec{R}$ denotes the position of barycentre of the system with respect to Earth; the binary components considered are identical, both with mass $m$ and positions given by $\vec{R}\pm\vec{\rho}$. By definition of the reference frame, $\vec{R}$ has constant direction and merely varies in magnitude. We start by working with the equation of motion for $\vec{R}$:
+The analytical approach to characterising the system is based upon the full equations of motion in a rotating reference frame, with the angular velocity of the reference frame $\vec{\omega}$ varying such that the barycentre of the system remains at a constant angle to the Earth. We define the binary in terms of the position of its barycentre $\vec{R}$, and the vector $\vec{\rho}$ such that the two components are located at $\vec{R}\pm\vec{\rho}$ (the two components are considered to be identical, both of mass $m$ and radius $r$). Using the standard non-inertial forces for a rotating frame (Centrifugal, Coriolis and Euler), we obtain the following equation:
+\begin{equation}
+\ddot{\vec{R}}\pm\ddot{\vec{\rho}} = -\frac{GM_\oplus(\vec{R}\pm\vec{\rho})}{\|\vec{R}\pm\vec{\rho}\|^{3}} + \left[\frac{-Gm}{4\|\vec{\rho}\|^{3}}+F(\vec{\rho})\right]\vec{\rho} +  \vec{\omega}\times[2(\dot{\vec{R}}\pm\dot{\vec{\rho}}) + \vec{\omega}\times(\vec{R}\pm\vec{\rho})]+\dot{\vec{\omega}}\times(\vec{R}\pm\vec{\rho}) 
+\end{equation}
 
+The resulting equations can be split into two separate parts, detailing the motion of the barycentre and the relative motion of the binary components respectively ($\vec{\rho_{\pm}}$ denotes the acceleration relative to the barycentre of the binary component located at $\vec{R}\pm\vec{\rho}$).
+ 
 \begin{equation}
 \ddot{\vec{R}} = \frac{-GM_\oplus}{\|\vec{R}\|^{3}}\vec{R}+\vec{\omega}\times(2\dot{\vec{R}}+\vec{\omega}\times\vec{R})+\dot{\vec{\omega}}\times\vec{R}
 \end{equation}
 
-As stated earlier, the definition of $\omega$ in our reference frame implies that the direction of $\vec{R}$ is constant. Thus, any components of $\vec{\ddot{R}}$ orthogonal to $\vec{R}$ must be zero. This implies the following definiton of the magnitude of $\vec{\ddot{R}}$, along with equation 3 (which is equivalent to the conservation of angular momentum): 
+\begin{equation}
+\ddot{\vec{\rho}}_{\pm} = \left[\frac{-Gm}{4\|\vec{\rho}\|^{3}}+F(\vec{\rho})\right]\vec{\rho}+\vec{\omega}\times(2\dot{\vec{\rho}}+\vec{\omega}\times\vec{\rho})+\dot{\vec{\omega}}\times\vec{\rho}+{GM_\oplus}\left[\frac{\mp\vec{R}}{\|\vec{R}\|^{3}}-\frac{\vec{R}\pm\vec{\rho}}{\|\vec{R}\pm\vec{\rho}\|^{3}}\right]
+\end{equation}
+
+
+
+We start our analysis by working with the equation of motion for $\vec{R}$; as stated earlier, the definition of $\vec{\omega}$ in our reference frame implies that the direction of $\vec{R}$ is constant. Thus, any components of $\vec{\ddot{R}}$ orthogonal to $\vec{R}$ must be zero. This implies the following definiton of the magnitude of $\vec{\ddot{R}}$, along with equation 3 (which is equivalent to the conservation of angular momentum): 
 \begin{equation}
 \ddot{R} = \frac{-GM_\oplus}{R^{2}}+\omega^{2}R
 \end{equation}
 \begin{equation}
 2\vec{\omega}\times\dot{\vec{R}}+\dot{\vec{\omega}}\times\vec{R}=0
 \end{equation}
-Since we consider no forces acting outside of the orbital plane, the direction of $\vec{\omega}$ must remain constant. We consider the conservation of angular momentum to obtain an equation for $\omega$:
+Since we consider no forces acting outside of the orbital plane, the direction of $\vec{\omega}$ must remain constant and orthogonal to $\vec{R}$ at all times. We consider the conservation of angular momentum to obtain an equation for $\omega$ (the magnitude of $\vec{\omega}$):
 \begin{equation}
-\notag\frac{\partial\left(R^{2}\omega\right)}{\partial t} = 2R\dot{R}\omega + R^{2}\dot{\omega} = 0 \implies R^{2}\omega = constant
+\frac{\partial\left(R^{2}\omega\right)}{\partial t} = 2R\dot{R}\omega + R^{2}\dot{\omega} = 0 \implies R^{2}\omega = constant
 \end{equation}
 Assuming the initial values $R_0$ and $\omega_0$ at some time $t_0$ we get the following:
 \begin{equation}
 \omega = \frac{R_0^{2}\omega_0}{R^{2}}
 \end{equation}
 
-Now, we move on to consider the equation of motion for the position of the binary components relative to the centre of mass, $\vec{\rho}$: 
-\begin{equation}
-\ddot{\vec{\rho}} = \left[\frac{-Gm}{4\|\vec{\rho}\|^{3}}+F(\vec{\rho})\right]\vec{\rho}+\vec{\omega}\times(2\dot{\vec{\rho}}+\vec{\omega}\times\vec{\rho})+\dot{\vec{\omega}}\times\vec{\rho}+{GM_\oplus}\left[\frac{\vec{R}}{\|\vec{R}\|^{3}}-\frac{\vec{R}+\vec{\rho}}{\|\vec{R}+\vec{\rho}\|^{3}}\right]
-\end{equation}
-We make the assumption that the pair remains in a mutual circular orbit until the fragmentation event occurs. As such, by considering only components in the $\vec{\rho}$ direction we obtain an equation describing the forces acting along $\ddot{\rho}$ and hence responsible for the binding of the pair ($\theta$ being the angle between $\vec{R}$ \& $\vec{\rho}$ at a given time).
+Now, we move on to consider the equation of motion for the position of the binary components relative to the centre of mass, $\vec{\rho}$. We chose to work soley with the equation describing the motion of the component located at $\vec{R}+\vec{\rho}$; an analysis could be performed for the other component but similar results would be expected. We make the assumption that the pair remains in a mutual circular orbit until the fragmentation event occurs. As such, by considering only components of the vector acting in the $\vec{\rho}$ direction we obtain an equation describing the forces responsible for the binding of the pair ($\theta$ being the angle between $\vec{R}$ \& $\vec{\rho}$ at a given time).
 \begin{equation}\label{eq:rdd}
 \ddot{\rho} = \left[\frac{-Gm}{4\rho^{2}}+F(\rho)\right]+2\omega\dot{\rho}+\omega^{2}\rho+{GM_\oplus}\left[\frac{\cos\theta}{R^{2}}-\frac{R\cos\theta+\rho}{(R^{2}+2R\rho\cos\theta+\rho^{2})^\frac{3}{2}}\right]
 \end{equation}
-
- 
-
-
-
-
-\section{Numerical Simulations}
-The numerical simulations are run using a custom multi-body code, which includes full inter-particle gravitational interactions, London dispersion forces and Soft-Body collisions similar to those implemented in \textit{PKDGRAV} by Schwartz \textit{et al}\cite{soft}.
-Previous work considering the orbits of binary and rubble pile asteroid has only considered gravitational interactions between the components. 
-Initially, we ran simulations comprised only of the two binary components and Earth. Encounters with a range of Earth-Asteroid two-body energies and varying binary asteroid rotation speed were simulated. The binary components are initially placed in a mutual circular orbit in each case with the force between them artificially varied to simulate the effects of a regolith bridge binding the two components.
-\begin{figure}[H]
-\centering
-\centerline{\includegraphics[width=1.2\textwidth]{binary_num.eps}} 
-\caption{Plots of the Gravitational potential and kinetic energy of both components of the binary from numerical simulations.} 
-\label{fig:Num}
-\end{figure}
- Figure ~\ref{fig:Num} shows the output of such a simulation for a binary on a Parabolic trajectory; after the fragmentation one components is "captured" (having its orbital energy reduced below zero) and the other escapes (gaining orbital energy).  
- 
-\subsection{Analytical comparisons}
-
-Using the set of equations derived earlier, we can make some estimations on the behaviour of the binary asteroid; namely whether or not a fragmentation event is expected and if so at what time it is expected to occur.
 
 If we consider the fragmentation event to be instantaneous and that the radius of the binary orbit remains constant up until this point, we can neglect the term involving $\dot{\rho}$ in equation~\ref{eq:rdd}. The resulting equation has two important parts; namely the attractive and repulsive terms.
 \begin{equation} \label{eq:attr}
@@ -105,9 +96,36 @@ If we consider the fragmentation event to be instantaneous and that the radius o
 \ddot{\rho}_{rep} = \omega^{2}\rho+{GM_\oplus}\left[\frac{\cos\theta}{R^{2}}-\frac{R\cos\theta+\rho}{(R^{2}+2R\rho\cos\theta+\rho^{2})^\frac{3}{2}}\right]
 \end{equation}
 
+The attractive force remains constant throughout the orbit, whereas the repulsive force varies with distance to the Earth, relative angle of the pair and orbital angular velocity. The sensitivity of the force to these parameters will be investigated via full numerical simulations of such encounters. 
+
+
+\section{Numerical Simulations}
+
+As mentioned previously, our numerical simulations are run using a simple multi-body code; this code implements soft-body collisions and makes use of a Second-order "Leapfrog" simplectic integration scheme much like the work of Schwartz \textit{et al}\cite{soft}. The code makes use of OpenCL to allow for the utilisation of multiple processor cores and the possibility of running the code on a GPU.
+
+
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{binary_num.eps}} 
+\caption{Plots of the Gravitational potential and kinetic energy of both components of the binary from numerical simulations.} 
+\label{fig:Num}
+\end{figure}
+ Figure ~\ref{fig:Num} shows the output of such a simulation for a binary on a Parabolic trajectory; after the fragmentation one components is "captured" (having its orbital energy reduced below zero) and the other escapes (gaining orbital energy). The break-up is observed as the energy trace transitions from the oscillating regime to a steady state; we define the fragmentation energy as the difference between the average total energy of a binary component and the final energy state.  
+\subsection{Analytical comparisons}
+Using the set of equations derived earlier, we can make some estimations on the behaviour of the binary asteroid; namely whether or not a fragmentation event is expected and if so at what time it is expected to occur. We also gauge the relationship between the fragmentation energy and the parameters $\theta$, $\omega$ \& $R$. Firstly, however, we attempt to verify the accuracy of some of the assumptions applied in the derivation of the equations; namely the constant rotation rate and radius of the binary pair prior to the fragmentation event. To do this, we ran a simulation Figure~\ref{fig:omega} shows the angular velocity of the binary pair over the course of an orbit. Prior to the fragmentation event, the fluctuation in angular speed is approximately 1\% of its magnitude.
+
+\begin{center}
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{omega.eps}} 
+\caption{Plot of angular velocity of a binary pair as a fraction of the initial angular velocity.} 
+\label{fig:omega}
+\end{figure}
+\end{center}
+
 Since we are only using these equations as a comparison to the computational simulations, rather than using an analytical solution for $R$ we evaluate $\omega$ in each frame of the simulation using the corresponding numerical value of $R$. Assuming the rotation rate is balanced with the attractive force between the binary components such that the orbit is circular when in free space, any effective repulsive force between the two components introduced by the influence of a third body would alter the orbit into an elliptical one or if strong enough eliminate the possibility of any stable orbit. If the strength of the repulsive force is greater than that of the attractive, the net effective force between the pair is repulsive and as such fragmentation is inevitable. 
 
-Figure ~\ref{fig:Analy} shows a plot of the ratio between the Repulsive and Attractive force components, given in equations~\ref{eq:rep} and~\ref{eq:attr} respectively. Also plotted is the ratio between current and final total energy of one of the binary components (values from the same numerical simulation). The break-up is observed as the energy trace transitions from the oscillating regime to a steady state.
+Figure ~\ref{fig:Analy} shows a plot of the ratio between the Repulsive and Attractive force components, given in equations~\ref{eq:rep} and~\ref{eq:attr} respectively. Also plotted is the ratio between current and final total energy of one of the binary components (values from the same numerical simulation). 
 \begin{figure}[H]
 \centering
 \centerline{\includegraphics[width=1.2\textwidth]{binary_analy.eps}} 
@@ -124,15 +142,7 @@ Also, as can be seen in equation~\ref{eq:rep}, the repulsive effective force bet
 \label{fig:phase}
 \end{figure} 
 
-The equations used here have been derived under the assumption that the rotation rate and radius of the binary pair remains constant until the fragmentation event occurs. To give and indication of the level of accuracy of this assumption, figure~\ref{fig:sin} shows the total energy of one of the binary components plotted alongside a sine wave of the same period as the binary orbit. It can be seen that the orbital period begins to increase as the binary gets closer to the earth; however for the cases considered the slow-down is only $1\%$ of the orbital period. 
-\begin{center}
-\begin{figure}[H]
-\centering
-\centerline{\includegraphics[width=1.2\textwidth]{pure_sin.eps}} 
-\caption{Plot of the total energy of one components in a binary, plotted with a pure sine wave for comparison.} 
-\label{fig:sin}
-\end{figure}
-\end{center}
+
 
 Following this, numerical simulations of two boulders bound by a regolith bridge on a Parabolic trajectory were performed. 
 
