@@ -24,27 +24,33 @@
 \begin{document}
 
 \title{\textsf{\textbf{Induced Fragmentation of Asteroids during Close Encounters}}}
-\author{\textsf{Bryan Tester}\thanks{PhD student at University of Strathclyde, United Kingdom}
-\ and \textsf{Prof. Massimiliano Vasile}\thanks{Professor at University of Strathclyde, United Kingdom}}
+\author{\textsf{Bryan Tester}\thanks{(bryan.tester@strath.ac.uk) PhD student at University of Strathclyde, United Kingdom}
+\ and \textsf{Prof. Massimiliano Vasile}\thanks{(massimiliano.vasile@strath.ac.uk) Professor at University of Strathclyde, United Kingdom}}
 
 \maketitle{} 		
 
 
 \begin{abstract}
-We consider the behaviour of rotating binary asteroids as they pass through Earth's Hill sphere, with primary interest in the effect the tidal force has on the interaction between the two components of the binary and their post-encounter trajectories. We focus on contact binary asteroids bound by a regolith bridge, using both direct numerical simulation and an analytical approach.
+We consider the behaviour of rotating binary asteroids as they pass through Earth's Hill sphere, with primary interest in the effect the tidal force has on the interaction between the two components of the binary and their post-encounter trajectories. We focus on contact binary asteroids bound by a regolith bridge, using both direct numerical simulation and an analytical approach to investigate which parameters the system is sensitive to. We find that the highest sensitivity is to the angle between the binary pair and the orbital path, having a significant impact upon the energy change during a fragmentation event. We also give the results of some basic simulations of a deflection attempt on such an object.
 \end{abstract}
 
 \section{Introduction}
-Radar observations suggest that a significant portion of Asteroids with Earth-crossing orbits are binary systems, consisting of two components in contact with or in close proximity to each other. As shown by work such as that of Farinella \textit{et al} \cite{binaryevo} in the early 1990s, gravitational encounters can significantly alter the orbits and integrity of binary asteroids. Clearly it is important to be able to accurately predict the motion of these bodies to give maximum warning of any possible Earth collision event. The work presented here is inspired by that of Borum \textit{et al}\cite{exchange}. In our work we revisit some of the previously discussed cases and then expand to include “Contact Binaries” (single asteroids formed primarily by two large boulders); we consider both gravitationally bound pairs and those bound by a regolith bridge, as illustrated in Figure ~\ref{fig:Pic}. The bridge is comprised of many small dust particles; due to their size there are non-negligble Van-Der Waals cohesive forces acting between them and the larger components. This mechanism is similar to that discussed by Sanchez \& Scheeres \cite{dustbound}). We also model an attempted deflection of the asteroid prior to the close encounter. Our analysis has been performed using both numerical simulations and by taking an analytical approach.
+Radar observations suggest that a significant portion of Asteroids with Earth-crossing orbits are binary systems, consisting of two components in contact with or in close proximity to each other. As shown by work such as that of Farinella \textit{et al} \cite{binaryevo} in the early 1990s, gravitational encounters can significantly alter the orbits and integrity of binary asteroids. Clearly it is important to be able to accurately predict the motion of these bodies to give maximum warning of any possible Earth collision event. The main effect we consider here is the "Binary Exchange" mechanism, as discussed by Borum \textit{et al}\cite{exchange}. This is where a rotation of a binary pair is disrupted by the tidal forces, causing the pair to split and hence altering the orbital energy of each component. 
+
+In our work consider mainly “Contact Binaries”; single asteroids formed primarily by two large boulders. We consider both gravitationally bound pairs and those bound by a "regolith bridge", as illustrated in Figure ~\ref{fig:Pic}. The bridge is comprised of many small dust particles; due to their size there are non-negligble London Dispersion forces acting between them, which cause and adhesive effect between them and the larger components (This mechanism is similar to that discussed by Sanchez \& Scheeres \cite{dustbound}). We also model an attempted deflection of the asteroid prior to the close encounter, using and impactor-type method. Clearly it is important to have a firm theoretical understanding of such an event so that it was ever necessary to fly such a mission the odds of success would be maximised.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\textwidth]{binary_3d.eps} 
-\caption{Simulation of two 10 cm diameter spheres joined by a finer regolith bridge.} 
+\caption{Simulation of two large spheres joined by a finer regolith bridge.} 
 \label{fig:Pic}
 \end{figure} 
+
+Our analytical work starts with the full equations of motion for a binary asteroid in a reference frame rotating about the centre of the Earth. Using a series of relevant approximations, the equations are simplified to give a handle on the factors which have the most impact on the system. 
+
 The numerical simulations are run using a custom multi-body code, which includes full inter-particle gravitational interactions, London dispersion forces and Soft-Body collisions similar to those implemented in \textit{PKDGRAV} by Schwartz \textit{et al}\cite{soft}.
 Previous work considering the orbits of binary and rubble pile asteroid has only considered gravitational interactions between the components. 
-Initially, we ran simulations comprised only of the two binary components and Earth. Encounters with a range of Earth-Asteroid two-body energies and varying binary asteroid rotation speed were simulated. The binary components are initially placed in a mutual circular orbit in each case with the force between them artificially varied to simulate the effects of a regolith bridge binding the two components.
+Initially, we ran simulations comprised only of the two binary components and Earth. Encounters with a range of Earth-Asteroid two-body energies and varying binary asteroid rotation speed were simulated. The binary components are initially placed in a mutual circular orbit in each case with the force between them artificially varied to simulate the effects of a regolith bridge or some other effect binding the two components. Following this, simulations including a full regolith bridge were run.
 
 
 
@@ -100,56 +106,8 @@ The attractive force remains constant throughout the orbit, whereas the repulsiv
 
 
 \section{Numerical Simulations}
-
-As mentioned previously, our numerical simulations are run using a simple multi-body code; this code implements soft-body collisions and makes use of a Second-order "Leapfrog" simplectic integration scheme much like the work of Schwartz \textit{et al}\cite{soft}. The code makes use of OpenCL to allow for the utilisation of multiple processor cores and the possibility of running the code on a GPU.
-
-
-\begin{figure}[H]
-\centering
-\centerline{\includegraphics[width=1.2\textwidth]{binary_num.eps}} 
-\caption{Plots of the Gravitational potential and kinetic energy of both components of the binary from numerical simulations.} 
-\label{fig:Num}
-\end{figure}
- Figure ~\ref{fig:Num} shows the output of such a simulation for a binary on a Parabolic trajectory; after the fragmentation one components is "captured" (having its orbital energy reduced below zero) and the other escapes (gaining orbital energy). The break-up is observed as the energy trace transitions from the oscillating regime to a steady state; we define the fragmentation energy as the difference between the average total energy of a binary component and the final energy state.  
-\subsection{Analytical comparisons}
-Using the set of equations derived earlier, we can make some estimations on the behaviour of the binary asteroid; namely whether or not a fragmentation event is expected and if so at what time it is expected to occur. We also gauge the relationship between the fragmentation energy and the parameters $\theta$, $\omega$ \& $R$. Firstly, however, we attempt to verify the accuracy of some of the assumptions applied in the derivation of the equations; namely the constant rotation rate and radius of the binary pair prior to the fragmentation event. To do this, we ran a simulation Figure~\ref{fig:omega} shows the angular velocity of the binary pair over the course of an orbit. Prior to the fragmentation event, the fluctuation in angular speed is approximately 1\% of its magnitude.
-
-\begin{center}
-\begin{figure}[H]
-\centering
-\centerline{\includegraphics[width=1.2\textwidth]{omega.eps}} 
-\caption{Plot of angular velocity of a binary pair as a fraction of the initial angular velocity.} 
-\label{fig:omega}
-\end{figure}
-\end{center}
-
-Since we are only using these equations as a comparison to the computational simulations, rather than using an analytical solution for $R$ we evaluate $\omega$ in each frame of the simulation using the corresponding numerical value of $R$. Assuming the rotation rate is balanced with the attractive force between the binary components such that the orbit is circular when in free space, any effective repulsive force between the two components introduced by the influence of a third body would alter the orbit into an elliptical one or if strong enough eliminate the possibility of any stable orbit. If the strength of the repulsive force is greater than that of the attractive, the net effective force between the pair is repulsive and as such fragmentation is inevitable. 
-
-Figure ~\ref{fig:Analy} shows a plot of the ratio between the Repulsive and Attractive force components, given in equations~\ref{eq:rep} and~\ref{eq:attr} respectively. Also plotted is the ratio between current and final total energy of one of the binary components (values from the same numerical simulation). 
-\begin{figure}[H]
-\centering
-\centerline{\includegraphics[width=1.2\textwidth]{binary_analy.eps}} 
-\caption{Plots of the ratio between attractive and repulsive forces predicted by analytical model and Gravitational potential and kinetic energy of 1 component of the binary as a fraction of its final energy state from numerical simulations.} 
-\label{fig:Analy}
-\end{figure} 
-
-
-Also, as can be seen in equation~\ref{eq:rep}, the repulsive effective force between the components has a dependence on the angle $\theta$. Figure ~\ref{fig:phase} shows the total energy plots for one component in a binary system over the course of an encounter with the Earth, with the value of $\theta$ at the start of the simulation varied; as can be seen there is a significant variation in the final energy. 
- \begin{figure}[H]
-\centering
-\centerline{\includegraphics[width=1.2\textwidth]{phasing_2.eps}} 
-\caption{Plots of the total energy for varying starting angle $\theta$.} 
-\label{fig:phase}
-\end{figure} 
-
-
-
-Following this, numerical simulations of two boulders bound by a regolith bridge on a Parabolic trajectory were performed. 
-
-
-\subsection{London Dispersion Forces}
-
-For the small grain sizes considered in our regolith ($100\mu m$) the dominating force between particles are London Dispersion forces. For point particles, the attractive and repulsive potentials are proportional to $\frac{1}{r^6}$ and $\frac{1}{r^{12}}$ respectively. However, for finite sized particles the formulation is more complicated. Hamaker gives a derivation of the attractive potential between two spheres, calculated by the integral of the forces between infinitesimal point-particle elements over both spheres. In principle, this integral could be repeated for the repulsive term also. However, since we are using a soft-body collision method in our code including this term would provide no additional accuracy. Instead, we opt to use a Pseudo-potential method (Equation 9): for distances greater than a given cut-off radius $r_{cutoff}$, the full value of the Hamaker potential is used; for distances less than this a quadratic function is used instead. The quadratic used is set to have the same value and gradient as the Hamaker potential at the cut-off point, has a global minimum at some point $r_{min}$; similar to the soft-body collisions implemented this value is set to be less than the sum of the radii of the two spheres, thus allowing some overlap and "softening" the potential. 
+\subsection{Multi-Body Code}
+As mentioned previously, our numerical simulations are run using a simple multi-body code; this code implements soft-body collisions and makes use of a Second-order "Leapfrog" simplectic integration scheme much like the work of Schwartz \textit{et al}\cite{soft}. The code makes use of OpenCL to allow for the utilisation of multiple processor cores and the possibility of running the code on a GPU. Our computations consider Gravitational interactions between all particles, as well as London Dispersion forces. For point particles, the attractive and repulsive potentials which characterise the London Dispersion interaction are proportional to $\frac{1}{r^6}$ and $\frac{1}{r^{12}}$ respectively. However, for finite sized particles the formulation is more complicated. Hamaker\cite{hamaker} gives a derivation of the attractive potential between two spheres, calculated by the integral of the forces between infinitesimal point-particle elements over both spheres. In principle, this integral could be repeated for the repulsive term also. However, since we are using a soft-body collision method in our code including this term would provide no additional accuracy. Instead, we opt to use a Pseudo-potential method (detailed in Equation 9): for distances greater than a given cut-off radius $r_{cutoff}$, the full value of the Hamaker potential is used; for distances less than this a quadratic function is used instead. The quadratic used is set to have the same value and gradient as the Hamaker potential at the cut-off point, has a global minimum at some point $r_{min}$; similar to the soft-body collisions implemented this value is set to be less than the sum of the radii of the two spheres, thus allowing some overlap and "softening" the potential. 
 \begin{equation}
 V(r) = \left\{
 \begin{array}{lr}
@@ -158,8 +116,70 @@ V(r) = \left\{
 \end{array}
 \right.
 \end{equation}
-Ideally we wish to consider binary components with radii over 1 metre bound by a regolith bridge consisting of small ($100\mu m$) and medium ($1cm$) particles. However, the number of small particles which would have to be considered would make simulation of such a system not feasible. To overcome this, we first considered the binding effect between the small and medium particles. We established a simulation with two medium sized granules bound by a bridge of 510 small particles; the system was placed under rotation, initially with the rotation speed matching that of a purely gravitational circular orbit for the two medium granules. The rotation rate was gradually stepped up until the binding of the granules failed. The value of the Hamaker constant used in the simulations was then increased such that two medium sized granules had the same maximum rotation speed as when bound with the small particulate bridge. A factor of approximately 200 was found to be sufficient; this is roughly equal to the number of small particles in contact with each medium granule. Hence, the system considered for the regolith-bound simulations is comprised of the larger binary components bound by a bridge of 510 medium sized granules, with the additional effect of the small particles approximated by increased strength of the London Dispersion force.    
-For the encounter simulations, a closest approach distance of 200 km is used, and the binary asteroid considered has a total diameter of 4 metres. Figure~\ref{fig:reg} shows the total energy results from the simulation, compared to those from a simulation of the same binary components and close approach distance but without the regolith bridge. The curves match closely before the fragmentation event; however when fragmentation occurs both binary components gain additional energy from the collapse of the binding regolith bridge. It can be seen that the amount of energy gained from the collapse is about $30\%$ of the difference in total energy between the two components.
+
+\subsection{Simulation Results}
+
+Using the code described, we have run a series of simulations to explore the dynamics of close encounters of binary asteroids with Earth-sized bodies. Before we discuss the specific results, we first outline the setup considered and the nature of the output of the code.
+
+The majority of our simulations consider a parabolic encounter with a closest approach distance of 130km. The simulation outputs a track of positions, velocities, Kinetic and Potential energies for each body considered. The data we primarily consider is the sum of kinetic and potential energies for each component individually;  Figure~\ref{fig:Num} shows a plot of this total energy for the two binary components produced by a simulation. After the fragmentation one components is "captured" (having its orbital energy reduced below zero) and the other escapes (gaining orbital energy)
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{binary_num.eps}} 
+\caption{Plots of the Gravitational potential and kinetic energy of both components of the binary from numerical simulations.} 
+\label{fig:Num}
+\end{figure}
+The break-up is observed as the energy trace transitions from the oscillating regime to a steady state; we define the fragmentation energy as the difference between the average total energy of a binary component and the final energy state.  
+
+\subsection{Analytical Comparisons}
+
+Using the set of equations derived earlier, we can make some estimations on the behaviour of the binary asteroid. By running a series of simulations with varied initial conditions, we gauge the relationship between the fragmentation energy and the parameters $\theta$, $\omega$ \& $R$. Firstly, however, we attempt to verify the accuracy of some of the assumptions applied in the derivation of the equations; namely the constant rotation rate and radius of the binary pair prior to the fragmentation event. To do this, we ran a simulation Figure~\ref{fig:omega} shows the angular velocity of the binary pair over the course of an orbit, as well as the radius. Prior to the fragmentation event, the fluctuation in angular speed is approximately 1\% of its magnitude.
+
+\begin{center}
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{omega.eps}} 
+\caption{Plots of angular velocity and radius of a binary pair as fractions of the initial values.} 
+\label{fig:omega}
+\end{figure}
+\end{center}
+
+Now, we move on to consider the sensitivity of the fragmentation energy to the parameters $\theta$, $\omega$ \& $R$. $\theta$ is varied by changing the starting orientation of the binary pair, whilst $\omega$ \& $R$ are changed by altering the orbital parameters. Rather than using an analytical solution for $R$ and $\omega$, equation~\ref{eq:rep} is evaluated in each frame of the simulation using the corresponding numerical values. Assuming the rotation rate is balanced with the attractive force between the binary components such that the orbit is circular when in free space (as is the case in all simulations we run here), any effective repulsive force between the two components introduced by the influence of a third body would alter the orbit into an elliptical one or if strong enough eliminate the possibility of any stable orbit. If the strength of the repulsive force is greater than that of the attractive, the net effective force between the pair is repulsive and as such fragmentation is inevitable. Figure ~\ref{fig:phase} shows the total energy plots for one component in a binary system over the course of an encounter with the Earth, with the value of $\theta$ at the start of the simulation varied; as can be seen there is a significant variation in the final energy. The discontinuities present in some curves are due to collisions between the components which occur as their orbit is destabilised. The velocity of these collisions is of the order of $10^{-4}m\cdot s^{-1}$,  so no destruction or deformation on the boulders is expected. As the angle varies steadily, the fragmentation energy initially varies similarly. However, as the value of $\theta$ at closest approach nears $\frac{\pi}{2}$ the energy varies more rapidly as the components "swap" (the one which gained orbital energy during the encounter for lower values of $\theta$ instead loses energy and vice versa).
+ \begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{phasing_2.eps}} 
+\caption{Plots of the total energy for varying starting angle $\theta$.} 
+\label{fig:phase}
+\end{figure} 
+
+For the analyses of both the $\omega$ and $R$ sensitivity, the setup is somewhat more complicated in principle; it is not possible to scale one without altering the other throughout the rest of the orbit. However, since the effects of the disruption will be greatest at the closest approach point, we change each parameter in uniform steps whilst keeping the other constant at this point. 
+Using this procedure, the sensitivity of the fragmentation energy to the orbital speed $\omega$ is investigated. We maintain a constant closest approach distance of 130km but increase the orbital energy (and hence both the tangential and angular orbital velocity at this point). Figure~\ref{fig:omegasens} shows a plot of the energy traces of a single component for a range of values of $\omega$.As can be seen the fragmentation energy increases steadily with $\omega$as would be expected from equation~\ref{eq:rep}. 
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{omegasens.eps}} 
+\caption{Plots of the total energy for varying orbital angular speed $\omega$ (values of $\omega$ in $mrad\cdot s^{-1}$).} 
+\label{fig:omegasens}
+\end{figure} 
+
+
+Finally, we consider the sensitivity of the fragmentation energy to the Earth-Binary distance $R$ is considered. This is done by varying the closest approach distance whilst keeping the ratio between $R$ and $v$ at closest approach (and hence $\omega$) constant. As can be seen in figure~\ref{fig:Rsens} the scaling of the fragmentation energy is smooth and increases with R; this would suggest that the centrifugal component of equation~\ref{eq:rep} ($\omega^2\rho$) is dominant.
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{Rsens.eps}} 
+\caption{Plots of the total energy for varying closest approach distance $R$.} 
+\label{fig:Rsens}
+\end{figure} 
+
+
+\subsection{Regolith-Bound Binary}
+Following the sensitivity analysis, numerical simulations of two boulders bound by a regolith bridge on a Parabolic trajectory were performed. For the small grain sizes considered in our regolith ($100\mu m$) the dominating force between particles are London Dispersion forces. Ideally we wish to consider binary components with radii over 1 metre bound by a regolith bridge consisting of small ($100\mu m$) and medium ($1cm$) particles. However, the number of small particles which would have to be considered would make simulation of such a system not feasible. To overcome this, we first considered the binding effect between the small and medium particles. We established a simulation with two medium sized granules bound by a bridge of 510 small particles; the system was placed under rotation, initially with the rotation speed matching that of a purely gravitational circular orbit for the two medium granules. The rotation rate was gradually stepped up until the binding of the granules failed. The value of the Hamaker constant used in the simulations was then increased such that two medium sized granules had the same maximum rotation speed without the bridge as when bound by the small particulate bridge with the real value of the Hamaker constant. A factor of approximately 200 was found to be sufficient; this is roughly equal to the number of small particles in contact with each medium granule. Figure~\ref{fig:dustyspin} shows the kinetic energy tracew for a few key cases: rotation just below and just above the failure point of the bridge, and the same 2 rotation speeds but with the force approximation in place of the bridge. Hence, the system considered for the regolith-bound simulations is comprised of the larger binary components bound by a bridge of 510 medium sized granules, with the additional effect of the small particles approximated by increased strength of the London Dispersion force.  
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{regolith_v_gravitational.eps}} 
+\caption{Plots of the Kinetic energy for two small particles; both bound by a fine regolith bridge and with our force-based approximation for the bridge.} 
+\label{fig:dustyspin}
+\end{figure}
+  
+As with the previous encounter simulations, a closest approach distance of 130km is used, and the binary asteroid considered has a total diameter of 4 metres. Figure~\ref{fig:reg} shows the total energy results from the simulation, compared to those from a simulation of the same binary components and close approach distance but without the regolith bridge. The curves match closely before the fragmentation event; however when fragmentation occurs both binary components gain additional energy from the collapse of the binding regolith bridge. It can be seen that the amount of energy gained from the collapse is about $30\%$ of the difference in total energy between the two components.
  
 \begin{figure}[H]
 \centering
@@ -167,18 +187,40 @@ For the encounter simulations, a closest approach distance of 200 km is used, an
 \caption{Plots of the Total energy of both components of the binary from numerical simulations; both for the purely graviational and the regolith-bound cases.} 
 \label{fig:reg}
 \end{figure}
+
+\subsection{Deflection attempt}
+
+The final analysis we present here are a few simulations of attempted deflections for a binary asteroid on a collision course with Earth. Theses simulations are not highly realistic for two main reasons. Firstly, the soft-body collision model does not allow for any permanent deformation, fragmentation or similar; due to the high velocities required for an impactor-based deflection some degree of deformation would be expected in reality. The second limitation is that of computational time required for simulating the orbit; to minimise on this, the deflection is carried out rather close to the Earth (roughly 24 hours before impact). Any real deflection mission would hopefully have significantly more time and as such would require a less aggressive deflection. Still, these simulations indicate certain effects and phenomena which may be present in a more realistic deflection scenario. 
+
+Figure~\ref{fig:bouncey} shows the orbital paths for several cases: an undeflected asteroid, a deflected single-body and both components of a deflected binary. It can be seen that the post-deflection paths of the two components of the binary are greatly different to that of a single body of equal mass. This is likely due to a "Newton's Cradle" type effect in the collisions; as such the component which is struck by the impactor passes all of the additional momentum from the impact to the second, leaving it's momentum largely unchanged by the impact. This effect is most prevalent when the two components are of roughly equivalent mass.
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{deflection_0.eps}} 
+\caption{Orbital paths of binary and single body asteroids pre and post deflection.} 
+\label{fig:bouncey}
+\end{figure} 
+
+We also simulate the effect of an impact on a full regolith-bound binary; both with the same impact speed as the previous case and with a lower speed, more reasonable impact. It can be seen that in both cases, a large amount of the regolith is discharged, and in the former case the bridge fails completely and the pair fragments.
+
 \section{Conclusion}
-We present a methodology to model contact binary asteroids bound by regolith during an encounter with a large body such as Earth. Any conclusions drawn from this research will allow for enhanced accuracy in the prediction of asteroid trajectories and allow for better planning in any mission to capture or deflect such an object.
+We present a methodology to model contact binary asteroids bound by regolith during an encounter with a large body such as Earth. Using an analytical approach we have attempted to identify which parameters should impact upon the energy involved in the fragmentation of such an object and the extent of such sensitivity. We find that there the dynamics of the fragmentation event are highly sensitive to the angle of the binary pair with respect to the orbital path, whilst the sensitivity to the closest approach distance and speed of the orbit are much more smooth and in line with the analytical predictions. Also we find that there is a notable change in the fragmentation energy when a full regolith bridge is considered.
+
+Additionally, we give the results of some basic simulations of a deflection attempt. These suggest that the dynamics of an impact-based deflection differ greatly based on whether the object is a single body or a contact binary. 
+
 
 \bibliographystyle{AAS_publication}   % Number the references.
 \bibliography{references_me}   % Use references.bib to resolve the labels.
-
 \section{Blah}
-Similarly, considering only components orthogonal to $\vec{\rho}$ (and hence changes to the rotational speed of the pair) we obtain the following:
-\begin{equation}
-\ddot{\rho}_\bot = \dot{\omega}\rho +  {GM_\oplus}\left[\frac{\sin\theta}{R^{2}}-\frac{R\sin\theta}{R^{2}+2R\rho\cos\theta+\rho^{2}}\right]
-\end{equation}
 
 
+Assuming the rotation rate is balanced with the attractive force between the binary components such that the orbit is circular when in free space, any effective repulsive force between the two components introduced by the influence of a third body would alter the orbit into an elliptical one or if strong enough eliminate the possibility of any stable orbit. If the strength of the repulsive force is greater than that of the attractive, the net effective force between the pair is repulsive and as such fragmentation is inevitable. 
+
+Figure ~\ref{fig:Analy} shows a plot of the ratio between the Repulsive and Attractive force components, given in equations~\ref{eq:rep} and~\ref{eq:attr} respectively. Also plotted is the ratio between current and final total energy of one of the binary components (values from the same numerical simulation). 
+\begin{figure}[H]
+\centering
+\centerline{\includegraphics[width=1.2\textwidth]{binary_analy.eps}} 
+\caption{Plots of the ratio between attractive and repulsive forces predicted by analytical model and Gravitational potential and kinetic energy of 1 component of the binary as a fraction of its final energy state from numerical simulations.} 
+\label{fig:Analy}
+\end{figure} 
 
 \end{document}

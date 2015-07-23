@@ -19,4 +19,8 @@ R.~Schwartz, D.~Richard, and P.~Michel, ``An Implementation of the Soft-Sphere
   Discrete Element Method in a high-performance parallel gravity tree-code,''
   {\em Granular Matter.}, Vol.~14, 2012, pp.~363--380.
 
+\bibitem{hamaker}
+H.~Hamaker, ``The London-Van Der Waals Attraction Between Spherical
+  Particles,''  {\em Physica.}, Vol.~4, No.~10, 1937, pp.~1058--1072.
+
 \end{thebibliography}
