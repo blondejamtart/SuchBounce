@@ -1,0 +1,26 @@
+\begin{thebibliography}{1}
+
+\bibitem{binaryevo}
+P.~Farinella and B.~Chauvineau, ``On the Evolution of binary Earth-approaching
+  asteroids,''  {\em Astron. Astrophys.}, Vol.~279, 1993, pp.~251--259.
+
+\bibitem{exchange}
+A.~Borum, J.~Burns, P.~Wentzel, A.~Anreyev, and S.~Ross, ``Asteroid capture
+  using a binary exchange mechanism,''  {\em Virginia Space Grant Consortium
+  Student Research Conference}, 2012.
+
+\bibitem{dustbound}
+P.~Sanchez and D.~Scheeres, ``The Parameterization of the Rotation Matrix using
+  Redundant Attitude Coordinates,''  {\em AIP Proceedings}, Vol.~1542, No.~955,
+  2013.
+
+\bibitem{soft}
+R.~Schwartz, D.~Richard, and P.~Michel, ``An Implementation of the Soft-Sphere
+  Discrete Element Method in a high-performance parallel gravity tree-code,''
+  {\em Granular Matter.}, Vol.~14, 2012, pp.~363--380.
+
+\bibitem{hamaker}
+H.~Hamaker, ``The London-Van Der Waals Attraction Between Spherical
+  Particles,''  {\em Physica.}, Vol.~4, No.~10, 1937, pp.~1058--1072.
+
+\end{thebibliography}
