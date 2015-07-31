@@ -3,44 +3,44 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: AAS_Binaries_2.aux
 The style file: AAS_publication.bst
 Database file #1: references_me.bib
-You've used 5 entries,
+You've used 6 entries,
             1928 wiz_defined-function locations,
-            517 strings with 4301 characters,
-and the built_in function-call counts, 1398 in all, are:
-= -- 142
-> -- 48
+            524 strings with 4523 characters,
+and the built_in function-call counts, 1797 in all, are:
+= -- 180
+> -- 71
 < -- 0
-+ -- 18
-- -- 13
-* -- 104
-:= -- 202
-add.period$ -- 5
-call.type$ -- 5
++ -- 26
+- -- 20
+* -- 139
+:= -- 260
+add.period$ -- 6
+call.type$ -- 6
 change.case$ -- 0
 chr.to.int$ -- 0
-cite$ -- 5
-duplicate$ -- 71
-empty$ -- 133
-format.name$ -- 13
-if$ -- 339
+cite$ -- 6
+duplicate$ -- 88
+empty$ -- 164
+format.name$ -- 20
+if$ -- 433
 int.to.chr$ -- 0
-int.to.str$ -- 5
-missing$ -- 5
-newline$ -- 18
-num.names$ -- 5
-pop$ -- 11
+int.to.str$ -- 6
+missing$ -- 6
+newline$ -- 21
+num.names$ -- 6
+pop$ -- 12
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 49
+skip$ -- 63
 stack$ -- 0
-substring$ -- 104
-swap$ -- 31
+substring$ -- 136
+swap$ -- 40
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 14
-width$ -- 6
-write$ -- 51
+while$ -- 18
+width$ -- 7
+write$ -- 62

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.3.23)  24 JUL 2015 11:16
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.3.23)  31 JUL 2015 17:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -402,12 +402,6 @@ LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <12> not available
 (Font)              Font shape `OT1/phv/b/n' tried instead on input line 30.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 37.
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ú in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ù in font ptmr7t!
 Package epstopdf Info: Source file: <binary_3d.eps>
 (epstopdf)                    date: 2015-04-07 08:52:50
 (epstopdf)                    size: 30800532 bytes
@@ -433,51 +427,51 @@ Underfull \vbox (badness 6675) has occurred while \output is active []
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <10.95> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 51.
+Underfull \vbox (badness 1675) has occurred while \output is active []
+
  [2pdfTeX warning (ext4): destination with the same identifier (name{figure.1})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.62 
-      <./binary_3d-eps-converted-to.pdf>] [3]
+l.60 \end{equation}
+                    <./binary_3d-eps-converted-to.pdf>] [3] [4]
 Package epstopdf Info: Source file: <binary_num.eps>
-(epstopdf)                    date: 2015-04-07 10:43:36
-(epstopdf)                    size: 137846 bytes
+(epstopdf)                    date: 2015-07-31 17:28:14
+(epstopdf)                    size: 169217 bytes
 (epstopdf)             Output file: <binary_num-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-04-07 10:45:04
-(epstopdf)                    size: 100295 bytes
+(epstopdf)                    date: 2015-07-31 17:28:21
+(epstopdf)                    size: 120452 bytes
 (epstopdf)             Command: <repstopdf --outfile=binary_num-eps-converted-t
 o.pdf binary_num.eps>
-(epstopdf)             \includegraphics on input line 123.
+(epstopdf)             \includegraphics on input line 125.
 Package epstopdf Info: Output file is already uptodate.
 
-<binary_num-eps-converted-to.pdf, id=118, 1541.76pt x 520.94624pt>
+<binary_num-eps-converted-to.pdf, id=126, 1541.76pt x 618.31pt>
 File: binary_num-eps-converted-to.pdf Graphic file (type pdf)
 
 <use binary_num-eps-converted-to.pdf>
-Package pdftex.def Info: binary_num-eps-converted-to.pdf used on input line 123
+Package pdftex.def Info: binary_num-eps-converted-to.pdf used on input line 125
 .
-(pdftex.def)             Requested size: 520.34267pt x 175.81573pt.
- [4]
-Package epstopdf Info: Source file: <omega.eps>
-(epstopdf)                    date: 2015-07-23 11:13:16
-(epstopdf)                    size: 94880 bytes
-(epstopdf)             Output file: <omega-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-07-23 11:13:21
-(epstopdf)                    size: 32985 bytes
-(epstopdf)             Command: <repstopdf --outfile=omega-eps-converted-to.pdf
- omega.eps>
-(epstopdf)             \includegraphics on input line 136.
+(pdftex.def)             Requested size: 520.34267pt x 208.67534pt.
+Package epstopdf Info: Source file: <peak_accel.eps>
+(epstopdf)                    date: 2015-07-31 13:13:14
+(epstopdf)                    size: 78940 bytes
+(epstopdf)             Output file: <peak_accel-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-31 13:13:32
+(epstopdf)                    size: 39853 bytes
+(epstopdf)             Command: <repstopdf --outfile=peak_accel-eps-converted-t
+o.pdf peak_accel.eps>
+(epstopdf)             \includegraphics on input line 131.
 Package epstopdf Info: Output file is already uptodate.
 
-<omega-eps-converted-to.pdf, id=129, 1541.76pt x 577.15625pt>
-File: omega-eps-converted-to.pdf Graphic file (type pdf)
+<peak_accel-eps-converted-to.pdf, id=127, 1541.76pt x 616.3025pt>
+File: peak_accel-eps-converted-to.pdf Graphic file (type pdf)
 
-<use omega-eps-converted-to.pdf>
-Package pdftex.def Info: omega-eps-converted-to.pdf used on input line 136.
-(pdftex.def)             Requested size: 520.34267pt x 194.78622pt.
+<use peak_accel-eps-converted-to.pdf>
+Package pdftex.def Info: peak_accel-eps-converted-to.pdf used on input line 131
+.
+(pdftex.def)             Requested size: 520.34267pt x 207.99782pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
@@ -486,26 +480,48 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.140 \end{center}
-                   <./binary_num-eps-converted-to.pdf>]
-Package epstopdf Info: Source file: <phasing_2.eps>
-(epstopdf)                    date: 2015-07-23 13:57:43
-(epstopdf)                    size: 589642 bytes
-(epstopdf)             Output file: <phasing_2-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-07-23 13:57:48
-(epstopdf)                    size: 461095 bytes
-(epstopdf)             Command: <repstopdf --outfile=phasing_2-eps-converted-to
-.pdf phasing_2.eps>
-(epstopdf)             \includegraphics on input line 145.
+l.136 
+       <./binary_num-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <omega.eps>
+(epstopdf)                    date: 2015-07-31 13:09:35
+(epstopdf)                    size: 142118 bytes
+(epstopdf)             Output file: <omega-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-31 13:09:40
+(epstopdf)                    size: 45086 bytes
+(epstopdf)             Command: <repstopdf --outfile=omega-eps-converted-to.pdf
+ omega.eps>
+(epstopdf)             \includegraphics on input line 144.
 Package epstopdf Info: Output file is already uptodate.
 
-<phasing_2-eps-converted-to.pdf, id=143, 1541.76pt x 580.1675pt>
-File: phasing_2-eps-converted-to.pdf Graphic file (type pdf)
+<omega-eps-converted-to.pdf, id=141, 1541.76pt x 613.29124pt>
+File: omega-eps-converted-to.pdf Graphic file (type pdf)
 
-<use phasing_2-eps-converted-to.pdf>
-Package pdftex.def Info: phasing_2-eps-converted-to.pdf used on input line 145.
+<use omega-eps-converted-to.pdf>
+Package pdftex.def Info: omega-eps-converted-to.pdf used on input line 144.
+(pdftex.def)             Requested size: 520.34267pt x 206.98154pt.
+Package epstopdf Info: Source file: <omega_zoom.eps>
+(epstopdf)                    date: 2015-07-31 17:30:26
+(epstopdf)                    size: 57360 bytes
+(epstopdf)             Output file: <omega_zoom-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-31 17:28:22
+(epstopdf)                    size: 28224 bytes
+(epstopdf)             Command: <repstopdf --outfile=omega_zoom-eps-converted-t
+o.pdf omega_zoom.eps>
+(epstopdf)             \includegraphics on input line 145.
+runsystem(repstopdf --outfile=omega_zoom-eps-converted-to.pdf omega_zoom.eps)..
+.executed safely (allowed).
 
-(pdftex.def)             Requested size: 520.34267pt x 195.80249pt.
+Package epstopdf Info: Result file: <omega_zoom-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-31 17:31:34
+(epstopdf)                    size: 28221 bytes.
+
+<omega_zoom-eps-converted-to.pdf, id=142, 1541.76pt x 618.31pt>
+File: omega_zoom-eps-converted-to.pdf Graphic file (type pdf)
+
+<use omega_zoom-eps-converted-to.pdf>
+Package pdftex.def Info: omega_zoom-eps-converted-to.pdf used on input line 145
+.
+(pdftex.def)             Requested size: 520.34267pt x 208.67534pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
@@ -514,191 +530,277 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.149 
-       <./omega-eps-converted-to.pdf>]
-Package epstopdf Info: Source file: <omegasens.eps>
-(epstopdf)                    date: 2015-07-23 13:50:32
-(epstopdf)                    size: 353490 bytes
-(epstopdf)             Output file: <omegasens-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-07-23 13:51:03
-(epstopdf)                    size: 258369 bytes
-(epstopdf)             Command: <repstopdf --outfile=omegasens-eps-converted-to
-.pdf omegasens.eps>
-(epstopdf)             \includegraphics on input line 154.
+l.149 \end{center}
+                   <./peak_accel-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <phasing_energy_full.eps>
+(epstopdf)                    date: 2015-07-30 14:38:14
+(epstopdf)                    size: 18105289 bytes
+(epstopdf)             Output file: <phasing_energy_full-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-30 14:41:26
+(epstopdf)                    size: 95104 bytes
+(epstopdf)             Command: <repstopdf --outfile=phasing_energy_full-eps-co
+nverted-to.pdf phasing_energy_full.eps>
+(epstopdf)             \includegraphics on input line 157.
 Package epstopdf Info: Output file is already uptodate.
 
-<omegasens-eps-converted-to.pdf, id=156, 1541.76pt x 580.1675pt>
-File: omegasens-eps-converted-to.pdf Graphic file (type pdf)
+<phasing_energy_full-eps-converted-to.pdf, id=163, 1264.725pt x 549.05125pt>
+File: phasing_energy_full-eps-converted-to.pdf Graphic file (type pdf)
 
-<use omegasens-eps-converted-to.pdf>
-Package pdftex.def Info: omegasens-eps-converted-to.pdf used on input line 154.
-
-(pdftex.def)             Requested size: 520.34267pt x 195.80249pt.
-Package epstopdf Info: Source file: <Rsens.eps>
-(epstopdf)                    date: 2015-07-23 16:19:27
-(epstopdf)                    size: 438527 bytes
-(epstopdf)             Output file: <Rsens-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-07-23 16:19:33
-(epstopdf)                    size: 319701 bytes
-(epstopdf)             Command: <repstopdf --outfile=Rsens-eps-converted-to.pdf
- Rsens.eps>
-(epstopdf)             \includegraphics on input line 163.
-Package epstopdf Info: Output file is already uptodate.
-
-<Rsens-eps-converted-to.pdf, id=158, 1541.76pt x 583.17876pt>
-File: Rsens-eps-converted-to.pdf Graphic file (type pdf)
-
-<use Rsens-eps-converted-to.pdf>
-Package pdftex.def Info: Rsens-eps-converted-to.pdf used on input line 163.
-(pdftex.def)             Requested size: 520.34267pt x 196.81879pt.
-
-Underfull \vbox (badness 7685) has occurred while \output is active []
-
+<use phasing_energy_full-eps-converted-to.pdf>
+Package pdftex.def Info: phasing_energy_full-eps-converted-to.pdf used on input
+ line 157.
+(pdftex.def)             Requested size: 520.34267pt x 225.89998pt.
  [7pdfTeX warning (ext4): destination with the same identifier (name{figure.4})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.166 \end{figure}
-                  pdfTeX warning (ext4): destination with the same identifier (
-name{figure.5}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.166 \end{figure}
-                   <./phasing_2-eps-converted-to.pdf> <./omegasens-eps-converte
-d-to.pdf>]
-Package epstopdf Info: Source file: <regolith_v_gravitational.eps>
-(epstopdf)                    date: 2015-07-15 10:13:06
-(epstopdf)                    size: 244689 bytes
-(epstopdf)             Output file: <regolith_v_gravitational-eps-converted-to.
-pdf>
-(epstopdf)                    date: 2015-07-15 12:29:06
-(epstopdf)                    size: 170368 bytes
-(epstopdf)             Command: <repstopdf --outfile=regolith_v_gravitational-e
-ps-converted-to.pdf regolith_v_gravitational.eps>
-(epstopdf)             \includegraphics on input line 173.
+l.160 \end{figure}
+                   <./omega-eps-converted-to.pdf> <./omega_zoom-eps-converted-t
+o.pdf>]
+Package epstopdf Info: Source file: <phasing_energy_zoom.eps>
+(epstopdf)                    date: 2015-07-30 14:39:14
+(epstopdf)                    size: 18105289 bytes
+(epstopdf)             Output file: <phasing_energy_zoom-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-30 14:41:29
+(epstopdf)                    size: 61241 bytes
+(epstopdf)             Command: <repstopdf --outfile=phasing_energy_zoom-eps-co
+nverted-to.pdf phasing_energy_zoom.eps>
+(epstopdf)             \includegraphics on input line 163.
 Package epstopdf Info: Output file is already uptodate.
 
-<regolith_v_gravitational-eps-converted-to.pdf, id=186, 1541.76pt x 523.9575pt>
-File: regolith_v_gravitational-eps-converted-to.pdf Graphic file (type pdf)
-<use regolith_v_gravitational-eps-converted-to.pdf>
-Package pdftex.def Info: regolith_v_gravitational-eps-converted-to.pdf used on 
-input line 173.
-(pdftex.def)             Requested size: 520.34267pt x 176.83202pt.
+<phasing_energy_zoom-eps-converted-to.pdf, id=179, 1264.725pt x 549.05125pt>
+File: phasing_energy_zoom-eps-converted-to.pdf Graphic file (type pdf)
 
-Underfull \vbox (badness 2027) has occurred while \output is active []
+<use phasing_energy_zoom-eps-converted-to.pdf>
+Package pdftex.def Info: phasing_energy_zoom-eps-converted-to.pdf used on input
+ line 163.
+(pdftex.def)             Requested size: 433.62pt x 188.24161pt.
+Package epstopdf Info: Source file: <theta_sens.eps>
+(epstopdf)                    date: 2015-07-30 11:53:59
+(epstopdf)                    size: 10487 bytes
+(epstopdf)             Output file: <theta_sens-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-30 11:54:11
+(epstopdf)                    size: 9221 bytes
+(epstopdf)             Command: <repstopdf --outfile=theta_sens-eps-converted-t
+o.pdf theta_sens.eps>
+(epstopdf)             \includegraphics on input line 169.
+Package epstopdf Info: Output file is already uptodate.
 
- [8pdfTeX warning (ext4): destination with the same identifier (name{figure.6})
+<theta_sens-eps-converted-to.pdf, id=180, 1541.76pt x 594.22pt>
+File: theta_sens-eps-converted-to.pdf Graphic file (type pdf)
+
+<use theta_sens-eps-converted-to.pdf>
+Package pdftex.def Info: theta_sens-eps-converted-to.pdf used on input line 169
+.
+(pdftex.def)             Requested size: 520.34267pt x 200.54512pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [8pdfTeX warning (ext4): destination with the same identifier (name{figure.5})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.177 
-       <./Rsens-eps-converted-to.pdf>]
-Package epstopdf Info: Source file: <regolith_v_gravitational.eps>
-(epstopdf)                    date: 2015-07-15 10:13:06
-(epstopdf)                    size: 244689 bytes
-(epstopdf)             Output file: <regolith_v_gravitational-eps-converted-to.
-pdf>
-(epstopdf)                    date: 2015-07-15 12:29:06
-(epstopdf)                    size: 170368 bytes
-(epstopdf)             Command: <repstopdf --outfile=regolith_v_gravitational-e
-ps-converted-to.pdf regolith_v_gravitational.eps>
-(epstopdf)             \includegraphics on input line 182.
+l.172 \end{figure}
+                   <./phasing_energy_full-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <Rsens_accel_1.eps>
+(epstopdf)                    date: 2015-07-30 11:35:36
+(epstopdf)                    size: 9918 bytes
+(epstopdf)             Output file: <Rsens_accel_1-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-30 11:35:40
+(epstopdf)                    size: 8333 bytes
+(epstopdf)             Command: <repstopdf --outfile=Rsens_accel_1-eps-converte
+d-to.pdf Rsens_accel_1.eps>
+(epstopdf)             \includegraphics on input line 178.
 Package epstopdf Info: Output file is already uptodate.
-File: regolith_v_gravitational-eps-converted-to.pdf Graphic file (type pdf)
 
-<use regolith_v_gravitational-eps-converted-to.pdf>
-Package pdftex.def Info: regolith_v_gravitational-eps-converted-to.pdf used on 
-input line 182.
-(pdftex.def)             Requested size: 520.34267pt x 176.83202pt.
- [9pdfTeX warning (ext4): destination with the same identifier (name{figure.7})
+<Rsens_accel_1-eps-converted-to.pdf, id=212, 1541.76pt x 595.22375pt>
+File: Rsens_accel_1-eps-converted-to.pdf Graphic file (type pdf)
+
+<use Rsens_accel_1-eps-converted-to.pdf>
+Package pdftex.def Info: Rsens_accel_1-eps-converted-to.pdf used on input line 
+178.
+(pdftex.def)             Requested size: 520.34267pt x 200.88388pt.
+ [9pdfTeX warning (ext4): destination with the same identifier (name{figure.6})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.190 
+l.182 
       pdfTeX warning (ext4): destination with the same identifier (name{figure.
-8}) has been already used, duplicate ignored
+7}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.190 
-       <./regolith_v_gravitational-eps-converted-to.pdf>]
-Package epstopdf Info: Source file: <deflection_1.eps>
-(epstopdf)                    date: 2015-07-24 11:16:24
-(epstopdf)                    size: 282316 bytes
-(epstopdf)             Output file: <deflection_1-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-07-24 11:07:40
-(epstopdf)                    size: 211054 bytes
-(epstopdf)             Command: <repstopdf --outfile=deflection_1-eps-converted
--to.pdf deflection_1.eps>
-(epstopdf)             \includegraphics on input line 194.
-runsystem(repstopdf --outfile=deflection_1-eps-converted-to.pdf deflection_1.ep
-s)...executed safely (allowed).
+l.182 
+       <./phasing_energy_zoom-eps-converted-to.pdf> <./theta_sens-eps-converted
+-to.pdf>]
+Package epstopdf Info: Source file: <omegasens.eps>
+(epstopdf)                    date: 2015-07-31 17:02:09
+(epstopdf)                    size: 10348 bytes
+(epstopdf)             Output file: <omegasens-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-31 17:02:14
+(epstopdf)                    size: 8860 bytes
+(epstopdf)             Command: <repstopdf --outfile=omegasens-eps-converted-to
+.pdf omegasens.eps>
+(epstopdf)             \includegraphics on input line 187.
+Package epstopdf Info: Output file is already uptodate.
+ <omegasens-eps-converted-to.pdf, id=251, 1541.76pt x 618.31pt>
+File: omegasens-eps-converted-to.pdf Graphic file (type pdf)
 
-Package epstopdf Info: Result file: <deflection_1-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-07-24 11:16:56
-(epstopdf)                    size: 170064 bytes.
+<use omegasens-eps-converted-to.pdf>
+Package pdftex.def Info: omegasens-eps-converted-to.pdf used on input line 187.
 
-<deflection_1-eps-converted-to.pdf, id=213, 1541.76pt x 569.12625pt>
-File: deflection_1-eps-converted-to.pdf Graphic file (type pdf)
+(pdftex.def)             Requested size: 520.34267pt x 208.67534pt.
 
-<use deflection_1-eps-converted-to.pdf>
-Package pdftex.def Info: deflection_1-eps-converted-to.pdf used on input line 1
-94.
-(pdftex.def)             Requested size: 520.34267pt x 192.07616pt.
-Package epstopdf Info: Source file: <deflection_0.eps>
-(epstopdf)                    date: 2015-07-24 11:12:22
-(epstopdf)                    size: 123068 bytes
-(epstopdf)             Output file: <deflection_0-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-07-24 11:12:35
-(epstopdf)                    size: 152700 bytes
-(epstopdf)             Command: <repstopdf --outfile=deflection_0-eps-converted
--to.pdf deflection_0.eps>
-(epstopdf)             \includegraphics on input line 195.
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [10pdfTeX warning (ext4): destination with the same identifier (name{figure.8}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.191 
+       <./Rsens_accel_1-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <regolith_v_gravitational.eps>
+(epstopdf)                    date: 2015-07-31 12:06:06
+(epstopdf)                    size: 262114 bytes
+(epstopdf)             Output file: <regolith_v_gravitational-eps-converted-to.
+pdf>
+(epstopdf)                    date: 2015-07-31 12:06:20
+(epstopdf)                    size: 175296 bytes
+(epstopdf)             Command: <repstopdf --outfile=regolith_v_gravitational-e
+ps-converted-to.pdf regolith_v_gravitational.eps>
+(epstopdf)             \includegraphics on input line 201.
 Package epstopdf Info: Output file is already uptodate.
 
-<deflection_0-eps-converted-to.pdf, id=214, 1541.76pt x 769.87625pt>
-File: deflection_0-eps-converted-to.pdf Graphic file (type pdf)
+<regolith_v_gravitational-eps-converted-to.pdf, id=270, 1541.76pt x 608.2725pt>
+File: regolith_v_gravitational-eps-converted-to.pdf Graphic file (type pdf)
+<use regolith_v_gravitational-eps-converted-to.pdf>
+Package pdftex.def Info: regolith_v_gravitational-eps-converted-to.pdf used on 
+input line 201.
+(pdftex.def)             Requested size: 520.34267pt x 205.28775pt.
 
-<use deflection_0-eps-converted-to.pdf>
-Package pdftex.def Info: deflection_0-eps-converted-to.pdf used on input line 1
-95.
-(pdftex.def)             Requested size: 520.34267pt x 259.8279pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [10]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 1565) has occurred while \output is active []
 
  [11pdfTeX warning (ext4): destination with the same identifier (name{figure.9}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.204 
+l.205 
+       <./omegasens-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <deflection_1.eps>
+(epstopdf)                    date: 2015-07-31 17:21:19
+(epstopdf)                    size: 283014 bytes
+(epstopdf)             Output file: <deflection_1-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-31 17:21:57
+(epstopdf)                    size: 180920 bytes
+(epstopdf)             Command: <repstopdf --outfile=deflection_1-eps-converted
+-to.pdf deflection_1.eps>
+(epstopdf)             \includegraphics on input line 217.
+Package epstopdf Info: Output file is already uptodate.
+
+<deflection_1-eps-converted-to.pdf, id=288, 1541.76pt x 618.31pt>
+File: deflection_1-eps-converted-to.pdf Graphic file (type pdf)
+
+<use deflection_1-eps-converted-to.pdf>
+Package pdftex.def Info: deflection_1-eps-converted-to.pdf used on input line 2
+17.
+(pdftex.def)             Requested size: 520.34267pt x 208.67534pt.
+Package epstopdf Info: Source file: <deflection_0.eps>
+(epstopdf)                    date: 2015-07-31 17:21:50
+(epstopdf)                    size: 122212 bytes
+(epstopdf)             Output file: <deflection_0-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-31 17:21:57
+(epstopdf)                    size: 144663 bytes
+(epstopdf)             Command: <repstopdf --outfile=deflection_0-eps-converted
+-to.pdf deflection_0.eps>
+(epstopdf)             \includegraphics on input line 218.
+Package epstopdf Info: Output file is already uptodate.
+
+<deflection_0-eps-converted-to.pdf, id=289, 1541.76pt x 618.31pt>
+File: deflection_0-eps-converted-to.pdf Graphic file (type pdf)
+
+<use deflection_0-eps-converted-to.pdf>
+Package pdftex.def Info: deflection_0-eps-converted-to.pdf used on input line 2
+18.
+(pdftex.def)             Requested size: 520.34267pt x 208.67534pt.
+
+Underfull \vbox (badness 2547) has occurred while \output is active []
+
+ [12pdfTeX warning (ext4): destination with the same identifier (name{figure.10
+}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.222 
+       <./regolith_v_gravitational-eps-converted-to.pdf>]
+<reg_deflect_pre.png, id=303, 1568.86125pt x 530.98375pt>
+File: reg_deflect_pre.png Graphic file (type png)
+
+<use reg_deflect_pre.png>
+Package pdftex.def Info: reg_deflect_pre.png used on input line 227.
+(pdftex.def)             Requested size: 520.34267pt x 176.1083pt.
+
+<reg_deflect_post0.png, id=304, 1518.67375pt x 441.65pt>
+File: reg_deflect_post0.png Graphic file (type png)
+
+<use reg_deflect_post0.png>
+Package pdftex.def Info: reg_deflect_post0.png used on input line 228.
+(pdftex.def)             Requested size: 520.34267pt x 151.32486pt.
+
+<reg_deflect_post1.png, id=305, 1265.72874pt x 517.935pt>
+File: reg_deflect_post1.png Graphic file (type png)
+
+<use reg_deflect_post1.png>
+Package pdftex.def Info: reg_deflect_post1.png used on input line 229.
+(pdftex.def)             Requested size: 520.34267pt x 212.92374pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [13pdfTeX warning (ext4): destination with the same identifier (name{figure.11
+}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.233 
        <./deflection_1-eps-converted-to.pdf> <./deflection_0-eps-converted-to.p
-df>] (./AAS_Binaries_2.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 211.
- [12]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 211.
- (./AAS_Binaries_2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 211.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 211.
+df>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [14pdfTeX warning (ext4): destination with the same identifier (name{figure.12
+}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.236 
+       <./reg_deflect_pre.png (PNG copy)> <./reg_deflect_post0.png (PNG copy)> 
+<./reg_deflect_post1.png (PNG copy)>] (./AAS_Binaries_2.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 243.
+ [15]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 243.
+
+(./AAS_Binaries_2.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 243.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 243.
 Package rerunfilecheck Info: File `AAS_Binaries_2.out' has not changed.
-(rerunfilecheck)             Checksum: 80E3BB0B01E6C461010F9FE1C92E58BE;530.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 211.
+(rerunfilecheck)             Checksum: 7E2F5DBE2752882BF2D94A19A0BA2CE4;541.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 243.
  ) 
 Here is how much of TeX's memory you used:
- 6570 strings out of 494985
- 94810 string characters out of 6180356
- 182393 words of memory out of 5000000
- 9609 multiletter control sequences out of 15000+600000
- 37650 words of font info for 87 fonts, out of 8000000 for 9000
+ 6613 strings out of 494985
+ 96004 string characters out of 6180356
+ 183092 words of memory out of 5000000
+ 9639 multiletter control sequences out of 15000+600000
+ 36021 words of font info for 85 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 34i,12n,45p,2333b,386s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,12n,45p,1901b,386s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{section*.9} has been referenced but does not exis
 t, replaced by a fixed one
 
@@ -718,19 +820,17 @@ onts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
 lic/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf
--dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
-/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on AAS_Binaries_2.pdf (12 pages, 1963608 bytes).
+/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
+/utmri8a.pfb>
+Output written on AAS_Binaries_2.pdf (15 pages, 1395772 bytes).
 PDF statistics:
- 309 PDF objects out of 1000 (max. 8388607)
- 234 compressed objects within 3 object streams
- 47 named destinations out of 1000 (max. 500000)
- 118 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 393 PDF objects out of 1000 (max. 8388607)
+ 268 compressed objects within 3 object streams
+ 54 named destinations out of 1000 (max. 500000)
+ 153 words of extra memory for PDF output out of 10000 (max. 10000000)
 
