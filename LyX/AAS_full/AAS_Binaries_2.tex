@@ -37,7 +37,7 @@ We consider the behaviour of rotating binary asteroids as they pass through Eart
 \section{Introduction}
 Radar observations suggest that a significant portion of asteroids with Earth-crossing orbits are binary systems, consisting of two components in contact with or in close proximity of each other. As shown by work such as that of Farinella \textit{et al} \cite{binaryevo} in the early 1990s, gravitational encounters can significantly alter the orbits and integrity of such binary systems. It is important to be able to accurately predict the motion of these bodies for maximum warning of any possible Earth collision event. The main effect we consider here is the Binary Exchange mechanism, as discussed by Borum \textit{et al}\cite{exchange}. This is where a rotation of a binary pair is disrupted by the tidal forces, causing the pair to split and altering the orbital energy of each component. 
 
-In this work, we consider Contact Binaries; single asteroids formed primarily by two large boulders. We consider both gravitationally bound pairs and those bound by a regolith bridge, as illustrated in Figure ~\ref{fig:Pic}. The bridge is comprised of many small dust particles; the size of which cause in non-negligble London Dispersion forces between them resulting in adhesive effect between them and the larger components (This mechanism is similar to that discussed by Sanchez \& Scheeres \cite{dustbound}). We also model an attempted deflection of the binary system to the close encounter, using and impactor-type method. This work forms a theoretical basis in the event such a deflection mission is required.
+In this work, we consider Contact Binaries; single asteroids formed primarily by two large boulders. We consider both gravitationally bound pairs and those bound by a regolith bridge, as illustrated in Figure ~\ref{fig:Pic}. The bridge is comprised of many small dust particles; the size of which cause in non-negligble London Dispersion forces between them resulting in adhesive effect between them and the larger components (This mechanism is similar to that discussed by Sanchez and Scheeres \cite{dustbound}). We also model an attempted deflection of the binary system to the close encounter, using and impactor-type method. This work forms a theoretical basis in the event such a deflection mission is required.
 
 \begin{figure}[H]
 \centering
@@ -84,7 +84,7 @@ Assuming the initial values $R_0$ and $\omega_0$ at some time $t_0$ we get the f
 \omega = \frac{R_0^{2}\omega_0}{R^{2}}
 \end{equation}
 
-Now, we consider the equation of motion for the position of the binary components relative to the centre of mass, $\vec{\rho}$. We chose to work solely with the equation describing the motion of the component located at $\vec{R}+\vec{\rho}$; an analysis could be performed for the other component but similar results would be expected. We make the assumption that the pair remains in a mutual circular orbit until the fragmentation event occurs. As such, by considering only components of the vector acting in the $\vec{\rho}$ direction we obtain an equation describing the forces responsible for the binding of the pair. We define the Binary-Orbit angle $\theta$ as the angle between $\vec{R}$ \& $\vec{\rho}$ at a given time.
+Now, we consider the equation of motion for the position of the binary components relative to the centre of mass, $\vec{\rho}$. We chose to work solely with the equation describing the motion of the component located at $\vec{R}+\vec{\rho}$; an analysis could be performed for the other component but similar results would be expected. We make the assumption that the pair remains in a mutual circular orbit until the fragmentation event occurs. As such, by considering only components of the vector acting in the $\vec{\rho}$ direction we obtain an equation describing the forces responsible for the binding of the pair. We define the Binary-Orbit angle $\theta$ as the angle between $\vec{R}$ and $\vec{\rho}$ at a given time.
 \begin{equation}\label{eq:rdd}
 \ddot{\rho} = \left[\frac{-Gm}{4\rho^{2}}+F(\rho)\right]+2\omega\dot{\rho}+\omega^{2}\rho+{GM_\oplus}\left[\frac{\cos\theta}{R^{2}}-\frac{R\cos\theta+\rho}{(R^{2}+2R\rho\cos\theta+\rho^{2})^\frac{3}{2}}\right]
 \end{equation}
@@ -113,12 +113,10 @@ V(r) = \left\{
 \right.
 \end{equation}
 
-\subsection{Simulation Setup \& Results}
+\subsection{Simulation Setup and Results}
 
 Using the code described, a series of simulations are performed to explore the dynamics of close encounters of binary asteroids with Earth-sized bodies. Before discussing specific results, we outline the setup considered and the nature of the output of the code.
-
 The majority of our simulations detailed in this section consider a parabolic encounter with a closest approach distance of 124km. Our code takes a list of initial positions and velocities in Cartesian co-ordinates as the input, and outputs a track of positions, velocities, kinetic and potential energies for each body considered. To generate the input parameters to give the desired orbit path, we first simulate a single body (with the same mass as the sum of the two binary components) starting at the closest approach point with velocity orthogonal to the direction to the Earth, with the simulation running for half the final desired time. We then take the resulting final output position and velocity, reverse the velocity and use this as the initial position and velocity for the barycentre of the binary for the main simulation. In all our simulations we consider a binary comprised of two 2 metre diameter spheres, each of mass 10 tonnes, with an initial mutual orbital radius of 1.01 metres from the barycentre and rotating about the barycentre with an angular speed of 1.7032  $mrad\cdot s^{-1}$.
-
 The two data outputs we primarily consider are the sum of kinetic and potential energies for each component individually and the acceleration of each component relative to the barycentre;  Figure~\ref{fig:Num_energy} shows a plot of this total energy for the two binary components produced by a simulation, and  figure~\ref{fig:Num_accell} the relative acceleration. After the fragmentation one components is captured (having its orbital energy reduced below zero) and the other escapes (gaining orbital energy). The break-up is observed as the energy trace transitions from the oscillating regime to a steady state; we define the fragmentation energy as the difference between the average total energy of a binary component and the final energy state.
 \begin{figure}[H]
 \centering
@@ -136,25 +134,23 @@ The two data outputs we primarily consider are the sum of kinetic and potential 
 
 \subsection{Analytical Comparisons}
 
-Using the set of equations derived earlier, we can make estimates for the behavior of the binary system. By running a series of simulations with varied initial conditions, we gauge the relationship between the fragmentation energy and the parameters $\theta$, $\omega$ \& $R$. Firstly, however, we attempt to verify the accuracy of some of the assumptions applied in the derivation of the equations; namely the constant rotation rate and radius of the binary pair prior to the fragmentation event. To do this, we run a simulation with a close approach distance of 124km and an orbital angular speed at closest approach of 1.703 $mrad \cdot s^{-1}$.Figure~\ref{fig:omega} shows the radius and angular velocity of the binary pair over the course of an orbit. Prior to the fragmentation event, the fluctuation in angular speed is approximately 1\% of its magnitude.
+Using the set of equations derived earlier, we can make estimates for the behavior of the binary system. By running a series of simulations with varied initial conditions, we gauge the relationship between the fragmentation energy and the parameters $\theta$, $\omega$ and $R$. Firstly, however, we attempt to verify the accuracy of some of the assumptions applied in the derivation of the equations; namely the constant rotation rate and radius of the binary pair prior to the fragmentation event. To do this, we run a simulation with a close approach distance of 124km and an orbital angular speed at closest approach of 1.703 $mrad/s$.Figure~\ref{fig:omega} shows the radius and angular velocity of the binary pair over the course of an orbit. Prior to the fragmentation event, the fluctuation in angular speed is approximately 1\% of its magnitude.
 
-\begin{center}
-\begin{figure}[H]
+\begin{figure}
 \centering
-\centerline{\includegraphics[width=1.2\textwidth]{omega.eps}} 
-\centerline{\includegraphics[width=1.2\textwidth]{omega_zoom.eps}} 
+\centerline{\includegraphics[width=1.1\textwidth]{omega.eps}} 
+\centerline{\includegraphics[width=1.1\textwidth]{omega_zoom.eps}} 
 \caption{Plots of angular velocity and radius of a binary pair as fractions of the initial values (full encounter duration and close-up of fragmentation). The vertical dashed black line in the close-up plot indicates the fragmentation event time.} 
 \label{fig:omega}
 \end{figure}
-\end{center}
 
-Now, we consider the sensitivity of the fragmentation energy and peak component acceleration (relative to the barycentre) to the parameters $\theta$, $\omega$ \& $R$. $\theta$ is varied by changing the starting orientation of the binary pair, whilst $\omega$ \& $R$ are changed by altering the orbital parameters. Assuming the rotation rate is balanced with the attractive force between the binary components such that the orbit is circular when in free space (as is the case in all simulations presented here), any effective repulsive force between the two components introduced by the influence of a third body would alter the orbit into an elliptical one or if strong enough eliminate the possibility of any stable orbit. If the strength of the repulsive force is greater than that of the attractive, the net effective force between the pair is repulsive and as such fragmentation is inevitable. 
 
-To investigate the sensitivity of the fragmentation to $\theta$ we ran a series of simulations as discussed above, witha close approach distance of 124km and orbital angular velocity at close approach of 1.703 $mrad \cdot s^{-1}$. We varied the starting orientation in 30 uniform steps between 0 and $\pi$. The results of these simulations are illustrated in figures ~ref{fig:phase}\&~\ref{fig:theta}. Figure ~\ref{fig:phase} shows a surface of the total energy one component in a binary system as a function of time and angle $\theta$ (Since $\theta$ is a function of time, we consider its value immediately prior to the fragmentation in our plots here).
-As can be seen there is a significant variation in the final energy, with some cases getting captured while others escaping. The discontinuities present in some curves are due to collisions between the components which occur as their orbit is destabilized. The relative velocity of these collisions is of the order of $10^{-4}m\cdot s^{-1}$,  so no destruction or deformation on the boulders is expected. As the angle varies steadily, the fragmentation energy initially varies as a small offset. However, at a certain point the energy varies more rapidly as the components swap (the one which gained orbital energy during the encounter for lower values of $\theta$ instead loses energy and vice versa). Figure~\ref{fig:phase} shows the peak acceleration experienced over the same range of $\theta$ values. The values exhibit the general periodicity predicted in equation~\ref{eq:rep}. However, the region for theta between 1 and 2.1 radians exhibits very rough and discontinuous behaviour. For values of theta in this region, there are significant collisions between the two components, so we would not expect our equations to be valid in these cases. These collisions can be identified as the jumps in the value of component energy present in figure~\ref{fig:phase_zoom}
+Now, we consider the sensitivity of the fragmentation energy and peak component acceleration (relative to the barycentre) to the parameters $\theta$, $\omega$ and $R$. $\theta$ is varied by changing the starting orientation of the binary pair, whilst $\omega$ and $R$ are changed by altering the orbital parameters. Assuming the rotation rate is balanced with the attractive force between the binary components such that the orbit is circular when in free space (as is the case in all simulations presented here), any effective repulsive force between the two components introduced by the influence of a third body would alter the orbit into an elliptical one or if strong enough eliminate the possibility of any stable orbit. If the strength of the repulsive force is greater than that of the attractive, the net effective force between the pair is repulsive and as such fragmentation is inevitable. 
+To investigate the sensitivity of the fragmentation to $\theta$ we ran a series of simulations as discussed above, witha close approach distance of 124km and orbital angular velocity at close approach of 1.703 $mrad/s$. We varied the starting orientation in 30 uniform steps between 0 and $\pi$. The results of these simulations are illustrated in figures ~\ref{fig:phase} and~\ref{fig:theta}. Figures ~\ref{fig:phase} and ~\ref{fig:phase_zoom} show a surface of the total energy one component in a binary system as a function of time and angle $\theta$ (full encounter and close-up of fragmentation respectively). Since $\theta$ is a function of time, we consider its value immediately prior to the fragmentation in our plots here.
+As can be seen there is a significant variation in the final energy, with some cases getting captured while others escaping. The discontinuities present in some curves are due to collisions between the components which occur as their orbit is destabilized. The relative velocity of these collisions is of the order of $10^{-4}m/s$,  so no destruction or deformation on the boulders is expected. As the angle varies steadily, the fragmentation energy initially varies as a small offset. However, at a certain point the energy varies more rapidly as the components swap (the one which gained orbital energy during the encounter for lower values of $\theta$ instead loses energy and vice versa). Figure~\ref{fig:phase} shows the peak acceleration experienced over the same range of $\theta$ values. The values exhibit the general periodicity predicted in equation~\ref{eq:rep}. However, the region for theta between 1 and 2.1 radians exhibits very rough and discontinuous behaviour. For values of theta in this region, there are significant collisions between the two components, so we would not expect our equations to be valid in these cases. These collisions can be identified as the jumps in the value of component energy present in figure~\ref{fig:phase_zoom}
  \begin{figure}[H]
 \centering
-\centerline{\includegraphics[width=1.2\textwidth]{phasing_energy_full.eps}} 
+\centerline{\includegraphics[width=1.0\textwidth]{phasing_energy_full.eps}} 
 \caption{Surface showing the energy of one component for varying angle $\theta$ over the duration of the encounter.} 
 \label{fig:phase}
 \end{figure} 
@@ -164,15 +160,16 @@ As can be seen there is a significant variation in the final energy, with some c
 \caption{Surface showing the energy of one component for varying angle $\theta$ over the duration of the encounter (close-up of fragmentation time).} 
 \label{fig:phase_zoom}
 \end{figure} 
+
+
+For the analyses of both the $\omega$ and $R$ sensitivity, the setup is somewhat more complicated in principle as it is not possible to scale one without altering the other throughout the rest of the orbit. However, since the effects of the disruption will be greatest at the closest approach point, we change each parameter in uniform steps whilst keeping the other constant at this point. 
+Using this procedure, the sensitivity of the acceleration during fragmentation to the Earth-Binary distance $R$ is investigated. This is done by varying the closest approach distance whilst keeping the ratio between $R$ and $v$ at closest approach (and hence $\omega$) constant. We increase the close approach distance in increments of 20km, starting at 124km, keeping a constant orbital angular speed at close approach of 1.703 $mrad/s$. As can be seen in figure~\ref{fig:Rsens}, the peak component-barycentre acceleration experienced during the fragmentation decreases smoothly as close approach distance increases; this is as expected from equation~\ref{eq:rep}.
  \begin{figure}[H]
 \centering
-\centerline{\includegraphics[width=1.2\textwidth]{theta_sens.eps}} 
+\centerline{\includegraphics[width=1.0\textwidth]{theta_sens.eps}} 
 \caption{Plots of the Peak acceleration relative to the barycentre for varying angle $\theta$.} 
 \label{fig:theta}
 \end{figure}
-
-For the analyses of both the $\omega$ and $R$ sensitivity, the setup is somewhat more complicated in principle as it is not possible to scale one without altering the other throughout the rest of the orbit. However, since the effects of the disruption will be greatest at the closest approach point, we change each parameter in uniform steps whilst keeping the other constant at this point. 
-Using this procedure, the sensitivity of the acceleration during fragmentation to the Earth-Binary distance $R$ is investigated. This is done by varying the closest approach distance whilst keeping the ratio between $R$ and $v$ at closest approach (and hence $\omega$) constant. We increase the close approach distance in increments of 20km, starting at 124km, keeping a constant orbital angular speed at close approach of 1.703 $mrad \cdot s^{-1}$. As can be seen in figure~\ref{fig:Rsens}, the peak component-barycentre acceleration experienced during the fragmentation decreases smoothly as close approach distance increases; this is as expected from equation~\ref{eq:rep}.
 \begin{figure}[H]
 \centering
 \centerline{\includegraphics[width=1.2\textwidth]{Rsens_accel_1.eps}} 
@@ -181,7 +178,7 @@ Using this procedure, the sensitivity of the acceleration during fragmentation t
 \end{figure} 
 
 
- Finally, we consider the sensitivity of the acceleration during fragmentation to the orbit angular speed $\omega$. We maintain a constant closest approach distance of 124km but increase the orbital energy (and hence both the tangential and angular orbital velocity at this point). We start with an orbital angular speed of 1.703 $mrad \cdot s^{-1}$ and increase in steps of 0.01538 $mrad \cdot s^{-1}$. Figure~\ref{fig:omegasens} shows a plot of the energy traces of a single component for a range of values of $\omega$. As can be seen the peak acceleration decreases steadily as $\omega$ increases; this is contrary to what we would expect from equation~\ref{eq:rep}. One possible cause of this discrepancy is that as the value of $\omega$ increases, the time for which the binary is in the strongest region of the gravitational field decreases. Since the tidal force is proportional to the distance between the two binary components, it may be that the components do not drift sufficiently far apart whilst in close proximity to the Earth, hence reducing the peak acceleration experienced.
+ Finally, we consider the sensitivity of the acceleration during fragmentation to the orbit angular speed $\omega$. We maintain a constant closest approach distance of 124km but increase the orbital energy (and hence both the tangential and angular orbital velocity at this point). We start with an orbital angular speed of 1.703 $mrad/s$ and increase in steps of 0.01538 $mrad/s$. Figure~\ref{fig:omegasens} shows a plot of the energy traces of a single component for a range of values of $\omega$. As can be seen the peak acceleration decreases steadily as $\omega$ increases; this is contrary to what we would expect from equation~\ref{eq:rep}. One possible cause of this discrepancy is that as the value of $\omega$ increases, the time for which the binary is in the strongest region of the gravitational field decreases. Since the tidal force is proportional to the distance between the two binary components, it may be that the components do not drift sufficiently far apart whilst in close proximity to the Earth, hence reducing the peak acceleration experienced.
 \begin{figure}[H]
 \centering
 \centerline{\includegraphics[width=1.2\textwidth]{omegasens.eps}} 
@@ -204,30 +201,28 @@ As with the previous encounter simulations, a closest approach distance of 124km
 \end{figure}
 
 \subsection{Deflection attempt}
+Lastly, we present here a few simulations of attempted deflections for a binary asteroid on a collision course with Earth. The validity of these simulations has two main limitations. Firstly, the soft-body collision model does not allow for any permanent deformation, fragmentation or similar phenomena; due to the high velocities required for an impactor-based deflection some degree of deformation would be expected in reality. The second limitation is that of size; due to computational time constraints, the binary pairs we consider in all our simulations are significantly smaller than any which would need to be deflected (having a total diameter of 4 metres and a mass of 20 tons). Still, these simulations indicate certain effects and phenomena which may be present in a more realistic deflection scenario. 
 
-Lastly, we present here a few simulations of attempted deflections for a binary asteroid on a collision course with Earth. Theses simulations are not highly realistic for two main reasons. Firstly, the soft-body collision model does not allow for any permanent deformation, fragmentation or similar phenomena; due to the high velocities required for an impactor-based deflection some degree of deformation would be expected in reality. The second limitation is that of computational time required for simulating the orbit; to minimize this, the deflection is carried out rather close to the Earth (roughly 24 hours before impact). Any real deflection mission would hopefully have significantly more time and as such would require a less aggressive deflection. Still, these simulations indicate certain effects and phenomena which may be present in a more realistic deflection scenario. 
+To select an appropriate value for the spring constant and damping constants for the soft-body collisions, we first simulate a collision between two 1 metre radius spheres at 1 $m/s$. We adjust the parameter such that the system loses roughly 20\% of its Kinetic energy in this collision, thus matching the experimental data of the coefficient of restitution for metre-scale granite spheres as measured by Durda \textit{et al}~\cite{bigrocks}.
 
-To select an appropriate value for the spring constant and damping constants for the soft-body collisions, we first simulate a collision between two 1 metre radius spheres at 1 $m\cdot s^{-1}$. We adjust the parameter such that the system loses roughly 20\% of its Kinetic energy in this collision, thus matching the experimental data of the coefficient of restitution for metre-scale granite spheres as measured by Durda \textit{et al}~\cite{bigrocks}.
-Our impactor is modelled as a 60cm diameter sphere of mass 1 ton; the impact velocity is 800 $m\cdot s^{-1}$, with the impact occuring parallel to the $\vec{\rho}$ direction.
-
-
+Our impactor is modelled as a 60cm diameter sphere of mass 1 ton; the impact velocity is 840 $m/s$, with the impact occuring parallel to the $\vec{\rho}$ direction.
 We ran simulations for several cases: an undeflected binary, a deflected single-body with the same mass as the binary and both components of a deflected binary. Figure~\ref{fig:bouncey} shows the orbit paths produced as the results of these simulations. It can be seen that the post-deflection paths of the two components of the binary are greatly different to that of a single body of equal mass. This is likely due to a Newton's Cradle type effect in the collisions; as such the component which is struck by the impactor passes all of the additional momentum from the impact to the second, leaving its momentum largely unchanged by the deflection attempt and as such it still impacts the Earth (the binary is also fragmented during the impact). This effect is most prevalent when the two components are of roughly equivalent mass.
 \begin{figure}[H]
 \centering
-\centerline{\includegraphics[width=1.2\textwidth]{deflection_1.eps}}
-\centerline{\includegraphics[width=1.2\textwidth]{deflection_0.eps}} 
+\centerline{\includegraphics[width=1.1\textwidth]{deflection_1.eps}}
+\centerline{\includegraphics[width=1.1\textwidth]{deflection_0.eps}} 
 \caption{Orbital paths of binary and single body asteroids pre and post deflection (full orbit and close-up of close encounter/impact).} 
 \label{fig:bouncey}
 \end{figure} 
 
-We also simulate the effect of an impact on a full regolith-bound binary; both with the same impact speed as the previous case and with a lower speed, more reasonable impact (50 $m\cdot s^{-1}$). Figure~\ref{fig:boom} shows the positions of the particles in the simulation at 3 time steps (1.221 ms prior to impact and 2.685 ms  \& 19.287 ms following the impact) for the high speed case: It can be seen that a large amount of the regolith is discharged and the bridge fails completely, causing the pair to fragment. The outcome is very much the same for the low speed case. 
+We also simulate the effect of an impact on a full regolith-bound binary; both with the same impact speed as the previous case and with a lower speed impact (50 $m/s$). Figure~\ref{fig:boom} shows the positions of the particles in the simulation at 3 time steps (1.221 ms prior to impact, 2.685 ms  and 19.287 ms following the impact) for the high speed case: It can be seen that a large amount of the regolith is discharged and the bridge fails completely, causing the pair to fragment immediately. The outcome is very much the same for the low speed case. 
 
 \begin{figure}[H]
 \centering
 \centerline{\includegraphics[width=1.2\textwidth]{reg_deflect_pre.png}}
 \centerline{\includegraphics[width=1.2\textwidth]{reg_deflect_post0.png}} 
 \centerline{\includegraphics[width=1.2\textwidth]{reg_deflect_post1.png}} 
-\caption{Particle positions during simulations 1.221 ms prior to impact and 2.685 ms  \& 19.287 ms following the impact. The impactor is blue, the binary components are red and the regolith particles are green.} 
+\caption{Particle positions during simulations 1.221 ms prior to impact, 2.685 ms and 19.287 ms following the impact. The impactor is blue, the binary components are red and the regolith particles are green.} 
 \label{fig:boom}
 \end{figure} 
 
