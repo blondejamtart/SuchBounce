@@ -207,24 +207,22 @@ int main()
 	std::vector<cl::Device> platformDevices, allDevices, conDev;
 	std::string device_name;
 	cl::Device DevChoice;
-
+	int nDev;
 	cl::Platform::get(&platforms);
 	platforms[0].getDevices(CL_DEVICE_TYPE_ALL, &platformDevices);
 	
-	cl::Context ctx(platformDevices);
-	conDev = ctx.getInfo<CL_CONTEXT_DEVICES>();
-	
+		
 	std::cout << "Please Choose Device:\n\n";
-	for (unsigned int i = 0; i < conDev.size(); i++)
+	for (unsigned int i = 0; i < platformDevices.size(); i++)
 	{
-		device_name = conDev[i].getInfo<CL_DEVICE_NAME>();
+		device_name = platformDevices[i].getInfo<CL_DEVICE_NAME>();
 		std::cout << "Device " << i << ": "
 		<< device_name
 		<< std::endl;
 	}
-	int nDev = 0;
-	//std::cin >> nDev;
-	std::vector<cl::Device> ctxDevices = { conDev[nDev] };
+	std::cin >> nDev;
+	std::vector<cl::Device> ctxDevices = { platformDevices[nDev] };
+	cl::Context ctx(ctxDevices[0]);
 	cl::CommandQueue queue(ctx, ctxDevices[0]);
 	
 
@@ -340,13 +338,14 @@ int main()
 	ker_T.setArg(3, Twbuff);
 	ker_T.setArg(4, mbuff);
 	ker_T.setArg(5, Ibuff);
-
+	
 	cl::NDRange offset(0);
 	cl::NDRange gsize1(n);
 	cl::NDRange gsize1m(n-1);
 	cl::NDRange unitsize(1);
 	cl::NDRange gsize2(n_el);
 	cl::NDRange local_size(1);
+	//std::cout << local_size.dimensions() << "\n";
 
 
 	// Initialise timestep scaler	
@@ -392,13 +391,18 @@ int main()
 	//for (int i=0; i<100; i++){std::cout << "-";}
 	std::cout << "\n";
 	clock_t t0 = clock();
+	clock_t t_temp = t0;
 	for(int init_x=0; init_x<512; init_x ++)
 	{
+		//std::cout << init_x << "\n";		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
 
 		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 		// Evaluate Kinetic Energy
+		queue.flush();
+		queue.finish();				
+
 
 		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
@@ -406,11 +410,11 @@ int main()
 			if (floor(100 * framecount / n_frames) > 4+floor(prog))
 			{
 				prog = floor(100 * framecount / n_frames); 
-				std::cout << prog << "%; dt = " << stuff[0] << "s\n";
+				std::cout << prog << "%\n";
 			}		
 			
 			
-			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
+			queue.enqueueReadBuffer(rbuff, CL_FALSE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
 			r_tracker << tempstring;
 
@@ -462,9 +466,11 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, local_size);		// Make positions relative to particle 1
-		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, local_size);	
-
+		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
+		queue.flush();
+		t_temp = clock()-t_temp;
+		//std::cout << float(t_temp)/(7.1*CLOCKS_PER_SEC) << "\n";
 
 	}
 	
@@ -483,6 +489,8 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
 
 		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 		// Evaluate Kinetic Energy
+		queue.flush();		
+		queue.finish();
 
 		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
@@ -490,7 +498,7 @@ int main()
 			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}		
 			
 			
-			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
+			queue.enqueueReadBuffer(rbuff, CL_FALSE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
 			r_tracker << tempstring;
 
@@ -541,8 +549,9 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, local_size);		// Make positions relative to particle 1
-		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, local_size);
+		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);
+		queue.flush();
 
 	}
   

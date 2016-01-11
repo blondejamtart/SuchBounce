@@ -12,7 +12,7 @@
 #include <time.h>
 
 //Settings:
-const int n = 3;
-const double settings[9] = {pow(2,16), pow(2.0,-4), 0, 2.1e-16, 0, 0, 0, 1e-03, pow(2.0,8)};
-const double max_time = pow(2,16);
-const double warp = pow(2.0,8);
+const int n = 512;
+const double settings[10] = {pow(2,-2), pow(2.0,-12), pow(2.0,-12), 2.0e+02, 2.1e-16, 0, 0, 0, 1e+07, pow(2.0,-1)};
+const double max_time = pow(2,-2);
+const double warp = pow(2.0,-1);
