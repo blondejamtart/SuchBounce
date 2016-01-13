@@ -390,8 +390,11 @@ int main()
 	std::cout << "Kernels & Buffers set: simulation started.\n";
 	//for (int i=0; i<100; i++){std::cout << "-";}
 	std::cout << "\n";
-	clock_t t0 = clock();
-	clock_t t_temp = t0;
+	//clock_t t0 = clock();
+	//clock_t t_temp = t0;
+	
+	time_t t0 = time(NULL);
+
 	for(int init_x=0; init_x<512; init_x ++)
 	{
 		//std::cout << init_x << "\n";		
@@ -469,17 +472,18 @@ int main()
 		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
 		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
 		queue.flush();
-		t_temp = clock()-t_temp;
+		//t_temp = clock()-t_temp;
 		//std::cout << float(t_temp)/(7.1*CLOCKS_PER_SEC) << "\n";
 
 	}
 	
-	clock_t t_elap = clock()-t0;
-	float est_time = (1.0/512.0)*float(t_elap)/(7.1*CLOCKS_PER_SEC)*(float(max_time)/stuff[0]);
+	//clock_t t_elap = clock()-t0;
+	time_t t_elap = difftime(time(NULL),t0);	
+	float est_time = (1.0/512.0)*float(t_elap)*(float(max_time)/stuff[0]);
 	int est_h = floor(est_time/3600);
 	int est_m = floor((est_time/60)-60*est_h);
 	int est_s = floor(est_time-60*est_m-3600*est_h);
-	std::cout << "First 512 steps runtime: " << float(t_elap)/(7.1*CLOCKS_PER_SEC) << "s; Estimated run time: " << est_h << "h" << est_m << "m" << est_s << "s\n";
+	std::cout << "First 512 steps runtime: " << float(t_elap) << "s; Estimated run time: " << est_h << "h" << est_m << "m" << est_s << "s\n";
 
 	while (t_now < max_time)
 	{
@@ -557,8 +561,8 @@ int main()
   
 
 	std::cout << "\nSimulation complete!\n\n";
-	t_elap = clock()-t0;
-	std::cout << "Runtime was: " << float(t_elap)/(7.1*CLOCKS_PER_SEC) << "s\n";
+	t_elap = difftime(time(NULL),t0);
+	std::cout << "Runtime was: " << float(t_elap) << "s\n";
 	delete [] r;
 	delete [] v;
 	delete [] w;
