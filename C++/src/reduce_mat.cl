@@ -15,16 +15,13 @@ __kernel void red(__global double3 *rddp,
 		{
 			int x = get_global_id(0);			
 									
-			for (int c = 0; c < n[1]; c++)					
-			{	
-				float flag = b[c+n[1]*x];
-				if (b[c+n[1]*x] != 0)
-				{
-					Internal[x] += Ipart[abs(b[c+n[1]*x])-1];				
-					V[x] += 0.5*Vpart[abs(b[c+n[1]*x])-1];				
-					accel[x] -= sign(flag)*rddp[abs(b[c+n[1]*x])-1]/m[x];					
-					alpha[x] += oddp[abs(b[c+n[1]*x])-1]*rad[x]/I[x];	
-				}			
-			}
+			Internal[x] = Ipart[n[1]*x];
+			Ipart[n[1]*x] = 0;
+			V[x] = 0.5*Vpart[n[1]*x];
+			Vpart[n[1]*x] = 0;				
+			accel[x] = rddp[n[1]*x]/m[x];
+			rddp[n[1]*x] = (0.0, 0.0, 0.0);					
+			alpha[x] = oddp[n[1]*x]*rad[x]/I[x];
+			oddp[n[1]*x] = (0.0, 0.0, 0.0);	
 				
 		}	
