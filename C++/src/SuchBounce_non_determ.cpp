@@ -39,6 +39,24 @@ std::string arraytostring(double a[n][4], int n)
 	return out;
 }
 
+std::string arraytostring(float a[n][4], int n)
+{	
+	std::string out = "[";
+	for (int j = 0; j < n; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{	
+			char temp[25];
+			sprintf(temp, "%+.13e", a[j][k]);
+			out.append(std::string(temp));
+			if (k != 2){out.append(", "); }		
+		}
+		if (j != (n - 1)){ out.append("; "); }
+	}
+	out.append("]\n");
+	return out;
+}
+
 std::string arraytostring(double a[n], int n)
 {
 	std::string out = "[";
@@ -53,13 +71,36 @@ std::string arraytostring(double a[n], int n)
 	return out;
 }
 
-cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, std::vector<cl::Device> ctxdev)
+std::string arraytostring(float a[n], int n)
+{
+	std::string out = "[";
+	for (int j = 0; j < n; j++)
+	{
+			char temp[25];
+			sprintf(temp, "%+.13e", a[j]);
+			out.append(std::string(temp));
+			if (j != (n-1)){ out.append(", "); }
+	}
+	out.append("]\n");
+	return out;
+}
+
+cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, std::vector<cl::Device> ctxdev, int i)
 {
 	std::ifstream programFile(file);
 	std::string programString(std::istreambuf_iterator<char>(programFile), (std::istreambuf_iterator<char>()));
 	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length()+1));
 	cl::Program program(ctx, source);
-	program.build(ctxdev, "-cl-finite-math-only");		
+	try
+	{	
+		program.build(ctxdev, "-cl-finite-math-only");		
+	}
+	catch (cl::Error e)
+	{
+		std::cout << e.what() << ";" << e.err() << ";" << i << "\n";
+	}	
+
+		
 	cl::Kernel kernel(program, ker_func.c_str());
 	return kernel;
 }
@@ -150,16 +191,20 @@ int main()
 	int framecount = 0;
 	int tempcount = 0;
 	auto E_temp = new double[n];
+	auto V_temp = new double[n];	
 	auto I = new double[n];
 	auto l1 = new int[n_el];
 	auto l2 = new int[n_el];
-	auto l3 = new short[n][n_el];
+	auto flag = new int[n];
+	
+	//auto l3 = new short[n][n_el];
 	//short l4[n] = {0};
 	int n0[2] = { n_el, n };
 
 	for (int x=0; x<n; x++)
 	{
-	I[x] = (2*m[x]*(pow(rad[x],2))/5);
+		I[x] = (2*m[x]*(pow(rad[x],2))/5);
+		flag[x] = 0;
 	}
 	
 	for (int x=1; x<n; x++)
@@ -170,12 +215,12 @@ int main()
 			l1[i] = x;
 			l2[i] = y;
 			//std::cout << x << "/" << y << "/" << i << "\n";		
-			for (int h=0; h<n; h++)
-			{
-				if (h==x){l3[x][i] = -1;}	
-				if (h==y){l3[y][i] = 1;}							
-				if (h!=x & h!=y){l3[h][i] = 0;}
-			}
+			//for (int h=0; h<n; h++)
+			//{
+			//	if (h==x){l3[x][i] = -1;}	
+			//	if (h==y){l3[y][i] = 1;}							
+			//	if (h!=x & h!=y){l3[h][i] = 0;}
+			//}
 		}
 		
 	}	
@@ -227,23 +272,23 @@ int main()
 	
 
 	// Build Kernels
-	cl::Kernel ker_F = kernel_init("F_Hybrid_non_determ.cl", "Fimp", ctx, ctxDevices);
-	cl::Kernel ker_T = kernel_init("kinetic.cl", "Tstep", ctx, ctxDevices);
-	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices);
-	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices);
-	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices);
-	cl::Kernel ker_v_0 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
-	cl::Kernel ker_v_1 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
-	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
-	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
-	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices);
+	cl::Kernel ker_F = kernel_init("F_Hybrid_non_determ.cl", "Fimp", ctx, ctxDevices,0);
+	cl::Kernel ker_T = kernel_init("kinetic.cl", "Tstep", ctx, ctxDevices,1);
+	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices,2);
+	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices,3);
+	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices,4);
+	cl::Kernel ker_v_0 = kernel_init("velocity_non_determ.cl", "vstep", ctx, ctxDevices,5);
+	cl::Kernel ker_v_1 = kernel_init("velocity_non_determ.cl", "vstep", ctx, ctxDevices,6);
+	cl::Kernel ker_0_0 = kernel_init("zero_non_determ.cl", "zeroer", ctx, ctxDevices,7);
+	cl::Kernel ker_0_1 = kernel_init("zero_non_determ.cl", "zeroer", ctx, ctxDevices,8);
+	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices,9);
 	
 	// Assign Buffers
 	double zerotemp_4[4] = { 0.0, 0.0, 0.0, 0.0 }; 
 	::size_t vecsize = ::size_t(4*n*8);
 
 	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
-	cl::Buffer l3buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(2*n*n_el), l3);
+	cl::Buffer flagbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (4*n), flag);
 	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l2);
 	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l1);
 	cl::Buffer cbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
@@ -257,15 +302,11 @@ int main()
 	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, v);
 	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, w);
 
-	cl::Buffer vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el*4));
-	cl::Buffer wincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el*4));
-	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE, vecsize);
-	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE, vecsize);
+	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE, ::size_t(8*4*n));
+	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE, ::size_t(8*4*n));
 
 	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
-	cl::Buffer Vincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
 	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
-	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
 	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));	
 
@@ -299,6 +340,7 @@ int main()
 	ker_F.setArg(12, Vbuff);
 	ker_F.setArg(13, Intbuff);
 	ker_F.setArg(14, Ftmp);
+	ker_F.setArg(15, flagbuff);
 	
 	ker_0_0.setArg(0, accelbuff);
 	ker_0_0.setArg(1, Vbuff);
@@ -402,16 +444,16 @@ int main()
 			}		
 			
 			
-			queue.enqueueReadBuffer(rbuff, CL_FALSE, ::size_t (0), vecsize, r);
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
 			r_tracker << tempstring;
 
-			queue.enqueueReadBuffer(Vbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
-			tempstring = arraytostring(E_temp, n);
+			queue.enqueueReadBuffer(Vbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), V_temp);		
+			tempstring = arraytostring(V_temp, n);
 			V_tracker << tempstring;
 
-			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
-			tempstring = arraytostring(E_temp, n);
+			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), V_temp);			
+			tempstring = arraytostring(V_temp, n);
 			E_tracker << tempstring;
 
 			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
@@ -439,15 +481,15 @@ int main()
 		//std::cout << stuff[0] << ", ";
 		t_now += stuff[0];
 		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
-		
+			
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
 		
-	
 		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
 
 		queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size); 		// Compute force
-	
+				
+		
 		counter++;
 		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
@@ -455,7 +497,7 @@ int main()
 
 		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
 		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
-		queue.flush();
+		
 		//t_temp = clock()-t_temp;
 		//std::cout << float(t_temp)/(7.1*CLOCKS_PER_SEC) << "\n";
 
@@ -486,16 +528,16 @@ int main()
 			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}		
 			
 			
-			queue.enqueueReadBuffer(rbuff, CL_FALSE, ::size_t (0), vecsize, r);
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
 			r_tracker << tempstring;
 
-			queue.enqueueReadBuffer(Vbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
-			tempstring = arraytostring(E_temp, n);
+			queue.enqueueReadBuffer(Vbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), V_temp);			
+			tempstring = arraytostring(V_temp, n);
 			V_tracker << tempstring;
 
-			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
-			tempstring = arraytostring(E_temp, n);
+			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), V_temp);
+			tempstring = arraytostring(V_temp, n);
 			E_tracker << tempstring;
 
 			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
@@ -554,10 +596,11 @@ int main()
 	delete [] m;
 	delete [] rad;	
 	delete [] E_temp;
+	delete [] V_temp;
 	delete [] I;
 	delete [] l1;
 	delete [] l2; 
-	delete [] l3;
+	//delete [] l3;
 
 	//long hold = 0;
 	//while (true)
