@@ -1,0 +1,19 @@
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+__kernel void logic(__global double3 *r,					
+					__global double3 *v,
+					__global double *q,
+					__constant int *n)
+					
+		{
+			int x = get_global_id(0);
+			
+			for (int i = 0, i < n, i++)
+			{
+				if (i != x && d < (rad_a + rad_b))
+				{
+					do_attract = 					
+					if (do_attract) {q[a] += q_control; q[b] -= q_control;}
+				}
+			}				
+									
+		}

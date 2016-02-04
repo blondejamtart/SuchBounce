@@ -195,10 +195,12 @@ int main()
 	auto I = new double[n];
 	auto l1 = new int[n_el];
 	auto l2 = new int[n_el];
+	auto l1temp = new int[64*127];
+	auto l2temp = new int[64*127];
+	auto l1_128 = new int[64*127];
+	auto l2_128 = new int[64*127];
 	auto flag = new int[n];
 	
-	//auto l3 = new short[n][n_el];
-	//short l4[n] = {0};
 	int n0[2] = { n_el, n };
 
 	for (int x=0; x<n; x++)
@@ -207,23 +209,84 @@ int main()
 		flag[x] = 0;
 	}
 	
-	for (int x=1; x<n; x++)
+	for (int x=1; x<128; x++)
 	{
 		for (int y=0; y<x; y++)	
 		{	
 			int i = (0.5*x*(x-1)+y);			
-			l1[i] = x;
-			l2[i] = y;
-			//std::cout << x << "/" << y << "/" << i << "\n";		
-			//for (int h=0; h<n; h++)
-			//{
-			//	if (h==x){l3[x][i] = -1;}	
-			//	if (h==y){l3[y][i] = 1;}							
-			//	if (h!=x & h!=y){l3[h][i] = 0;}
-			//}
+			l1temp[i] = x;
+			l2temp[i] = y;			
 		}
 		
-	}	
+	}
+
+	
+	for (int p=0; p<(64*127); p=p+64)
+	{
+		int j = 0;
+		for (int q=0; q<64; q++)
+		{
+			int i = 0;
+			int k = 0;			
+			while(k == 0)			
+			{	
+				if (q != 0)
+				{		
+					for (int s=0; s<q; s++)
+					{
+						if (l1temp[i] == l1_128[p+s] || l1temp[i] == l2_128[p+s] || l2temp[i] == l1_128[p+s]  || l2temp[i] == l2_128[p+s]){j=1;}   
+					}
+				}		
+				if (j == 0 && l1temp[i] != -1) {l1_128[p+q] = l1temp[i]; l2_128[p+q] = l2temp[i]; l1temp[i] = -1; l2temp[i] = -1; k = 1;}
+				else{i++;}
+				j = 0;
+			}
+		}
+	}
+
+	int count = 0;
+	for (int p = 0; p<(n/128); p++)
+	{
+		for (int i=0; i<(64*127); i++)
+		{    		
+			l1[count] = l1_128[i] + 128*p;
+    			l2[count] = l2_128[i] + 128*p;
+    			count++;
+		}
+    		for (int q = 0; q<p; q++)
+		{
+        		for (int s = 0; s<128; s++)
+			{
+            			for (int t = 0; t<128; t++)
+				{
+                			l1[count] = p*128 + t;
+                			l2[count] = q*128 + (s + t - 128*floor((s+t)/128));
+                			count++;
+				}
+			}
+		}
+	}
+	//int fail = 0;
+	//for (int p = 0; p<64*127; p = p + 64)
+	//{
+	//	for (int i = 1; i<64; i++)
+	//	{
+	//		for (int j = 0; j<i; j++)
+	//		{
+	//			if (l1[p+i] == l1[p+j] || l1[p+i] == l2[p+j] || l2[p+i] == l1[p+j] || l2[p+i] == l2[p+j])
+	//			{
+	//				fail++;
+	//			}
+	//		}
+	//	}
+
+
+	//}
+	//std::cout << fail << "!\n";
+	delete [] l1temp;
+	delete [] l2temp; 
+	delete [] l1_128;
+	delete [] l2_128;
 	
 	//for (int x = 0; x<n; x++)
 	//{
@@ -344,8 +407,10 @@ int main()
 	
 	ker_0_0.setArg(0, accelbuff);
 	ker_0_0.setArg(1, Vbuff);
+	ker_0_0.setArg(2, flagbuff);
 	ker_0_1.setArg(0, alphabuff);
 	ker_0_1.setArg(1, Intbuff);
+	ker_0_1.setArg(2, flagbuff);
 
 	ker_v_0.setArg(0, vbuff);
 	ker_v_0.setArg(1, accelbuff);
@@ -371,7 +436,7 @@ int main()
 	cl::NDRange gsize1m(n-1);
 	cl::NDRange unitsize(1);
 	cl::NDRange gsize2(n_el);
-	cl::NDRange local_size(1);
+	cl::NDRange local_size(workgroup_size);
 	//std::cout << local_size.dimensions() << "\n";
 
 
@@ -481,12 +546,12 @@ int main()
 		//std::cout << stuff[0] << ", ";
 		t_now += stuff[0];
 		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
+
+		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
 			
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
-		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
+		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things		
 		
-		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
-
 		queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size); 		// Compute force
 				
 		

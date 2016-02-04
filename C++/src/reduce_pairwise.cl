@@ -1,16 +1,8 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 __kernel void red_pair(__global double3 *rddp,
-					__global double3 *oddp,
-					__global double3 *accel,
-					__global double3 *alpha,
-					__global const int *b,
-					__global const double *m,
-					__global const double *I,
-					__global const double *rad,
-					__global int *n,
-					__global double *V,
+					__global double3 *oddp,		
+					__global int *n,				
 					__global double *Vpart,
-					__global double *Internal,
 					__global double *Ipart)
 		{
 			int i = get_global_id(0);
