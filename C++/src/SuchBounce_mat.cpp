@@ -173,6 +173,8 @@ int main()
 	auto I = new double[n];
 	auto l1 = new short[n_el];
 	auto l2 = new short[n_el];
+	auto l3 = new short[0.5*(n/128)*(n/128+1)];
+	auto l4 = new short[0.5*(n/128)*(n/128+1)];
 	auto l1temp = new int[64*127];
 	auto l2temp = new int[64*127];
 	auto l1_128 = new int[64*127];
@@ -194,6 +196,16 @@ int main()
 			int i = (0.5*x*(x-1)+y);			
 			l1temp[i] = x;
 			l2temp[i] = y;			
+		}
+		
+	}
+	for (int x=1; x<n/128; x++)
+	{
+		for (int y=0; y<x; y++)	
+		{	
+			int i = (0.5*x*(x-1)+y);			
+			l3[i] = x;
+			l4[i] = y;			
 		}
 		
 	}
@@ -595,7 +607,7 @@ int main()
 	
 		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
 
-		for (int i = 0; i < n_split_elements; i++)
+		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
 		{
 			short a = l3[i];
 			short b = l4[i];
@@ -632,20 +644,22 @@ int main()
 			n0[2] = 0.5*n0[2];		
 		}
 
-		for (int i = 0; i < pow(n,2)/pow(128,2); i++)
-		{	
-			ker_Sp.setArg(0, vincbuff[i]);
-			ker_Sp.setArg(1, wincbuff[i]);			
-			
-			queue.enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);		// Reduce
-					
-		}
-			
-
 		
-
 		n0[1] = n/128;
 		n0[2] = n/128;
+		
+		queue.enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);	
+
+		for (int i = 0; i < pow(n,2)/pow(128,2); i++)
+		{	
+			ker_S_interm.setArg(0, vincbuff[i]);
+			ker_S_interm.setArg(1, wincbuff[i]);			
+			cl::NDRange gsizeRed(128);		
+			queue.enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);		// Reduce
+					
+		}	
+
+		
 		ker_Sp.setArg(0, accelsumbuff);
 		ker_Sp.setArg(1, alphasumbuff);
 		ker_S.setArg(0, accelsumbuff);

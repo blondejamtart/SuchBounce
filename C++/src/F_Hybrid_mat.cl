@@ -19,11 +19,11 @@ __kernel void Fimp(__global const double *q,
 					__global double *Ipart_upper,
 					__global double *F_track,
 					__global const int *n,
-					__global const int *offset)
+					__global const short *offset)
 					
 				  
 		{ 			
-			int x = get_global_id(0) + offset;
+			int x = get_global_id(0) + offset[0];
 			int a = k[x];
 			int b = l[x];
 			double3 r_a = r[a], r_b = r[b], v_a = v[a], v_b = v[b];

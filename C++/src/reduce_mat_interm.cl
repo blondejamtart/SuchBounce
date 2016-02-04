@@ -8,17 +8,19 @@ __kernel void red_copy(__global double3 *rddp,
 					__global double *Vpart,
 					__global double *Internalsum,
 					__global double *Ipart,
-					__global double *offsets)
+					__global const short *offset)
 		{
 			int x = get_global_id(0);			
-									
-			Internalsum[n[1]*(x+offsets[0])+offsets[1]] = Ipart[n[1]*x];
-			Ipart[n[1]*x] = 0;
-			Vsum[x+offsets[0]] = Vpart[n[1]*x];
-			Vpart[n[1]*x] = 0;				
-			accelsum[x+offsets[0]] = rddp[n[1]*x];
-			rddp[n[1]*x] = (0.0, 0.0, 0.0);					
-			alphasum[x+offsets[0]] = oddp[n[1]*x];
-			oddp[n[1]*x] = (0.0, 0.0, 0.0);	
+			
+			int row_offset = 128*floor(offset[1]/(n[1]))
+			int column_offset = offset[1] - row_offset/128;						
+			Internalsum[n[1]*(x+row_offset)+column_offset] = Ipart[128*x];
+			Ipart[128*x] = 0;
+			Vsum[x+offsets[0]] = Vpart[128*x];
+			Vpart[128*x] = 0;				
+			accelsum[x+offsets[0]] = rddp[128*x];
+			rddp[128*x] = (0.0, 0.0, 0.0);					
+			alphasum[x+offsets[0]] = oddp[128*x];
+			oddp[128*x] = (0.0, 0.0, 0.0);	
 				
 		}	
