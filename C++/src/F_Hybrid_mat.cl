@@ -2,8 +2,8 @@
 __kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
-				  	__global const short *k,
-					__global const short *l,			  	 				  	 
+				  	__global const int *k,
+					__global const int *l,			  	 				  	 
 				 	__global const double *rad,	
 				 	__global double *stuff,			  
 				 	__global double3 *r,
@@ -19,7 +19,7 @@ __kernel void Fimp(__global const double *q,
 					__global double *Ipart_upper,
 					__global double *F_track,
 					__global const int *n,
-					__global const short *offset)
+					__global const int *offset)
 					
 				  
 		{ 			
@@ -78,8 +78,8 @@ __kernel void Fimp(__global const double *q,
 			double fdyn = (F*t_step + 0.5*dF*t_step*t_step);
 			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}
 			
-			int a_sub = a - 128*floor(a/128);
-			int b_sub = b - 128*floor(b/128);
+			int a_sub = a - 128*(a/128);
+			int b_sub = b - 128*(b/128);
 			accel_part_lower[a_sub*128+b_sub] = -(j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel)); 
 			alpha_part_lower[a_sub*128+b_sub] = cross(Runit,step(0,jf)*jf*v_rel);			
 			

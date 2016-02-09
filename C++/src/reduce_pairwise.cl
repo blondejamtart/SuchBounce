@@ -7,7 +7,7 @@ __kernel void red_pair(__global double3 *rddp,
 		{
 			int i = get_global_id(0);
 				
-			int a = n[1]*(floor(2.0*i/n[2]));
+			int a = n[1]*(((2*i)/n[2]));
 			int x = i-0.5*n[2]*a/n[1];							
 				
 			rddp[a+x] += rddp[a+n[2]-x-1];
