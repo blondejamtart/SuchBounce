@@ -6,6 +6,7 @@ __kernel void red_pair(__global double3 *rddp,
 					__global double *Ipart)
 		{
 			int i = get_global_id(0);
+
 				
 			int a = n[1]*(((2*i)/n[2]));
 			int x = i-0.5*n[2]*a/n[1];							

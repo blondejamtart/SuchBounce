@@ -194,7 +194,7 @@ int main()
 	auto l2_128 = new int[64*127];
 	
 	
-	int n0[3] = { n_el, n , n};
+	int n0[4] = { n_el, n, n , n};
 
 	for (int x=0; x<n; x++)
 	{
@@ -320,7 +320,7 @@ int main()
 	std::vector<cl::Device> platformDevices, allDevices, conDev;
 	std::string device_name;
 	cl::Device DevChoice;
-	int nDevs = 2;
+	int nDevs = 1;
 	int Devs[2] = { 0, 1 };
 	cl::Platform::get(&platforms);
 	platforms[0].getDevices(CL_DEVICE_TYPE_ALL, &platformDevices);
@@ -359,8 +359,8 @@ int main()
 	cl::Kernel ker_T = kernel_init("kinetic.cl", "Tstep", ctx, ctxDevices);
 	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices);
 	cl::Kernel ker_S = kernel_init("reduce_mat.cl", "red", ctx, ctxDevices);
-	cl::Kernel ker_Sp = kernel_init("reduce_pairwise.cl", "red_pair", ctx, ctxDevices);
-	cl::Kernel ker_S_interm = kernel_init("reduce_mat_interm.cl", "red_copy", ctx, ctxDevices);	
+	cl::Kernel ker_Sp = kernel_init("reduce_pairwise_MD.cl", "red_pair", ctx, ctxDevices);
+	cl::Kernel ker_S_interm = kernel_init("reduce_MD_interm.cl", "red_copy", ctx, ctxDevices);	
 	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices);
 	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices);
 	cl::Kernel ker_v_0 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
@@ -704,48 +704,63 @@ int main()
 			ker_F.setArg(16, Vincbuff[b*(n/128)+a]);
 			ker_F.setArg(17, Intincbuff[b*(n/128)+a]);			
 			ker_F.setArg(20, offset_buff_0[i]);
-			//try
-			//{
+			try
+			{
 				if (a == b) {queue[ind].enqueueNDRangeKernel(ker_F, offset, gsize2[1], local_size); } 		// Compute force
 				else { queue[ind].enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 
 				queue[ind].flush();
-			//}
-			//catch(cl::Error e) {std::cout << "1:" << e.what() << "," << e.err() << "\n";break;}
+			}
+			catch(cl::Error e) {std::cout << "1(" << i << "):" << e.what() << "," << e.err() << "\n";break;}
 		}
 		//std::cout << "b";
 		n0[2] = 128;
 		n0[1] = 128;
-		
+		n0[3] = 128;
+		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}	
+
 		while(n0[2] > 1)
 		{
-			for (int i = 0; i < nDevs; i++){ queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0); }
+			//for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 			cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);				
 			
 			for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
 			{	
-
+				
 				int a = l3[i];
 				int b = l4[i];
 				int ind = i - nDevs*floor(i/nDevs);				
+				if (a != b)
+				{		
+					ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(1, wincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(3, Vincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(4, Intincbuff[a*(n/128)+b]);			
 						
-				ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(1, wincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(3, Vincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(4, Intincbuff[a*(n/128)+b]);			
+					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
+					//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
+					queue[ind].flush();		// Reduce blocks
 					
-				queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
-				//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
-				queue[ind].flush();		// Reduce blocks
-				
-				ker_Sp.setArg(0, vincbuff[b*(n/128)+a]);
-				ker_Sp.setArg(1, wincbuff[b*(n/128)+a]);
-				ker_Sp.setArg(3, Vincbuff[b*(n/128)+a]);
-				ker_Sp.setArg(4, Intincbuff[b*(n/128)+a]);			
+					ker_Sp.setArg(0, vincbuff[b*(n/128)+a]);
+					ker_Sp.setArg(1, wincbuff[b*(n/128)+a]);
+					ker_Sp.setArg(3, Vincbuff[b*(n/128)+a]);
+					ker_Sp.setArg(4, Intincbuff[b*(n/128)+a]);			
 					
-				queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
-				//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
-				queue[ind].flush();		// Reduce blocks
-				
+					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
+					//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
+					queue[ind].flush();		// Reduce blocks
+				}
+				else
+				{
+					ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(1, wincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(3, Vincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(4, Intincbuff[a*(n/128)+b]);			
+						
+					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
+					//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
+					queue[ind].flush();		// Reduce blocks
+					
+				}
 						
 			}
 
@@ -755,8 +770,9 @@ int main()
 		
 		n0[1] = n;
 		n0[2] = n/128;
-		for (int i = 0; i < nDevs; i++){ queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0); }	
-		
+		n0[3] = n;		
+		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
+
 		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
 		{	
 
@@ -764,29 +780,46 @@ int main()
 			int b = l4[i];	
 			int ind = i - nDevs*floor(i/nDevs);
 			cl::NDRange gsizeRed(128);
+	
+			if (a != b)
+			{
+			
 
-			ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
-			ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
-			ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
-			ker_S_interm.setArg(8, Intincbuff[a*(n/128)+a]);
-			ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
-					
-			queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
-			//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
-			queue[ind].flush();
-			//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
+				ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(8, Intincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
+						
+				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
+				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
+				queue[ind].flush();
+				//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
 		
-			ker_S_interm.setArg(0, vincbuff[b*(n/128)+a]);
-			ker_S_interm.setArg(1, wincbuff[b*(n/128)+a]);
-			ker_S_interm.setArg(6, Vincbuff[b*(n/128)+a]);
-			ker_S_interm.setArg(8, Intincbuff[b*(n/128)+a]);
-			ker_S_interm.setArg(9, offset_buff_1[b*(n/128)+a]);			
+				ker_S_interm.setArg(0, vincbuff[b*(n/128)+a]);
+				ker_S_interm.setArg(1, wincbuff[b*(n/128)+a]);
+				ker_S_interm.setArg(6, Vincbuff[b*(n/128)+a]);
+				ker_S_interm.setArg(8, Intincbuff[b*(n/128)+a]);
+				ker_S_interm.setArg(9, offset_buff_1[b*(n/128)+a]);			
 					
-			queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
-			//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
-			queue[ind].flush();
-			//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
-				
+				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
+				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
+				queue[ind].flush();
+				//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
+			}
+			else
+			{
+				ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(8, Intincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
+						
+				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
+				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
+				queue[ind].flush();
+				//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }		
+			}	
 		}	
 
 		//std::cout << "d";
@@ -801,9 +834,11 @@ int main()
 		ker_S.setArg(11, Intsumbuff);
 		n0[1] = n/128;
 		//n0[2] = n/128;
+		//n0[3] = n;
+		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 		while(n0[2] > 1)
 		{
-			queue[0].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);			
+			//for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}			
 			cl::NDRange gsizeRed(0.5*n*n0[2]);		
 			queue[0].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
 			//catch(cl::Error e) {std::cout << "4:" << e.what() << "," << e.err() << "\n"; break;}		// Reduce
@@ -820,8 +855,8 @@ int main()
 		queue[0].enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue[0].enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
+		queue[0].enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue[0].enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
 		queue[0].flush();
 		queue[0].finish();
 		//t_temp = clock()-t_temp;
@@ -930,12 +965,13 @@ int main()
 			//catch(cl::Error e) {std::cout << "1:" << e.what() << "," << e.err() << "\n";break;}
 		}
 		//std::cout << "b";
+		n0[3] = 128;
 		n0[2] = 128;
 		n0[1] = 128;
+		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 		
 		while(n0[2] > 1)
-		{
-			for (int i = 0; i < nDevs; i++){ queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0); }	
+		{		
 			cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);				
 			
 			for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
@@ -944,25 +980,38 @@ int main()
 				int a = l3[i];
 				int b = l4[i];
 				int ind = i - nDevs*floor(i/nDevs);				
+				if (a != b)
+				{		
+					ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(1, wincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(3, Vincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(4, Intincbuff[a*(n/128)+b]);			
 						
-				ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(1, wincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(3, Vincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(4, Intincbuff[a*(n/128)+b]);			
+					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
+					//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
+					queue[ind].flush();		// Reduce blocks
 					
-				queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
-				//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
-				queue[ind].flush();		// Reduce blocks
-				
-				ker_Sp.setArg(0, vincbuff[b*(n/128)+a]);
-				ker_Sp.setArg(1, wincbuff[b*(n/128)+a]);
-				ker_Sp.setArg(3, Vincbuff[b*(n/128)+a]);
-				ker_Sp.setArg(4, Intincbuff[b*(n/128)+a]);			
+					ker_Sp.setArg(0, vincbuff[b*(n/128)+a]);
+					ker_Sp.setArg(1, wincbuff[b*(n/128)+a]);
+					ker_Sp.setArg(3, Vincbuff[b*(n/128)+a]);
+					ker_Sp.setArg(4, Intincbuff[b*(n/128)+a]);			
 					
-				queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
-				//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
-				queue[ind].flush();		// Reduce blocks
-				
+					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
+					//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
+					queue[ind].flush();		// Reduce blocks
+				}
+				else
+				{
+					ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(1, wincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(3, Vincbuff[a*(n/128)+b]);
+					ker_Sp.setArg(4, Intincbuff[a*(n/128)+b]);			
+						
+					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
+					//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
+					queue[ind].flush();		// Reduce blocks
+					
+				}
 						
 			}
 
@@ -972,8 +1021,8 @@ int main()
 		
 		n0[1] = n;
 		n0[2] = n/128;
-		
-		for (int i = 0; i < nDevs; i++){ queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0); }
+		n0[3] = n;
+		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 		
 		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
 		{	
@@ -982,30 +1031,47 @@ int main()
 			int b = l4[i];	
 			int ind = i - nDevs*floor(i/nDevs);
 			cl::NDRange gsizeRed(128);
+	
+			if (a != b)
+			{
+			
 
-			ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
-			ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
-			ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
-			ker_S_interm.setArg(8, Intincbuff[a*(n/128)+a]);
-			ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
-					
-			queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
-			//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
-			queue[ind].flush();
-			//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
+				ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(8, Intincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
+						
+				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
+				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
+				queue[ind].flush();
+				//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
 		
-			ker_S_interm.setArg(0, vincbuff[b*(n/128)+a]);
-			ker_S_interm.setArg(1, wincbuff[b*(n/128)+a]);
-			ker_S_interm.setArg(6, Vincbuff[b*(n/128)+a]);
-			ker_S_interm.setArg(8, Intincbuff[b*(n/128)+a]);
-			ker_S_interm.setArg(9, offset_buff_1[b*(n/128)+a]);			
+				ker_S_interm.setArg(0, vincbuff[b*(n/128)+a]);
+				ker_S_interm.setArg(1, wincbuff[b*(n/128)+a]);
+				ker_S_interm.setArg(6, Vincbuff[b*(n/128)+a]);
+				ker_S_interm.setArg(8, Intincbuff[b*(n/128)+a]);
+				ker_S_interm.setArg(9, offset_buff_1[b*(n/128)+a]);			
 					
-			queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
-			//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
-			queue[ind].flush();
-			//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
-				
-		}	
+				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
+				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
+				queue[ind].flush();
+				//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
+			}
+			else
+			{
+				ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(8, Intincbuff[a*(n/128)+b]);
+				ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
+						
+				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
+				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
+				queue[ind].flush();
+				//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }		
+			}	
+		}
 
 		//std::cout << "d";
 
@@ -1019,9 +1085,11 @@ int main()
 		ker_S.setArg(11, Intsumbuff);
 		n0[1] = n/128;
 		//n0[2] = n/128;
+		//n0[3] = n;
+		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}		
+	
 		while(n0[2] > 1)
-		{
-			queue[0].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);			
+		{			
 			cl::NDRange gsizeRed(0.5*n*n0[2]);		
 			queue[0].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
 			//catch(cl::Error e) {std::cout << "4:" << e.what() << "," << e.err() << "\n"; break;}		// Reduce
@@ -1038,8 +1106,8 @@ int main()
 		queue[0].enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue[0].enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
+		queue[0].enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue[0].enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
 		queue[0].flush();
 		queue[0].finish();
 	}

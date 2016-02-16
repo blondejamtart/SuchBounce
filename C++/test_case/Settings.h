@@ -18,3 +18,4 @@ const double settings[10] = {pow(2,4), pow(2.0,-6), pow(2.0,-6), 0, 2.1e-16, 0, 
 
 const double max_time = settings[0];
 const double warp = settings[9];
+const int workgroup_size = 8;
