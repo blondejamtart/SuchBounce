@@ -718,13 +718,18 @@ int main()
 		n0[1] = 128;
 		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 		
-		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
-		{		
-			int a = l3[i];
-			int b = l4[i];
-			int ind = i - nDevs*floor(i/nDevs);				
-			if (a != b)
-			{	
+		for (int a = 0; a < (n/128); a++)
+		{
+			for (int b = 0; b < (n/128); b++)
+			{		
+				//int a = l3[i];
+				//int b = l4[i];
+								
+				if (a >= b) {int i = (0.5*a*(a+1)+b);}
+				else {int i = (0.5*b*(b+1)+a);}
+				
+				int ind = i - nDevs*floor(i/nDevs);				
+				
 				n0[2] = n0[1];
 				queue[ind].flush();						
 				ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
@@ -736,24 +741,9 @@ int main()
 					cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);
 					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
 					n0[2] = 0.5*n0[2];
-				}
-				
-				if (a != b)
-				{	
-					n0[2] = n0[1];
-					queue[ind].flush();
-					ker_Sp.setArg(0, vincbuff[b*(n/128)+a]);
-					ker_Sp.setArg(1, wincbuff[b*(n/128)+a]);
-					ker_Sp.setArg(3, Vincbuff[b*(n/128)+a]);
-					ker_Sp.setArg(4, Intincbuff[b*(n/128)+a]);
-					while (n0[2] > 1)
-					{			
-						cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);
-						queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
-						n0[2] = 0.5*n0[2];
-					}	
-				}						
-			}					
+				}				
+							
+			}				
 		}
 		//std::cout << "c";
 		
@@ -960,13 +950,18 @@ int main()
 		n0[1] = 128;
 		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 		
-		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
-		{		
-			int a = l3[i];
-			int b = l4[i];
-			int ind = i - nDevs*floor(i/nDevs);				
-			if (a != b)
-			{	
+		for (int a = 0; a < (n/128); a++)
+		{
+			for (int b = 0; b < (n/128); b++)
+			{		
+				//int a = l3[i];
+				//int b = l4[i];
+								
+				if (a >= b) {int i = (0.5*a*(a+1)+b);}
+				else {int i = (0.5*b*(b+1)+a);}
+				
+				int ind = i - nDevs*floor(i/nDevs);				
+				
 				n0[2] = n0[1];
 				queue[ind].flush();						
 				ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
@@ -978,24 +973,9 @@ int main()
 					cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);
 					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
 					n0[2] = 0.5*n0[2];
-				}
-				
-				if (a != b)
-				{	
-					n0[2] = n0[1];
-					queue[ind].flush();
-					ker_Sp.setArg(0, vincbuff[b*(n/128)+a]);
-					ker_Sp.setArg(1, wincbuff[b*(n/128)+a]);
-					ker_Sp.setArg(3, Vincbuff[b*(n/128)+a]);
-					ker_Sp.setArg(4, Intincbuff[b*(n/128)+a]);
-					while (n0[2] > 1)
-					{			
-						cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);
-						queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
-						n0[2] = 0.5*n0[2];
-					}	
-				}						
-			}					
+				}				
+							
+			}				
 		}
 		//std::cout << "c";
 		
