@@ -186,12 +186,12 @@ int main()
 	auto I = new double[n];
 	auto l1 = new int[n_el];
 	auto l2 = new int[n_el];
-	auto l3 = new int[(n/128)*(n/128+1)/2];
-	auto l4 = new int[(n/128)*(n/128+1)/2];
-	auto l1temp = new int[64*127];
-	auto l2temp = new int[64*127];
-	auto l1_128 = new int[64*127];
-	auto l2_128 = new int[64*127];
+	auto l3 = new int[(n/n_block[0])*(n/n_block[0]+1)/2];
+	auto l4 = new int[(n/n_block[0])*(n/n_block[0]+1)/2];
+	auto l1temp = new int[n_block[2]*n_block[1]];
+	auto l2temp = new int[n_block[2]*n_block[1]];
+	auto l1_blocks = new int[n_block[2]*n_block[1]];
+	auto l2_blocks = new int[n_block[2]*n_block[1]];
 	
 	
 	int n0[4] = { n_el, n, n , n};
@@ -202,19 +202,19 @@ int main()
 		
 	}
 	
-	for (int x=1; x<128; x++)
+	for (int x=1; x<n_block[0]; x++)
 	{
 		for (int y=0; y<x; y++)	
 		{	
 			int i = (0.5*x*(x-1)+y);			
 			l1temp[i] = x;
 			l2temp[i] = y;
-			l1_128[i] = x;
-			l2_128[i] = y;			
+			l1_blocks[i] = x;
+			l2_blocks[i] = y;			
 		}
 		
 	}
-	//for (int x=0; x<n/128; x++)
+	//for (int x=0; x<n/n_block[0]; x++)
 	//{
 	//	for (int y=0; y<x+1; y++)	
 	//	{	
@@ -226,10 +226,10 @@ int main()
 	//}
 
 	
-	//for (int p=0; p<(64*127); p=p+64)
+	//for (int p=0; p<(n_block[2]*n_block[1]); p=p+n_block[2])
 	//{
 	//	int j = 0;
-	//	for (int q=0; q<64; q++)
+	//	for (int q=0; q<n_block[2]; q++)
 	//	{
 	//		int i = 0;
 	//		int k = 0;			
@@ -239,10 +239,10 @@ int main()
 	//			{		
 	//				for (int s=0; s<q; s++)
 	//				{
-	//					if (l1temp[i] == l1_128[p+s] || l1temp[i] == l2_128[p+s] || l2temp[i] == l1_128[p+s]  || l2temp[i] == l2_128[p+s]){j=1;}   
+	//					if (l1temp[i] == l1_n_block[0][p+s] || l1temp[i] == l2_n_block[0][p+s] || l2temp[i] == l1_n_block[0][p+s]  || l2temp[i] == l2_n_block[0][p+s]){j=1;}   
 	//				}
 	//			}		
-	//			if (j == 0 && l1temp[i] != -1) {l1_128[p+q] = l1temp[i]; l2_128[p+q] = l2temp[i]; l1temp[i] = -1; l2temp[i] = -1; k = 1;}
+	//			if (j == 0 && l1temp[i] != -1) {l1_n_block[0][p+q] = l1temp[i]; l2_n_block[0][p+q] = l2temp[i]; l1temp[i] = -1; l2temp[i] = -1; k = 1;}
 	//			else{i++;}
 	//			j = 0;
 	//		}
@@ -250,52 +250,52 @@ int main()
 	//}
 
 	int count[2] = { 0 };
-	int offsets_0[(n/128)*((n/128)+1)/2]; 
-	int offsets_1[int (pow(n,2)/pow(128,2))];
+	int offsets_0[(n/n_block[0])*((n/n_block[0])+1)/2]; 
+	int offsets_1[int (pow(n,2)/pow(n_block[0],2))];
 	offsets_0[0] = 0;
-	for (int p = 0; p<(n/128); p++)
+	for (int p = 0; p<(n/n_block[0]); p++)
 	{
 		for (int q = 0; q<p; q++)
 		{
-			offsets_0[count[1]+1] = offsets_0[count[1]] + 128*128;
+			offsets_0[count[1]+1] = offsets_0[count[1]] + n_block[0]*n_block[0];
 			l3[count[1]] = p;
 			l4[count[1]] = q;
 			count[1]++;
-        		for (int s = 0; s<128; s++)
+        		for (int s = 0; s<n_block[0]; s++)
 			{
-            			for (int t = 0; t<128; t++)
+            			for (int t = 0; t<n_block[0]; t++)
 				{
-                			l1[count[0]] = p*128 + t;
-                			l2[count[0]] = q*128 + (s + t - 128*floor((s+t)/128));
+                			l1[count[0]] = p*n_block[0] + t;
+                			l2[count[0]] = q*n_block[0] + (s + t - n_block[0]*floor((s+t)/n_block[0]));
                 			count[0]++;
 				}
 			}
 		}
 		
 		//if (count[1] == 0) { offsets_0[count[1]] = 0; }
-		//else { offsets_0[count[1]] = offsets_0[count[1] - 1] + 64*127;  }
-		offsets_0[count[1]+1] = offsets_0[count[1]] + 64*127;		
+		//else { offsets_0[count[1]] = offsets_0[count[1] - 1] + n_block[2]*n_block[1];  }
+		offsets_0[count[1]+1] = offsets_0[count[1]] + n_block[2]*n_block[1];		
 		l3[count[1]] = p; l4[count[1]] = p;
 		count[1]++;
-		for (int i=0; i<(64*127); i++)
+		for (int i=0; i<(n_block[2]*n_block[1]); i++)
 		{    		
 							
-			l1[count[0]] = l1_128[i] + 128*p;
-    			l2[count[0]] = l2_128[i] + 128*p;
+			l1[count[0]] = l1_blocks[i] + n_block[0]*p;
+    			l2[count[0]] = l2_blocks[i] + n_block[0]*p;
     			count[0]++;
 		}
-		for (int u = 0; u<(n/128); u++)
+		for (int u = 0; u<(n/n_block[0]); u++)
 		{
-			offsets_1[(n/128)*p+u] = n*p+u;
-			//std::cout << (n/128)*(offsets_1[(n/128)*p+u]/(n/128)) << ", " << offsets_1[(n/128)*p+u] - (n/128)*(offsets_1[(n/128)*p+u]/(n/128)) << "; ";
+			offsets_1[(n/n_block[0])*p+u] = n*p+u;
+			//std::cout << (n/n_block[0])*(offsets_1[(n/n_block[0])*p+u]/(n/n_block[0])) << ", " << offsets_1[(n/n_block[0])*p+u] - (n/n_block[0])*(offsets_1[(n/n_block[0])*p+u]/(n/n_block[0])) << "; ";
 		}
     		
 	}
 	
 	//int fail = 0;
-	//for (int p = 0; p<64*127; p = p + 64)
+	//for (int p = 0; p<n_block[2]*n_block[1]; p = p + n_block[2])
 	//{
-	//	for (int i = 1; i<64; i++)
+	//	for (int i = 1; i<n_block[2]; i++)
 	//	{
 	//		for (int j = 0; j<i; j++)
 	//		{
@@ -311,8 +311,8 @@ int main()
 	//std::cout << "Generated interaction maps...\n";
 	delete [] l1temp;
 	delete [] l2temp; 
-	delete [] l1_128;
-	delete [] l2_128;
+	delete [] l1_blocks;
+	delete [] l2_blocks;
 	
 
 	// OpenCL Context Sorcery
@@ -387,22 +387,22 @@ int main()
 	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, v);
 	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, w);
 
-	std::vector<cl::Buffer> vincbuff = { buffer_init(ctx,::size_t (8*128*128*4)) };
-	std::vector<cl::Buffer> wincbuff = { buffer_init(ctx,::size_t (8*128*128*4)) };
+	std::vector<cl::Buffer> vincbuff = { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0]*4)) };
+	std::vector<cl::Buffer> wincbuff = { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0]*4)) };
 	std::vector<cl::Buffer> offset_buff_0 = { buffer_init(ctx,::size_t (4), 0) };
 	std::vector<cl::Buffer> offset_buff_1 = { buffer_init(ctx,::size_t (4), 0) };
-	std::vector<cl::Buffer> Vincbuff = { buffer_init(ctx,::size_t (8*128*128)) };
-	std::vector<cl::Buffer> Intincbuff = { buffer_init(ctx,::size_t (8*128*128)) };
-	std::cout << "Attempting to split " << (pow(n,2)/pow(128,2)) << " ways...\n";	
-	for (int i = 1; i<(pow(n,2)/pow(128,2)); i++)
+	std::vector<cl::Buffer> Vincbuff = { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0])) };
+	std::vector<cl::Buffer> Intincbuff = { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0])) };
+	std::cout << "Attempting to split " << (pow(n,2)/pow(n_block[0],2)) << " ways...\n";	
+	for (int i = 1; i<(pow(n,2)/pow(n_block[0],2)); i++)
 	{
-		vincbuff += { buffer_init(ctx,::size_t (8*128*128*4)) };
-		wincbuff += { buffer_init(ctx,::size_t (8*128*128*4)) };
-		Vincbuff += { buffer_init(ctx,::size_t (8*128*128)) };
-		Intincbuff += { buffer_init(ctx,::size_t (8*128*128)) };		
+		vincbuff += { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0]*4)) };
+		wincbuff += { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0]*4)) };
+		Vincbuff += { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0])) };
+		Intincbuff += { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0])) };		
 	}
 	
-	for (int i = 1; i<0.5*(n/128)*((n/128)+1); i++)
+	for (int i = 1; i<0.5*(n/n_block[0])*((n/n_block[0])+1); i++)
 	{
 		offset_buff_0 += { buffer_init(ctx, ::size_t (4), offsets_0[i]) };
 		//ker_F += { kernel_init("F_Hybrid_mat.cl", "Fimp", ctx, ctxDevices) };		
@@ -410,7 +410,7 @@ int main()
 		
 	}
 	
-	for (int i = 1; i<pow(n,2)/pow(128,2); i++)
+	for (int i = 1; i<pow(n,2)/pow(n_block[0],2); i++)
 	{
 		offset_buff_1 += { buffer_init(ctx, ::size_t (4), offsets_1[i]) };
 		//std::cout << offsets_1[i] << "; ";
@@ -423,10 +423,10 @@ int main()
 	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE, vecsize);
 	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE, vecsize);
 
-	cl::Buffer accelsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/128*4));
-	cl::Buffer alphasumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/128*4));
-	cl::Buffer Vsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/128));
-	cl::Buffer Intsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/128));
+	cl::Buffer accelsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/n_block[0]*4));
+	cl::Buffer alphasumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/n_block[0]*4));
+	cl::Buffer Vsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/n_block[0]));
+	cl::Buffer Intsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/n_block[0]));
 
 	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
@@ -448,7 +448,7 @@ int main()
 	
 
 	//Set Kernel Arguments
-	//for (int i = 0; i<1 ; i++) //0.5*(n/128)*((n/128)+1); i++)
+	//for (int i = 0; i<1 ; i++) //0.5*(n/n_block[0])*((n/n_block[0])+1); i++)
 	//{
 	//	ker_F[i].setArg(0, cbuff);
 	//	ker_F[i].setArg(1, mbuff);
@@ -463,14 +463,14 @@ int main()
 	//	int a = l3[i];
 	//	int b = l4[i];
 	//	//std::cout << a << "," << b << "\n";
-	//	ker_F[i].setArg(10, vincbuff[a*(n/128)+b]);
-	//	ker_F[i].setArg(11, wincbuff[a*(n/128)+b]);
-	//	ker_F[i].setArg(14, Vincbuff[a*(n/128)+b]);
-	//	ker_F[i].setArg(15, Intincbuff[a*(n/128)+b]);
-	//	ker_F[i].setArg(12, vincbuff[b*(n/128)+a]);
-	//	ker_F[i].setArg(13, wincbuff[b*(n/128)+a]);
-	//	ker_F[i].setArg(16, Vincbuff[b*(n/128)+a]);
-	//	ker_F[i].setArg(17, Intincbuff[b*(n/128)+a]);			
+	//	ker_F[i].setArg(10, vincbuff[a*(n/n_block[0])+b]);
+	//	ker_F[i].setArg(11, wincbuff[a*(n/n_block[0])+b]);
+	//	ker_F[i].setArg(14, Vincbuff[a*(n/n_block[0])+b]);
+	//	ker_F[i].setArg(15, Intincbuff[a*(n/n_block[0])+b]);
+	//	ker_F[i].setArg(12, vincbuff[b*(n/n_block[0])+a]);
+	//	ker_F[i].setArg(13, wincbuff[b*(n/n_block[0])+a]);
+	//	ker_F[i].setArg(16, Vincbuff[b*(n/n_block[0])+a]);
+	//	ker_F[i].setArg(17, Intincbuff[b*(n/n_block[0])+a]);			
 	//	ker_F[i].setArg(20, offset_buff_0[i]);
 	//	ker_F[i].setArg(18, Ftmp);
 	//	ker_F[i].setArg(19, nbuff);
@@ -490,14 +490,14 @@ int main()
 	int a = l3[0];
 	int b = l4[0];
 	//std::cout << a << "," << b << "\n";
-	ker_F.setArg(10, vincbuff[a*(n/128)+b]);
-	ker_F.setArg(11, wincbuff[a*(n/128)+b]);
-	ker_F.setArg(14, Vincbuff[a*(n/128)+b]);
-	ker_F.setArg(15, Intincbuff[a*(n/128)+b]);
-	ker_F.setArg(12, vincbuff[b*(n/128)+a]);
-	ker_F.setArg(13, wincbuff[b*(n/128)+a]);
-	ker_F.setArg(16, Vincbuff[b*(n/128)+a]);
-	ker_F.setArg(17, Intincbuff[b*(n/128)+a]);			
+	ker_F.setArg(10, vincbuff[a*(n/n_block[0])+b]);
+	ker_F.setArg(11, wincbuff[a*(n/n_block[0])+b]);
+	ker_F.setArg(14, Vincbuff[a*(n/n_block[0])+b]);
+	ker_F.setArg(15, Intincbuff[a*(n/n_block[0])+b]);
+	ker_F.setArg(12, vincbuff[b*(n/n_block[0])+a]);
+	ker_F.setArg(13, wincbuff[b*(n/n_block[0])+a]);
+	ker_F.setArg(16, Vincbuff[b*(n/n_block[0])+a]);
+	ker_F.setArg(17, Intincbuff[b*(n/n_block[0])+a]);			
 	ker_F.setArg(20, offset_buff_0[0]);
 	ker_F.setArg(18, Ftmp);
 	ker_F.setArg(19, nbuff);
@@ -558,7 +558,7 @@ int main()
 	cl::NDRange gsize1(n);
 	cl::NDRange gsize1m(n-1);
 	cl::NDRange unitsize(1);
-	std::vector<cl::NDRange> gsize2 = { n_el, 64*127, 128*128 };
+	std::vector<cl::NDRange> gsize2 = { n_el, n_block[2]*n_block[1], n_block[0]*n_block[0] };
 	cl::NDRange local_size(workgroup_size);
 	std::cout << "Kernels & Buffers set...";
 
@@ -688,21 +688,21 @@ int main()
 	
 		queue[0].enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
 		//std::cout << "a";
-		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
+		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 		{
 			int a = l3[i];
 			int b = l4[i];
 			int ind = i - nDevs*floor(i/nDevs);			
 			queue[ind].flush();
 			//std::cout << offsets_0[i] << "\n";
-			ker_F.setArg(10, vincbuff[a*(n/128)+b]);
-			ker_F.setArg(11, wincbuff[a*(n/128)+b]);
-			ker_F.setArg(14, Vincbuff[a*(n/128)+b]);
-			ker_F.setArg(15, Intincbuff[a*(n/128)+b]);
-			ker_F.setArg(12, vincbuff[b*(n/128)+a]);
-			ker_F.setArg(13, wincbuff[b*(n/128)+a]);
-			ker_F.setArg(16, Vincbuff[b*(n/128)+a]);
-			ker_F.setArg(17, Intincbuff[b*(n/128)+a]);			
+			ker_F.setArg(10, vincbuff[a*(n/n_block[0])+b]);
+			ker_F.setArg(11, wincbuff[a*(n/n_block[0])+b]);
+			ker_F.setArg(14, Vincbuff[a*(n/n_block[0])+b]);
+			ker_F.setArg(15, Intincbuff[a*(n/n_block[0])+b]);
+			ker_F.setArg(12, vincbuff[b*(n/n_block[0])+a]);
+			ker_F.setArg(13, wincbuff[b*(n/n_block[0])+a]);
+			ker_F.setArg(16, Vincbuff[b*(n/n_block[0])+a]);
+			ker_F.setArg(17, Intincbuff[b*(n/n_block[0])+a]);			
 			ker_F.setArg(20, offset_buff_0[i]);
 			//try
 			//{
@@ -713,33 +713,34 @@ int main()
 			//catch(cl::Error e) {std::cout << "1:" << e.what() << "," << e.err() << "\n";break;}
 		}
 		//std::cout << "b";
-		n0[3] = 128;
-		n0[2] = 128;
-		n0[1] = 128;
+		n0[3] = n_block[0];
+		n0[2] = n_block[0];
+		n0[1] = n_block[0];
+
 		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 		
-		for (int a = 0; a < (n/128); a++)
+		for (int a = 0; a < (n/n_block[0]); a++)
 		{
-			for (int b = 0; b < (n/128); b++)
+			for (int b = 0; b < (n/n_block[0]); b++)
 			{		
 				//int a = l3[i];
 				//int b = l4[i];
-								
-				if (a >= b) {int i = (0.5*a*(a+1)+b);}
-				else {int i = (0.5*b*(b+1)+a);}
+				int ind_job = 0;				
+				if (a >= b) {ind_job = (0.5*a*(a+1)+b);}
+				else {ind_job = (0.5*b*(b+1)+a);}
 				
-				int ind = i - nDevs*floor(i/nDevs);				
+				int ind_q = ind_job - nDevs*floor(ind_job/nDevs);				
 				
 				n0[2] = n0[1];
-				queue[ind].flush();						
-				ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(1, wincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(3, Vincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(4, Intincbuff[a*(n/128)+b]);
+				queue[ind_q].flush();						
+				ker_Sp.setArg(0, vincbuff[a*(n/n_block[0])+b]);
+				ker_Sp.setArg(1, wincbuff[a*(n/n_block[0])+b]);
+				ker_Sp.setArg(3, Vincbuff[a*(n/n_block[0])+b]);
+				ker_Sp.setArg(4, Intincbuff[a*(n/n_block[0])+b]);
 				while (n0[2] > 1)
 				{			
 					cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);
-					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
+					queue[ind_q].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
 					n0[2] = 0.5*n0[2];
 				}				
 							
@@ -748,38 +749,38 @@ int main()
 		//std::cout << "c";
 		
 		n0[1] = n;
-		n0[2] = n/128;
+		n0[2] = n/n_block[0];
 		n0[3] = n;
 		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 		
-		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
+		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 		{	
 
 			int a = l3[i];
 			int b = l4[i];	
 			int ind = i - nDevs*floor(i/nDevs);
-			cl::NDRange gsizeRed(128);
+			cl::NDRange gsizeRed(n_block[0]);
 	
 			if (a != b)
 			{
 			
 				queue[ind].flush();
-				ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(8, Intincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
+				ker_S_interm.setArg(0, vincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(1, wincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(6, Vincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(8, Intincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(9, offset_buff_1[a*(n/n_block[0])+b]);			
 						
 				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
 				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
 				
 				//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
 				queue[ind].flush();
-				ker_S_interm.setArg(0, vincbuff[b*(n/128)+a]);
-				ker_S_interm.setArg(1, wincbuff[b*(n/128)+a]);
-				ker_S_interm.setArg(6, Vincbuff[b*(n/128)+a]);
-				ker_S_interm.setArg(8, Intincbuff[b*(n/128)+a]);
-				ker_S_interm.setArg(9, offset_buff_1[b*(n/128)+a]);			
+				ker_S_interm.setArg(0, vincbuff[b*(n/n_block[0])+a]);
+				ker_S_interm.setArg(1, wincbuff[b*(n/n_block[0])+a]);
+				ker_S_interm.setArg(6, Vincbuff[b*(n/n_block[0])+a]);
+				ker_S_interm.setArg(8, Intincbuff[b*(n/n_block[0])+a]);
+				ker_S_interm.setArg(9, offset_buff_1[b*(n/n_block[0])+a]);			
 					
 				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
 				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
@@ -789,11 +790,11 @@ int main()
 			else
 			{
 				queue[ind].flush();
-				ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(8, Intincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
+				ker_S_interm.setArg(0, vincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(1, wincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(6, Vincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(8, Intincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(9, offset_buff_1[a*(n/n_block[0])+b]);			
 						
 				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
 				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
@@ -812,8 +813,8 @@ int main()
 		ker_S.setArg(1, alphasumbuff);
 		ker_S.setArg(9, Vsumbuff);
 		ker_S.setArg(11, Intsumbuff);
-		n0[1] = n/128;
-		//n0[2] = n/128;
+		n0[1] = n/n_block[0];
+		//n0[2] = n/n_block[0];
 		//n0[3] = n;
 		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}		
 	
@@ -920,21 +921,21 @@ int main()
 	
 		queue[0].enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
 		//std::cout << "a";
-		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
+		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 		{
 			int a = l3[i];
 			int b = l4[i];
 			int ind = i - nDevs*floor(i/nDevs);			
 			queue[ind].flush();
 			//std::cout << offsets_0[i] << "\n";
-			ker_F.setArg(10, vincbuff[a*(n/128)+b]);
-			ker_F.setArg(11, wincbuff[a*(n/128)+b]);
-			ker_F.setArg(14, Vincbuff[a*(n/128)+b]);
-			ker_F.setArg(15, Intincbuff[a*(n/128)+b]);
-			ker_F.setArg(12, vincbuff[b*(n/128)+a]);
-			ker_F.setArg(13, wincbuff[b*(n/128)+a]);
-			ker_F.setArg(16, Vincbuff[b*(n/128)+a]);
-			ker_F.setArg(17, Intincbuff[b*(n/128)+a]);			
+			ker_F.setArg(10, vincbuff[a*(n/n_block[0])+b]);
+			ker_F.setArg(11, wincbuff[a*(n/n_block[0])+b]);
+			ker_F.setArg(14, Vincbuff[a*(n/n_block[0])+b]);
+			ker_F.setArg(15, Intincbuff[a*(n/n_block[0])+b]);
+			ker_F.setArg(12, vincbuff[b*(n/n_block[0])+a]);
+			ker_F.setArg(13, wincbuff[b*(n/n_block[0])+a]);
+			ker_F.setArg(16, Vincbuff[b*(n/n_block[0])+a]);
+			ker_F.setArg(17, Intincbuff[b*(n/n_block[0])+a]);			
 			ker_F.setArg(20, offset_buff_0[i]);
 			//try
 			//{
@@ -945,33 +946,33 @@ int main()
 			//catch(cl::Error e) {std::cout << "1:" << e.what() << "," << e.err() << "\n";break;}
 		}
 		//std::cout << "b";
-		n0[3] = 128;
-		n0[2] = 128;
-		n0[1] = 128;
+		n0[3] = n_block[0];
+		n0[2] = n_block[0];
+		n0[1] = n_block[0];
 		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 		
-		for (int a = 0; a < (n/128); a++)
+		for (int a = 0; a < (n/n_block[0]); a++)
 		{
-			for (int b = 0; b < (n/128); b++)
+			for (int b = 0; b < (n/n_block[0]); b++)
 			{		
 				//int a = l3[i];
 				//int b = l4[i];
-								
-				if (a >= b) {int i = (0.5*a*(a+1)+b);}
-				else {int i = (0.5*b*(b+1)+a);}
+				int ind_job = 0;				
+				if (a >= b) {ind_job = (0.5*a*(a+1)+b);}
+				else {ind_job = (0.5*b*(b+1)+a);}
 				
-				int ind = i - nDevs*floor(i/nDevs);				
+				int ind_q = ind_job - nDevs*floor(ind_job/nDevs);				
 				
 				n0[2] = n0[1];
-				queue[ind].flush();						
-				ker_Sp.setArg(0, vincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(1, wincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(3, Vincbuff[a*(n/128)+b]);
-				ker_Sp.setArg(4, Intincbuff[a*(n/128)+b]);
+				queue[ind_q].flush();						
+				ker_Sp.setArg(0, vincbuff[a*(n/n_block[0])+b]);
+				ker_Sp.setArg(1, wincbuff[a*(n/n_block[0])+b]);
+				ker_Sp.setArg(3, Vincbuff[a*(n/n_block[0])+b]);
+				ker_Sp.setArg(4, Intincbuff[a*(n/n_block[0])+b]);
 				while (n0[2] > 1)
 				{			
 					cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);
-					queue[ind].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
+					queue[ind_q].enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);
 					n0[2] = 0.5*n0[2];
 				}				
 							
@@ -980,38 +981,38 @@ int main()
 		//std::cout << "c";
 		
 		n0[1] = n;
-		n0[2] = n/128;
+		n0[2] = n/n_block[0];
 		n0[3] = n;
 		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}
 		
-		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
+		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 		{	
 
 			int a = l3[i];
 			int b = l4[i];	
 			int ind = i - nDevs*floor(i/nDevs);
-			cl::NDRange gsizeRed(128);
+			cl::NDRange gsizeRed(n_block[0]);
 	
 			if (a != b)
 			{
 			
 				queue[ind].flush();
-				ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(8, Intincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
+				ker_S_interm.setArg(0, vincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(1, wincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(6, Vincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(8, Intincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(9, offset_buff_1[a*(n/n_block[0])+b]);			
 						
 				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
 				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
 				
 				//catch (cl::Error e) { std::cout << e.what() << e.err(); break; }			
 				queue[ind].flush();
-				ker_S_interm.setArg(0, vincbuff[b*(n/128)+a]);
-				ker_S_interm.setArg(1, wincbuff[b*(n/128)+a]);
-				ker_S_interm.setArg(6, Vincbuff[b*(n/128)+a]);
-				ker_S_interm.setArg(8, Intincbuff[b*(n/128)+a]);
-				ker_S_interm.setArg(9, offset_buff_1[b*(n/128)+a]);			
+				ker_S_interm.setArg(0, vincbuff[b*(n/n_block[0])+a]);
+				ker_S_interm.setArg(1, wincbuff[b*(n/n_block[0])+a]);
+				ker_S_interm.setArg(6, Vincbuff[b*(n/n_block[0])+a]);
+				ker_S_interm.setArg(8, Intincbuff[b*(n/n_block[0])+a]);
+				ker_S_interm.setArg(9, offset_buff_1[b*(n/n_block[0])+a]);			
 					
 				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
 				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
@@ -1021,11 +1022,11 @@ int main()
 			else
 			{
 				queue[ind].flush();
-				ker_S_interm.setArg(0, vincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(1, wincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(6, Vincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(8, Intincbuff[a*(n/128)+b]);
-				ker_S_interm.setArg(9, offset_buff_1[a*(n/128)+b]);			
+				ker_S_interm.setArg(0, vincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(1, wincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(6, Vincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(8, Intincbuff[a*(n/n_block[0])+b]);
+				ker_S_interm.setArg(9, offset_buff_1[a*(n/n_block[0])+b]);			
 						
 				queue[ind].enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
 				//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
@@ -1044,8 +1045,8 @@ int main()
 		ker_S.setArg(1, alphasumbuff);
 		ker_S.setArg(9, Vsumbuff);
 		ker_S.setArg(11, Intsumbuff);
-		n0[1] = n/128;
-		//n0[2] = n/128;
+		n0[1] = n/n_block[0];
+		//n0[2] = n/n_block[0];
 		//n0[3] = n;
 		for (int i = 0; i < nDevs; i++)	{queue[i].enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);}		
 	
