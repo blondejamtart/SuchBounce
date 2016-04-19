@@ -1,0 +1,6 @@
+Number of installed OpenCL Platforms: 1
+Accesible Devices on current Node:
+
+Platform #0 (Intel(R) OpenCL; running OpenCL 1.2 LINUX):
+Device 0: Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz
+

@@ -18546,3 +18546,1546 @@ Temporary Items
 /Instrumentino-master/instruments/MKS Mass Flow Controllers (MFC)/MFC Control Arduino I2C vs01-9.s#1
 /Instrumentino-master/instruments/MKS Mass Flow Controllers (MFC)/MFC Control Arduino I2C vs01-9.sch
 /Instrumentino-master/README.md
+/C++_home/a.out
+/C++_home/old/Int_tracks.dat
+/C++_home/old/OpenCL_Files/F_Hybrid.cl
+/C++_home/old/OpenCL_Files/kinetic.cl
+/C++_home/old/OpenCL_Files/position.cl
+/C++_home/old/OpenCL_Files/reduce.cl
+/C++_home/old/OpenCL_Files/translate_0.cl
+/C++_home/old/OpenCL_Files/translate.cl
+/C++_home/old/OpenCL_Files/velocity.cl
+/C++_home/old/OpenCL_Files/zero.cl
+/C++_home/old/Particle_tracks.dat
+/C++_home/old/Tv_tracks.dat
+/C++_home/old/Tw_tracks.dat
+/C++_home/old/v_tracks.dat
+/C++_home/old/w_tracks.dat
+/C++_home/Outputs/analytical_model.m
+/C++_home/Outputs/E_int_tracks.dat
+/C++_home/Outputs/E_plot.m
+/C++_home/Outputs/fileread1.m
+/C++_home/Outputs/filewrite.m
+/C++_home/Outputs/multiplot.m
+/C++_home/Outputs/multiWaitbar.m
+/C++_home/Outputs/orbit_plot.m
+/C++_home/Outputs/Particle_tracks.dat
+/C++_home/Outputs/r.vec
+/C++_home/Outputs/sim_render_dat.m
+/C++_home/Outputs/sphere_plot.m
+/C++_home/Outputs/spinny.m
+/C++_home/Outputs/theta_sens.m
+/C++_home/Outputs/T_v_tracks.dat
+/C++_home/Outputs/T_w_tracks.dat
+/C++_home/Outputs/V_tracks.dat
+/C++_home/Outputs/v_tracks.dat
+/C++_home/Outputs/w_tracks.dat
+/C++_home/Settings.h
+/C++_home/Settings.h~
+/C++_home/Setup/m.vec
+/C++_home/Setup/m.vec~
+/C++_home/Setup/q.vec
+/C++_home/Setup/q.vec~
+/C++_home/Setup/rad.vec
+/C++_home/Setup/rad.vec~
+/C++_home/Setup/r.vec
+/C++_home/Setup/r.vec~
+/C++_home/Setup/v.vec
+/C++_home/Setup/v.vec~
+/C++_home/Setup/w.vec
+/C++_home/Setup/w.vec~
+/C++_home/src_27_01_2016/src/a.out
+/C++_home/src_27_01_2016/src/F_Hybrid.cl
+/C++_home/src_27_01_2016/src/F_Hybrid.cl~
+/C++_home/src_27_01_2016/src/F_Hybrid_mat.cl
+/C++_home/src_27_01_2016/src/F_Hybrid_mat.cl~
+/C++_home/src_27_01_2016/src/F_Hybrid_non_determ.cl
+/C++_home/src_27_01_2016/src/F_Hybrid_non_determ.cl~
+/C++_home/src_27_01_2016/src/F_Hybrid_non_determ.cl.save
+/C++_home/src_27_01_2016/src/hello.c~
+/C++_home/src_27_01_2016/src/hello.cpp
+/C++_home/src_27_01_2016/src/hello.cpp~
+/C++_home/src_27_01_2016/src/Int_tracks.dat
+/C++_home/src_27_01_2016/src/kinetic.cl
+/C++_home/src_27_01_2016/src/kinetic.cl~
+/C++_home/src_27_01_2016/src/logic.cl
+/C++_home/src_27_01_2016/src/logic.cl~
+/C++_home/src_27_01_2016/src/log.txt
+/C++_home/src_27_01_2016/src/Old/src/F_Hybrid.cl
+/C++_home/src_27_01_2016/src/Old/src/F_Hybrid.cl~
+/C++_home/src_27_01_2016/src/Old/src/kinetic.cl
+/C++_home/src_27_01_2016/src/Old/src/kinetic.cl~
+/C++_home/src_27_01_2016/src/Old/src/logic.cl
+/C++_home/src_27_01_2016/src/Old/src/logic.cl~
+/C++_home/src_27_01_2016/src/Old/src/Particle_tracks.dat
+/C++_home/src_27_01_2016/src/Old/src/position.cl
+/C++_home/src_27_01_2016/src/Old/src/position.cl~
+/C++_home/src_27_01_2016/src/Old/src/reduce.cl
+/C++_home/src_27_01_2016/src/Old/src/reduce.cl~
+/C++_home/src_27_01_2016/src/Old/src/spheres.cpp
+/C++_home/src_27_01_2016/src/Old/src/spheres.cpp~
+/C++_home/src_27_01_2016/src/Old/src/SuchBounce.cpp
+/C++_home/src_27_01_2016/src/Old/src/SuchBounce.cpp~
+/C++_home/src_27_01_2016/src/Old/src/SuchBounce.sh~
+/C++_home/src_27_01_2016/src/Old/src/test.cpp
+/C++_home/src_27_01_2016/src/Old/src/test.cpp~
+/C++_home/src_27_01_2016/src/Old/src/time_scaler.cl
+/C++_home/src_27_01_2016/src/Old/src/time_scaler.cl~
+/C++_home/src_27_01_2016/src/Old/src/translate_0.cl
+/C++_home/src_27_01_2016/src/Old/src/translate_0.cl~
+/C++_home/src_27_01_2016/src/Old/src/translate.cl
+/C++_home/src_27_01_2016/src/Old/src/translate.cl~
+/C++_home/src_27_01_2016/src/Old/src/velocity.cl
+/C++_home/src_27_01_2016/src/Old/src/velocity.cl~
+/C++_home/src_27_01_2016/src/Old/src/zero.cl
+/C++_home/src_27_01_2016/src/Old/src/zero.cl~
+/C++_home/src_27_01_2016/src/Particle_tracks.dat
+/C++_home/src_27_01_2016/src/position.cl
+/C++_home/src_27_01_2016/src/position.cl~
+/C++_home/src_27_01_2016/src/reduce.cl
+/C++_home/src_27_01_2016/src/reduce.cl~
+/C++_home/src_27_01_2016/src/reduce_mat.cl
+/C++_home/src_27_01_2016/src/reduce_mat.cl~
+/C++_home/src_27_01_2016/src/reduce_pairwise.cl
+/C++_home/src_27_01_2016/src/reduce_pairwise.cl~
+/C++_home/src_27_01_2016/src/spheres.cpp
+/C++_home/src_27_01_2016/src/spheres.cpp~
+/C++_home/src_27_01_2016/src/SuchBounce.cpp
+/C++_home/src_27_01_2016/src/SuchBounce.cpp~
+/C++_home/src_27_01_2016/src/SuchBounce_mat.cpp
+/C++_home/src_27_01_2016/src/SuchBounce_mat.cpp~
+/C++_home/src_27_01_2016/src/SuchBounce_mat_x2.cpp
+/C++_home/src_27_01_2016/src/SuchBounce_mat_x2.cpp~
+/C++_home/src_27_01_2016/src/SuchBounce_non_determ.cpp
+/C++_home/src_27_01_2016/src/SuchBounce_non_determ.cpp~
+/C++_home/src_27_01_2016/src/SuchBounce.sh~
+/C++_home/src_27_01_2016/src/test.cpp
+/C++_home/src_27_01_2016/src/test.cpp~
+/C++_home/src_27_01_2016/src/time_scaler.cl
+/C++_home/src_27_01_2016/src/time_scaler.cl~
+/C++_home/src_27_01_2016/src/translate_0.cl
+/C++_home/src_27_01_2016/src/translate_0.cl~
+/C++_home/src_27_01_2016/src/translate.cl
+/C++_home/src_27_01_2016/src/translate.cl~
+/C++_home/src_27_01_2016/src/Tv_tracks.dat
+/C++_home/src_27_01_2016/src/Tw_tracks.dat
+/C++_home/src_27_01_2016/src/velocity.cl
+/C++_home/src_27_01_2016/src/velocity.cl~
+/C++_home/src_27_01_2016/src/velocity_non_determ.cl
+/C++_home/src_27_01_2016/src/velocity_non_determ.cl~
+/C++_home/src_27_01_2016/src/V_tracks.dat
+/C++_home/src_27_01_2016/src/workgroup_map.cpp
+/C++_home/src_27_01_2016/src/workgroup_map.cpp~
+/C++_home/src_27_01_2016/src/zero.cl
+/C++_home/src_27_01_2016/src/zero.cl~
+/C++_home/src_27_01_2016/src/zero_non_determ.cl
+/C++_home/src_27_01_2016/src/zero_non_determ.cl~
+/C++_home/src/F_Hybrid.cl
+/C++_home/src/F_Hybrid.cl~
+/C++_home/src/F_Hybrid_mat.cl
+/C++_home/src/F_Hybrid_mat.cl~
+/C++_home/src/F_Hybrid_non_determ.cl
+/C++_home/src/F_Hybrid_non_determ.cl~
+/C++_home/src/gmon.out
+/C++_home/src/kinetic.cl
+/C++_home/src/kinetic.cl~
+/C++_home/src/logic.cl
+/C++_home/src/logic.cl~
+/C++_home/src/OpenCL_devices.txt
+/C++_home/src/OpenCL_dev_info.cpp
+/C++_home/src/OpenCL_dev_info.run
+/C++_home/src/Particle_tracks.dat
+/C++_home/src/position.cl
+/C++_home/src/position.cl~
+/C++_home/src/reduce.cl
+/C++_home/src/reduce.cl~
+/C++_home/src/reduce_mat.cl
+/C++_home/src/reduce_mat.cl~
+/C++_home/src/reduce_mat_interm.cl
+/C++_home/src/reduce_mat_interm.cl~
+/C++_home/src/reduce_MD_interm.cl
+/C++_home/src/reduce_MD_interm.cl~
+/C++_home/src/reduce_pairwise.cl
+/C++_home/src/reduce_pairwise.cl~
+/C++_home/src/reduce_pairwise_MD.cl
+/C++_home/src/reduce_pairwise_MD.cl~
+/C++_home/src/spheres.cpp
+/C++_home/src/spheres.cpp~
+/C++_home/src/SuchBounce.cpp
+/C++_home/src/SuchBounce.cpp~
+/C++_home/src/SuchBounce_mat.cpp
+/C++_home/src/SuchBounce_mat.cpp~
+/C++_home/src/SuchBounce_mat_multidev.cpp
+/C++_home/src/SuchBounce_mat_multidev.cpp~
+/C++_home/src/SuchBounce_mat_x2.cpp
+/C++_home/src/SuchBounce_mat_x2.cpp~
+/C++_home/src/SuchBounce_MD.cpp
+/C++_home/src/SuchBounce_MD.cpp~
+/C++_home/src/SuchBounce_non_determ.cpp
+/C++_home/src/SuchBounce_non_determ.cpp~
+/C++_home/src/SuchBounce.sh~
+/C++_home/src/test.cpp
+/C++_home/src/test.cpp~
+/C++_home/src/time_scaler.cl
+/C++_home/src/time_scaler.cl~
+/C++_home/src/translate_0.cl
+/C++_home/src/translate_0.cl~
+/C++_home/src/translate.cl
+/C++_home/src/translate.cl~
+/C++_home/src/velocity.cl
+/C++_home/src/velocity.cl~
+/C++_home/src/velocity_non_determ.cl
+/C++_home/src/velocity_non_determ.cl~
+/C++_home/src/workgroup_map.cpp
+/C++_home/src/workgroup_map.cpp~
+/C++_home/src/zero.cl
+/C++_home/src/zero.cl~
+/C++_home/src/zero_non_determ.cl
+/C++_home/src/zero_non_determ.cl~
+/C++_home/SuchBatch.sh
+/C++_home/SuchBatch_t.sh
+/C++_home/SuchBounce_mat.sh
+/C++_home/SuchBounce_MD.sh
+/C++_home/SuchBounce_MD.sh~
+/C++_home/SuchBounce_non_dterm.sh
+/C++_home/SuchBounce.sh
+/C++_home/sum_alg_testy.m
+/C++_home/test_case/Settings.h
+/C++_home/test_case/Setup/m.vec
+/C++_home/test_case/Setup/q.vec
+/C++_home/test_case/Setup/q.vec~
+/C++_home/test_case/Setup/rad.vec
+/C++_home/test_case/Setup/r.vec
+/C++_home/test_case/Setup/r.vec~
+/C++_home/test_case/Setup/v.vec
+/C++_home/test_case/Setup/w.vec
+/C++/GPU_Outputs/E_int_tracks.dat
+/C++/GPU_Outputs/E_plot.m
+/C++/GPU_Outputs/fileread.m
+/C++/GPU_Outputs/filewrite.m
+/C++/GPU_Outputs/multiWaitbar.m
+/C++/GPU_Outputs/OpenCL_devices.txt
+/C++/GPU_Outputs/Particle_tracks.dat
+/C++/GPU_Outputs/sim_render_dat.m
+/C++/GPU_Outputs/T_v_tracks.dat
+/C++/GPU_Outputs/T_w_tracks.dat
+/C++/GPU_Outputs/V_tracks.dat
+/C++/GPU_Outputs/v_tracks.dat
+/C++/GPU_Outputs/w_tracks.dat
+/C++/Big_binary/Settings.h~
+/C++/binary_size_range/binary_1024/Outputs/E_int_tracks.dat
+/C++/binary_size_range/binary_1024/Outputs/r.vec
+/C++/binary_size_range/binary_1024/Outputs/v.vec
+/C++/binary_size_range/binary_1024/Settings.h
+/C++/binary_size_range/binary_1024/Settings.h~
+/C++/binary_size_range/binary_1024/Setup/m.vec
+/C++/binary_size_range/binary_1024/Setup/q.vec
+/C++/binary_size_range/binary_1024/Setup/rad.vec
+/C++/binary_size_range/binary_1024/Setup/r.vec
+/C++/binary_size_range/binary_1024/Setup_static/m.vec
+/C++/binary_size_range/binary_1024/Setup_static/q.vec
+/C++/binary_size_range/binary_1024/Setup_static/rad.vec
+/C++/binary_size_range/binary_1024/Setup_static/w.vec
+/C++/binary_size_range/binary_1024/Setup/v.vec
+/C++/binary_size_range/binary_1024/Setup/w.vec
+/C++/binary_size_range/binary_1024/src/a.out
+/C++/binary_size_range/binary_1024/src/F_Hybrid.cl
+/C++/binary_size_range/binary_1024/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_1024/src/F_Hybrid_mat.cl
+/C++/binary_size_range/binary_1024/src/F_Hybrid_mat.cl~
+/C++/binary_size_range/binary_1024/src/F_Hybrid_non_determ.cl
+/C++/binary_size_range/binary_1024/src/F_Hybrid_non_determ.cl~
+/C++/binary_size_range/binary_1024/src/hello.c~
+/C++/binary_size_range/binary_1024/src/hello.cpp
+/C++/binary_size_range/binary_1024/src/hello.cpp~
+/C++/binary_size_range/binary_1024/src/Int_tracks.dat
+/C++/binary_size_range/binary_1024/src/kinetic.cl
+/C++/binary_size_range/binary_1024/src/kinetic.cl~
+/C++/binary_size_range/binary_1024/src/logic.cl
+/C++/binary_size_range/binary_1024/src/logic.cl~
+/C++/binary_size_range/binary_1024/src/logic_comms.cl~
+/C++/binary_size_range/binary_1024/src/logic_interact.cl~
+/C++/binary_size_range/binary_1024/src/log.txt
+/C++/binary_size_range/binary_1024/src/Old/src/F_Hybrid.cl
+/C++/binary_size_range/binary_1024/src/Old/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_1024/src/Old/src/kinetic.cl
+/C++/binary_size_range/binary_1024/src/Old/src/kinetic.cl~
+/C++/binary_size_range/binary_1024/src/Old/src/logic.cl
+/C++/binary_size_range/binary_1024/src/Old/src/logic.cl~
+/C++/binary_size_range/binary_1024/src/Old/src/Particle_tracks.dat
+/C++/binary_size_range/binary_1024/src/Old/src/position.cl
+/C++/binary_size_range/binary_1024/src/Old/src/position.cl~
+/C++/binary_size_range/binary_1024/src/Old/src/reduce.cl
+/C++/binary_size_range/binary_1024/src/Old/src/reduce.cl~
+/C++/binary_size_range/binary_1024/src/Old/src/spheres.cpp
+/C++/binary_size_range/binary_1024/src/Old/src/spheres.cpp~
+/C++/binary_size_range/binary_1024/src/Old/src/SuchBounce.cpp
+/C++/binary_size_range/binary_1024/src/Old/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_1024/src/Old/src/SuchBounce.sh~
+/C++/binary_size_range/binary_1024/src/Old/src/test.cpp
+/C++/binary_size_range/binary_1024/src/Old/src/test.cpp~
+/C++/binary_size_range/binary_1024/src/Old/src/time_scaler.cl
+/C++/binary_size_range/binary_1024/src/Old/src/time_scaler.cl~
+/C++/binary_size_range/binary_1024/src/Old/src/translate_0.cl
+/C++/binary_size_range/binary_1024/src/Old/src/translate_0.cl~
+/C++/binary_size_range/binary_1024/src/Old/src/translate.cl
+/C++/binary_size_range/binary_1024/src/Old/src/translate.cl~
+/C++/binary_size_range/binary_1024/src/Old/src/velocity.cl
+/C++/binary_size_range/binary_1024/src/Old/src/velocity.cl~
+/C++/binary_size_range/binary_1024/src/Old/src/zero.cl
+/C++/binary_size_range/binary_1024/src/Old/src/zero.cl~
+/C++/binary_size_range/binary_1024/src/OpenCL_devices.txt
+/C++/binary_size_range/binary_1024/src/OpenCL_dev_info.cpp
+/C++/binary_size_range/binary_1024/src/OpenCL_dev_info.cpp~
+/C++/binary_size_range/binary_1024/src/OpenCL_info.run
+/C++/binary_size_range/binary_1024/src/Particle_tracks.dat
+/C++/binary_size_range/binary_1024/src/position.cl
+/C++/binary_size_range/binary_1024/src/position.cl~
+/C++/binary_size_range/binary_1024/src/reduce.cl
+/C++/binary_size_range/binary_1024/src/reduce.cl~
+/C++/binary_size_range/binary_1024/src/reduce_mat.cl
+/C++/binary_size_range/binary_1024/src/reduce_mat.cl~
+/C++/binary_size_range/binary_1024/src/reduce_mat_interm.cl
+/C++/binary_size_range/binary_1024/src/reduce_mat_interm.cl~
+/C++/binary_size_range/binary_1024/src/reduce_MD_interm.cl
+/C++/binary_size_range/binary_1024/src/reduce_pairwise.cl
+/C++/binary_size_range/binary_1024/src/reduce_pairwise.cl~
+/C++/binary_size_range/binary_1024/src/reduce_pairwise_MD.cl
+/C++/binary_size_range/binary_1024/src/spheres.cpp
+/C++/binary_size_range/binary_1024/src/spheres.cpp~
+/C++/binary_size_range/binary_1024/src/SuchBounce.cpp
+/C++/binary_size_range/binary_1024/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_1024/src/SuchBounce_mat.cpp
+/C++/binary_size_range/binary_1024/src/SuchBounce_mat.cpp~
+/C++/binary_size_range/binary_1024/src/SuchBounce_mat_multidev.cpp
+/C++/binary_size_range/binary_1024/src/SuchBounce_mat_multidev.cpp~
+/C++/binary_size_range/binary_1024/src/SuchBounce_mat_x2.cpp
+/C++/binary_size_range/binary_1024/src/SuchBounce_mat_x2.cpp~
+/C++/binary_size_range/binary_1024/src/SuchBounce_non_determ.cpp
+/C++/binary_size_range/binary_1024/src/SuchBounce_non_determ.cpp~
+/C++/binary_size_range/binary_1024/src/SuchBounce.sh~
+/C++/binary_size_range/binary_1024/src/test.cpp
+/C++/binary_size_range/binary_1024/src/test.cpp~
+/C++/binary_size_range/binary_1024/src/time_scaler.cl
+/C++/binary_size_range/binary_1024/src/time_scaler.cl~
+/C++/binary_size_range/binary_1024/src/translate_0.cl
+/C++/binary_size_range/binary_1024/src/translate_0.cl~
+/C++/binary_size_range/binary_1024/src/translate.cl
+/C++/binary_size_range/binary_1024/src/translate.cl~
+/C++/binary_size_range/binary_1024/src/Tv_tracks.dat
+/C++/binary_size_range/binary_1024/src/Tw_tracks.dat
+/C++/binary_size_range/binary_1024/src/velocity.cl
+/C++/binary_size_range/binary_1024/src/velocity.cl~
+/C++/binary_size_range/binary_1024/src/velocity_non_determ.cl
+/C++/binary_size_range/binary_1024/src/velocity_non_determ.cl~
+/C++/binary_size_range/binary_1024/src/V_tracks.dat
+/C++/binary_size_range/binary_1024/src/workgroup_map.cpp
+/C++/binary_size_range/binary_1024/src/workgroup_map.cpp~
+/C++/binary_size_range/binary_1024/src/zero.cl
+/C++/binary_size_range/binary_1024/src/zero.cl~
+/C++/binary_size_range/binary_1024/src/zero_non_determ.cl
+/C++/binary_size_range/binary_1024/src/zero_non_determ.cl~
+/C++/binary_size_range/binary_128/Outputs/E_int_tracks.dat
+/C++/binary_size_range/binary_128/Outputs/Particle_tracks.dat
+/C++/binary_size_range/binary_128/Outputs/r.vec
+/C++/binary_size_range/binary_128/Outputs/T_v_tracks.dat
+/C++/binary_size_range/binary_128/Outputs/T_w_tracks.dat
+/C++/binary_size_range/binary_128/Outputs/V_tracks.dat
+/C++/binary_size_range/binary_128/Outputs/v_tracks.dat
+/C++/binary_size_range/binary_128/Outputs/v.vec
+/C++/binary_size_range/binary_128/Outputs/w_tracks.dat
+/C++/binary_size_range/binary_128/Settings.h
+/C++/binary_size_range/binary_128/Settings.h~
+/C++/binary_size_range/binary_128/Setup/m.vec
+/C++/binary_size_range/binary_128/Setup/q.vec
+/C++/binary_size_range/binary_128/Setup/rad.vec
+/C++/binary_size_range/binary_128/Setup/r.vec
+/C++/binary_size_range/binary_128/Setup_static/m.vec
+/C++/binary_size_range/binary_128/Setup_static/q.vec
+/C++/binary_size_range/binary_128/Setup_static/rad.vec
+/C++/binary_size_range/binary_128/Setup_static/r.vec
+/C++/binary_size_range/binary_128/Setup_static/v.vec
+/C++/binary_size_range/binary_128/Setup_static/w.vec
+/C++/binary_size_range/binary_128/Setup/v.vec
+/C++/binary_size_range/binary_128/Setup/w.vec
+/C++/binary_size_range/binary_128/src/a.out
+/C++/binary_size_range/binary_128/src/F_Hybrid.cl
+/C++/binary_size_range/binary_128/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_128/src/F_Hybrid_mat.cl
+/C++/binary_size_range/binary_128/src/F_Hybrid_mat.cl~
+/C++/binary_size_range/binary_128/src/F_Hybrid_non_determ.cl
+/C++/binary_size_range/binary_128/src/F_Hybrid_non_determ.cl~
+/C++/binary_size_range/binary_128/src/hello.c~
+/C++/binary_size_range/binary_128/src/hello.cpp
+/C++/binary_size_range/binary_128/src/hello.cpp~
+/C++/binary_size_range/binary_128/src/Int_tracks.dat
+/C++/binary_size_range/binary_128/src/kinetic.cl
+/C++/binary_size_range/binary_128/src/kinetic.cl~
+/C++/binary_size_range/binary_128/src/logic.cl
+/C++/binary_size_range/binary_128/src/logic.cl~
+/C++/binary_size_range/binary_128/src/logic_comms.cl~
+/C++/binary_size_range/binary_128/src/logic_interact.cl~
+/C++/binary_size_range/binary_128/src/log.txt
+/C++/binary_size_range/binary_128/src/Old/src/F_Hybrid.cl
+/C++/binary_size_range/binary_128/src/Old/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_128/src/Old/src/kinetic.cl
+/C++/binary_size_range/binary_128/src/Old/src/kinetic.cl~
+/C++/binary_size_range/binary_128/src/Old/src/logic.cl
+/C++/binary_size_range/binary_128/src/Old/src/logic.cl~
+/C++/binary_size_range/binary_128/src/Old/src/Particle_tracks.dat
+/C++/binary_size_range/binary_128/src/Old/src/position.cl
+/C++/binary_size_range/binary_128/src/Old/src/position.cl~
+/C++/binary_size_range/binary_128/src/Old/src/reduce.cl
+/C++/binary_size_range/binary_128/src/Old/src/reduce.cl~
+/C++/binary_size_range/binary_128/src/Old/src/spheres.cpp
+/C++/binary_size_range/binary_128/src/Old/src/spheres.cpp~
+/C++/binary_size_range/binary_128/src/Old/src/SuchBounce.cpp
+/C++/binary_size_range/binary_128/src/Old/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_128/src/Old/src/SuchBounce.sh~
+/C++/binary_size_range/binary_128/src/Old/src/test.cpp
+/C++/binary_size_range/binary_128/src/Old/src/test.cpp~
+/C++/binary_size_range/binary_128/src/Old/src/time_scaler.cl
+/C++/binary_size_range/binary_128/src/Old/src/time_scaler.cl~
+/C++/binary_size_range/binary_128/src/Old/src/translate_0.cl
+/C++/binary_size_range/binary_128/src/Old/src/translate_0.cl~
+/C++/binary_size_range/binary_128/src/Old/src/translate.cl
+/C++/binary_size_range/binary_128/src/Old/src/translate.cl~
+/C++/binary_size_range/binary_128/src/Old/src/velocity.cl
+/C++/binary_size_range/binary_128/src/Old/src/velocity.cl~
+/C++/binary_size_range/binary_128/src/Old/src/zero.cl
+/C++/binary_size_range/binary_128/src/Old/src/zero.cl~
+/C++/binary_size_range/binary_128/src/OpenCL_devices.txt
+/C++/binary_size_range/binary_128/src/OpenCL_dev_info.cpp
+/C++/binary_size_range/binary_128/src/OpenCL_dev_info.cpp~
+/C++/binary_size_range/binary_128/src/OpenCL_info.run
+/C++/binary_size_range/binary_128/src/Particle_tracks.dat
+/C++/binary_size_range/binary_128/src/position.cl
+/C++/binary_size_range/binary_128/src/position.cl~
+/C++/binary_size_range/binary_128/src/reduce.cl
+/C++/binary_size_range/binary_128/src/reduce.cl~
+/C++/binary_size_range/binary_128/src/reduce_mat.cl
+/C++/binary_size_range/binary_128/src/reduce_mat.cl~
+/C++/binary_size_range/binary_128/src/reduce_mat_interm.cl
+/C++/binary_size_range/binary_128/src/reduce_mat_interm.cl~
+/C++/binary_size_range/binary_128/src/reduce_MD_interm.cl
+/C++/binary_size_range/binary_128/src/reduce_pairwise.cl
+/C++/binary_size_range/binary_128/src/reduce_pairwise.cl~
+/C++/binary_size_range/binary_128/src/reduce_pairwise_MD.cl
+/C++/binary_size_range/binary_128/src/spheres.cpp
+/C++/binary_size_range/binary_128/src/spheres.cpp~
+/C++/binary_size_range/binary_128/src/SuchBounce.cpp
+/C++/binary_size_range/binary_128/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_128/src/SuchBounce_mat.cpp
+/C++/binary_size_range/binary_128/src/SuchBounce_mat.cpp~
+/C++/binary_size_range/binary_128/src/SuchBounce_mat_multidev.cpp
+/C++/binary_size_range/binary_128/src/SuchBounce_mat_multidev.cpp~
+/C++/binary_size_range/binary_128/src/SuchBounce_mat_x2.cpp
+/C++/binary_size_range/binary_128/src/SuchBounce_mat_x2.cpp~
+/C++/binary_size_range/binary_128/src/SuchBounce_non_determ.cpp
+/C++/binary_size_range/binary_128/src/SuchBounce_non_determ.cpp~
+/C++/binary_size_range/binary_128/src/SuchBounce.sh~
+/C++/binary_size_range/binary_128/src/test.cpp
+/C++/binary_size_range/binary_128/src/test.cpp~
+/C++/binary_size_range/binary_128/src/time_scaler.cl
+/C++/binary_size_range/binary_128/src/time_scaler.cl~
+/C++/binary_size_range/binary_128/src/translate_0.cl
+/C++/binary_size_range/binary_128/src/translate_0.cl~
+/C++/binary_size_range/binary_128/src/translate.cl
+/C++/binary_size_range/binary_128/src/translate.cl~
+/C++/binary_size_range/binary_128/src/Tv_tracks.dat
+/C++/binary_size_range/binary_128/src/Tw_tracks.dat
+/C++/binary_size_range/binary_128/src/velocity.cl
+/C++/binary_size_range/binary_128/src/velocity.cl~
+/C++/binary_size_range/binary_128/src/velocity_non_determ.cl
+/C++/binary_size_range/binary_128/src/velocity_non_determ.cl~
+/C++/binary_size_range/binary_128/src/V_tracks.dat
+/C++/binary_size_range/binary_128/src/workgroup_map.cpp
+/C++/binary_size_range/binary_128/src/workgroup_map.cpp~
+/C++/binary_size_range/binary_128/src/zero.cl
+/C++/binary_size_range/binary_128/src/zero.cl~
+/C++/binary_size_range/binary_128/src/zero_non_determ.cl
+/C++/binary_size_range/binary_128/src/zero_non_determ.cl~
+/C++/binary_size_range/binary_2048/Settings.h
+/C++/binary_size_range/binary_2048/Settings.h~
+/C++/binary_size_range/binary_2048/Setup/m.vec
+/C++/binary_size_range/binary_2048/Setup/q.vec
+/C++/binary_size_range/binary_2048/Setup/rad.vec
+/C++/binary_size_range/binary_2048/Setup/r.vec
+/C++/binary_size_range/binary_2048/Setup/v.vec
+/C++/binary_size_range/binary_2048/Setup/w.vec
+/C++/binary_size_range/binary_2048/src/a.out
+/C++/binary_size_range/binary_2048/src/F_Hybrid.cl
+/C++/binary_size_range/binary_2048/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_2048/src/F_Hybrid_mat.cl
+/C++/binary_size_range/binary_2048/src/F_Hybrid_mat.cl~
+/C++/binary_size_range/binary_2048/src/F_Hybrid_non_determ.cl
+/C++/binary_size_range/binary_2048/src/F_Hybrid_non_determ.cl~
+/C++/binary_size_range/binary_2048/src_float/a.out
+/C++/binary_size_range/binary_2048/src_float/F_Hybrid.cl
+/C++/binary_size_range/binary_2048/src_float/F_Hybrid.cl~
+/C++/binary_size_range/binary_2048/src_float/F_Hybrid_mat.cl
+/C++/binary_size_range/binary_2048/src_float/F_Hybrid_mat.cl~
+/C++/binary_size_range/binary_2048/src_float/F_Hybrid_non_determ.cl
+/C++/binary_size_range/binary_2048/src_float/F_Hybrid_non_determ.cl~
+/C++/binary_size_range/binary_2048/src_float/hello.c~
+/C++/binary_size_range/binary_2048/src_float/hello.cpp
+/C++/binary_size_range/binary_2048/src_float/hello.cpp~
+/C++/binary_size_range/binary_2048/src_float/Int_tracks.dat
+/C++/binary_size_range/binary_2048/src_float/kinetic.cl
+/C++/binary_size_range/binary_2048/src_float/kinetic.cl~
+/C++/binary_size_range/binary_2048/src_float/logic.cl
+/C++/binary_size_range/binary_2048/src_float/logic.cl~
+/C++/binary_size_range/binary_2048/src_float/logic_comms.cl~
+/C++/binary_size_range/binary_2048/src_float/logic_interact.cl~
+/C++/binary_size_range/binary_2048/src_float/log.txt
+/C++/binary_size_range/binary_2048/src_float/Old/src/F_Hybrid.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_2048/src_float/Old/src/kinetic.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/kinetic.cl~
+/C++/binary_size_range/binary_2048/src_float/Old/src/logic.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/logic.cl~
+/C++/binary_size_range/binary_2048/src_float/Old/src/Particle_tracks.dat
+/C++/binary_size_range/binary_2048/src_float/Old/src/position.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/position.cl~
+/C++/binary_size_range/binary_2048/src_float/Old/src/reduce.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/reduce.cl~
+/C++/binary_size_range/binary_2048/src_float/Old/src/spheres.cpp
+/C++/binary_size_range/binary_2048/src_float/Old/src/spheres.cpp~
+/C++/binary_size_range/binary_2048/src_float/Old/src/SuchBounce.cpp
+/C++/binary_size_range/binary_2048/src_float/Old/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_2048/src_float/Old/src/SuchBounce.sh~
+/C++/binary_size_range/binary_2048/src_float/Old/src/test.cpp
+/C++/binary_size_range/binary_2048/src_float/Old/src/test.cpp~
+/C++/binary_size_range/binary_2048/src_float/Old/src/time_scaler.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/time_scaler.cl~
+/C++/binary_size_range/binary_2048/src_float/Old/src/translate_0.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/translate_0.cl~
+/C++/binary_size_range/binary_2048/src_float/Old/src/translate.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/translate.cl~
+/C++/binary_size_range/binary_2048/src_float/Old/src/velocity.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/velocity.cl~
+/C++/binary_size_range/binary_2048/src_float/Old/src/zero.cl
+/C++/binary_size_range/binary_2048/src_float/Old/src/zero.cl~
+/C++/binary_size_range/binary_2048/src_float/OpenCL_devices.txt
+/C++/binary_size_range/binary_2048/src_float/OpenCL_dev_info.cpp
+/C++/binary_size_range/binary_2048/src_float/OpenCL_dev_info.cpp~
+/C++/binary_size_range/binary_2048/src_float/OpenCL_info.run
+/C++/binary_size_range/binary_2048/src_float/Particle_tracks.dat
+/C++/binary_size_range/binary_2048/src_float/position.cl
+/C++/binary_size_range/binary_2048/src_float/position.cl~
+/C++/binary_size_range/binary_2048/src_float/reduce.cl
+/C++/binary_size_range/binary_2048/src_float/reduce.cl~
+/C++/binary_size_range/binary_2048/src_float/reduce_mat.cl
+/C++/binary_size_range/binary_2048/src_float/reduce_mat.cl~
+/C++/binary_size_range/binary_2048/src_float/reduce_mat_interm.cl
+/C++/binary_size_range/binary_2048/src_float/reduce_mat_interm.cl~
+/C++/binary_size_range/binary_2048/src_float/reduce_MD_interm.cl
+/C++/binary_size_range/binary_2048/src_float/reduce_MD_interm.cl~
+/C++/binary_size_range/binary_2048/src_float/reduce_pairwise.cl
+/C++/binary_size_range/binary_2048/src_float/reduce_pairwise.cl~
+/C++/binary_size_range/binary_2048/src_float/reduce_pairwise_MD.cl
+/C++/binary_size_range/binary_2048/src_float/reduce_pairwise_MD.cl~
+/C++/binary_size_range/binary_2048/src_float/spheres.cpp
+/C++/binary_size_range/binary_2048/src_float/spheres.cpp~
+/C++/binary_size_range/binary_2048/src_float/SuchBounce.cpp
+/C++/binary_size_range/binary_2048/src_float/SuchBounce.cpp~
+/C++/binary_size_range/binary_2048/src_float/SuchBounce_mat.cpp
+/C++/binary_size_range/binary_2048/src_float/SuchBounce_mat.cpp~
+/C++/binary_size_range/binary_2048/src_float/SuchBounce_mat_multidev.cpp
+/C++/binary_size_range/binary_2048/src_float/SuchBounce_mat_multidev.cpp~
+/C++/binary_size_range/binary_2048/src_float/SuchBounce_mat_x2.cpp
+/C++/binary_size_range/binary_2048/src_float/SuchBounce_mat_x2.cpp~
+/C++/binary_size_range/binary_2048/src_float/SuchBounce_non_determ.cpp
+/C++/binary_size_range/binary_2048/src_float/SuchBounce_non_determ.cpp~
+/C++/binary_size_range/binary_2048/src_float/SuchBounce.s
+/C++/binary_size_range/binary_2048/src_float/SuchBounce.sh~
+/C++/binary_size_range/binary_2048/src_float/test.cpp
+/C++/binary_size_range/binary_2048/src_float/test.cpp~
+/C++/binary_size_range/binary_2048/src_float/time_scaler.cl
+/C++/binary_size_range/binary_2048/src_float/time_scaler.cl~
+/C++/binary_size_range/binary_2048/src_float/translate_0.cl
+/C++/binary_size_range/binary_2048/src_float/translate_0.cl~
+/C++/binary_size_range/binary_2048/src_float/translate.cl
+/C++/binary_size_range/binary_2048/src_float/translate.cl~
+/C++/binary_size_range/binary_2048/src_float/Tv_tracks.dat
+/C++/binary_size_range/binary_2048/src_float/Tw_tracks.dat
+/C++/binary_size_range/binary_2048/src_float/velocity.cl
+/C++/binary_size_range/binary_2048/src_float/velocity.cl~
+/C++/binary_size_range/binary_2048/src_float/velocity_non_determ.cl
+/C++/binary_size_range/binary_2048/src_float/velocity_non_determ.cl~
+/C++/binary_size_range/binary_2048/src_float/V_tracks.dat
+/C++/binary_size_range/binary_2048/src_float/workgroup_map.cpp
+/C++/binary_size_range/binary_2048/src_float/workgroup_map.cpp~
+/C++/binary_size_range/binary_2048/src_float/xF_Hybrid_mat.cl
+/C++/binary_size_range/binary_2048/src_float/zero.cl
+/C++/binary_size_range/binary_2048/src_float/zero.cl~
+/C++/binary_size_range/binary_2048/src_float/zero_non_determ.cl
+/C++/binary_size_range/binary_2048/src_float/zero_non_determ.cl~
+/C++/binary_size_range/binary_2048/src/hello.c~
+/C++/binary_size_range/binary_2048/src/hello.cpp
+/C++/binary_size_range/binary_2048/src/hello.cpp~
+/C++/binary_size_range/binary_2048/src/Int_tracks.dat
+/C++/binary_size_range/binary_2048/src/kinetic.cl
+/C++/binary_size_range/binary_2048/src/kinetic.cl~
+/C++/binary_size_range/binary_2048/src/logic.cl
+/C++/binary_size_range/binary_2048/src/logic.cl~
+/C++/binary_size_range/binary_2048/src/logic_comms.cl~
+/C++/binary_size_range/binary_2048/src/logic_interact.cl~
+/C++/binary_size_range/binary_2048/src/log.txt
+/C++/binary_size_range/binary_2048/src/Old/src/F_Hybrid.cl
+/C++/binary_size_range/binary_2048/src/Old/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_2048/src/Old/src/kinetic.cl
+/C++/binary_size_range/binary_2048/src/Old/src/kinetic.cl~
+/C++/binary_size_range/binary_2048/src/Old/src/logic.cl
+/C++/binary_size_range/binary_2048/src/Old/src/logic.cl~
+/C++/binary_size_range/binary_2048/src/Old/src/Particle_tracks.dat
+/C++/binary_size_range/binary_2048/src/Old/src/position.cl
+/C++/binary_size_range/binary_2048/src/Old/src/position.cl~
+/C++/binary_size_range/binary_2048/src/Old/src/reduce.cl
+/C++/binary_size_range/binary_2048/src/Old/src/reduce.cl~
+/C++/binary_size_range/binary_2048/src/Old/src/spheres.cpp
+/C++/binary_size_range/binary_2048/src/Old/src/spheres.cpp~
+/C++/binary_size_range/binary_2048/src/Old/src/SuchBounce.cpp
+/C++/binary_size_range/binary_2048/src/Old/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_2048/src/Old/src/SuchBounce.sh~
+/C++/binary_size_range/binary_2048/src/Old/src/test.cpp
+/C++/binary_size_range/binary_2048/src/Old/src/test.cpp~
+/C++/binary_size_range/binary_2048/src/Old/src/time_scaler.cl
+/C++/binary_size_range/binary_2048/src/Old/src/time_scaler.cl~
+/C++/binary_size_range/binary_2048/src/Old/src/translate_0.cl
+/C++/binary_size_range/binary_2048/src/Old/src/translate_0.cl~
+/C++/binary_size_range/binary_2048/src/Old/src/translate.cl
+/C++/binary_size_range/binary_2048/src/Old/src/translate.cl~
+/C++/binary_size_range/binary_2048/src/Old/src/velocity.cl
+/C++/binary_size_range/binary_2048/src/Old/src/velocity.cl~
+/C++/binary_size_range/binary_2048/src/Old/src/zero.cl
+/C++/binary_size_range/binary_2048/src/Old/src/zero.cl~
+/C++/binary_size_range/binary_2048/src/OpenCL_devices.txt
+/C++/binary_size_range/binary_2048/src/OpenCL_dev_info.cpp
+/C++/binary_size_range/binary_2048/src/OpenCL_dev_info.cpp~
+/C++/binary_size_range/binary_2048/src/OpenCL_info.run
+/C++/binary_size_range/binary_2048/src/Particle_tracks.dat
+/C++/binary_size_range/binary_2048/src/position.cl
+/C++/binary_size_range/binary_2048/src/position.cl~
+/C++/binary_size_range/binary_2048/src/reduce.cl
+/C++/binary_size_range/binary_2048/src/reduce.cl~
+/C++/binary_size_range/binary_2048/src/reduce_mat.cl
+/C++/binary_size_range/binary_2048/src/reduce_mat.cl~
+/C++/binary_size_range/binary_2048/src/reduce_mat_interm.cl
+/C++/binary_size_range/binary_2048/src/reduce_mat_interm.cl~
+/C++/binary_size_range/binary_2048/src/reduce_MD_interm.cl
+/C++/binary_size_range/binary_2048/src/reduce_pairwise.cl
+/C++/binary_size_range/binary_2048/src/reduce_pairwise.cl~
+/C++/binary_size_range/binary_2048/src/reduce_pairwise_MD.cl
+/C++/binary_size_range/binary_2048/src/spheres.cpp
+/C++/binary_size_range/binary_2048/src/spheres.cpp~
+/C++/binary_size_range/binary_2048/src/SuchBounce.cpp
+/C++/binary_size_range/binary_2048/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_2048/src/SuchBounce_mat.cpp
+/C++/binary_size_range/binary_2048/src/SuchBounce_mat.cpp~
+/C++/binary_size_range/binary_2048/src/SuchBounce_mat_multidev.cpp
+/C++/binary_size_range/binary_2048/src/SuchBounce_mat_multidev.cpp~
+/C++/binary_size_range/binary_2048/src/SuchBounce_mat_x2.cpp
+/C++/binary_size_range/binary_2048/src/SuchBounce_mat_x2.cpp~
+/C++/binary_size_range/binary_2048/src/SuchBounce_non_determ.cpp
+/C++/binary_size_range/binary_2048/src/SuchBounce_non_determ.cpp~
+/C++/binary_size_range/binary_2048/src/SuchBounce.s
+/C++/binary_size_range/binary_2048/src/SuchBounce.sh~
+/C++/binary_size_range/binary_2048/src/test.cpp
+/C++/binary_size_range/binary_2048/src/test.cpp~
+/C++/binary_size_range/binary_2048/src/time_scaler.cl
+/C++/binary_size_range/binary_2048/src/time_scaler.cl~
+/C++/binary_size_range/binary_2048/src/translate_0.cl
+/C++/binary_size_range/binary_2048/src/translate_0.cl~
+/C++/binary_size_range/binary_2048/src/translate.cl
+/C++/binary_size_range/binary_2048/src/translate.cl~
+/C++/binary_size_range/binary_2048/src/Tv_tracks.dat
+/C++/binary_size_range/binary_2048/src/Tw_tracks.dat
+/C++/binary_size_range/binary_2048/src/velocity.cl
+/C++/binary_size_range/binary_2048/src/velocity.cl~
+/C++/binary_size_range/binary_2048/src/velocity_non_determ.cl
+/C++/binary_size_range/binary_2048/src/velocity_non_determ.cl~
+/C++/binary_size_range/binary_2048/src/V_tracks.dat
+/C++/binary_size_range/binary_2048/src/workgroup_map.cpp
+/C++/binary_size_range/binary_2048/src/workgroup_map.cpp~
+/C++/binary_size_range/binary_2048/src/zero.cl
+/C++/binary_size_range/binary_2048/src/zero.cl~
+/C++/binary_size_range/binary_2048/src/zero_non_determ.cl
+/C++/binary_size_range/binary_2048/src/zero_non_determ.cl~
+/C++/binary_size_range/binary_2048.tar.gz
+/C++/binary_size_range/binary_256/Outputs/E_int_tracks.dat
+/C++/binary_size_range/binary_256/Outputs/Particle_tracks.dat
+/C++/binary_size_range/binary_256/Outputs/r.vec
+/C++/binary_size_range/binary_256/Outputs/T_v_tracks.dat
+/C++/binary_size_range/binary_256/Outputs/T_w_tracks.dat
+/C++/binary_size_range/binary_256/Outputs/V_tracks.dat
+/C++/binary_size_range/binary_256/Outputs/v_tracks.dat
+/C++/binary_size_range/binary_256/Outputs/v.vec
+/C++/binary_size_range/binary_256/Outputs/w_tracks.dat
+/C++/binary_size_range/binary_256/Settings.h
+/C++/binary_size_range/binary_256/Settings.h~
+/C++/binary_size_range/binary_256/Setup/m.vec
+/C++/binary_size_range/binary_256/Setup/q.vec
+/C++/binary_size_range/binary_256/Setup/rad.vec
+/C++/binary_size_range/binary_256/Setup/r.vec
+/C++/binary_size_range/binary_256/Setup_static/m.vec
+/C++/binary_size_range/binary_256/Setup_static/q.vec
+/C++/binary_size_range/binary_256/Setup_static/rad.vec
+/C++/binary_size_range/binary_256/Setup_static/r.vec
+/C++/binary_size_range/binary_256/Setup_static/v.vec
+/C++/binary_size_range/binary_256/Setup_static/w.vec
+/C++/binary_size_range/binary_256/Setup/v.vec
+/C++/binary_size_range/binary_256/Setup/w.vec
+/C++/binary_size_range/binary_256/Setup/xv.vec
+/C++/binary_size_range/binary_256/src/a.out
+/C++/binary_size_range/binary_256/src/F_Hybrid.cl
+/C++/binary_size_range/binary_256/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_256/src/F_Hybrid_mat.cl
+/C++/binary_size_range/binary_256/src/F_Hybrid_mat.cl~
+/C++/binary_size_range/binary_256/src/F_Hybrid_non_determ.cl
+/C++/binary_size_range/binary_256/src/F_Hybrid_non_determ.cl~
+/C++/binary_size_range/binary_256/src/hello.c~
+/C++/binary_size_range/binary_256/src/hello.cpp
+/C++/binary_size_range/binary_256/src/hello.cpp~
+/C++/binary_size_range/binary_256/src/Int_tracks.dat
+/C++/binary_size_range/binary_256/src/kinetic.cl
+/C++/binary_size_range/binary_256/src/kinetic.cl~
+/C++/binary_size_range/binary_256/src/logic.cl
+/C++/binary_size_range/binary_256/src/logic.cl~
+/C++/binary_size_range/binary_256/src/logic_comms.cl~
+/C++/binary_size_range/binary_256/src/logic_interact.cl~
+/C++/binary_size_range/binary_256/src/log.txt
+/C++/binary_size_range/binary_256/src/Old/src/F_Hybrid.cl
+/C++/binary_size_range/binary_256/src/Old/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_256/src/Old/src/kinetic.cl
+/C++/binary_size_range/binary_256/src/Old/src/kinetic.cl~
+/C++/binary_size_range/binary_256/src/Old/src/logic.cl
+/C++/binary_size_range/binary_256/src/Old/src/logic.cl~
+/C++/binary_size_range/binary_256/src/Old/src/Particle_tracks.dat
+/C++/binary_size_range/binary_256/src/Old/src/position.cl
+/C++/binary_size_range/binary_256/src/Old/src/position.cl~
+/C++/binary_size_range/binary_256/src/Old/src/reduce.cl
+/C++/binary_size_range/binary_256/src/Old/src/reduce.cl~
+/C++/binary_size_range/binary_256/src/Old/src/spheres.cpp
+/C++/binary_size_range/binary_256/src/Old/src/spheres.cpp~
+/C++/binary_size_range/binary_256/src/Old/src/SuchBounce.cpp
+/C++/binary_size_range/binary_256/src/Old/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_256/src/Old/src/SuchBounce.sh~
+/C++/binary_size_range/binary_256/src/Old/src/test.cpp
+/C++/binary_size_range/binary_256/src/Old/src/test.cpp~
+/C++/binary_size_range/binary_256/src/Old/src/time_scaler.cl
+/C++/binary_size_range/binary_256/src/Old/src/time_scaler.cl~
+/C++/binary_size_range/binary_256/src/Old/src/translate_0.cl
+/C++/binary_size_range/binary_256/src/Old/src/translate_0.cl~
+/C++/binary_size_range/binary_256/src/Old/src/translate.cl
+/C++/binary_size_range/binary_256/src/Old/src/translate.cl~
+/C++/binary_size_range/binary_256/src/Old/src/velocity.cl
+/C++/binary_size_range/binary_256/src/Old/src/velocity.cl~
+/C++/binary_size_range/binary_256/src/Old/src/zero.cl
+/C++/binary_size_range/binary_256/src/Old/src/zero.cl~
+/C++/binary_size_range/binary_256/src/OpenCL_devices.txt
+/C++/binary_size_range/binary_256/src/OpenCL_dev_info.cpp
+/C++/binary_size_range/binary_256/src/OpenCL_dev_info.cpp~
+/C++/binary_size_range/binary_256/src/OpenCL_info.run
+/C++/binary_size_range/binary_256/src/Particle_tracks.dat
+/C++/binary_size_range/binary_256/src/position.cl
+/C++/binary_size_range/binary_256/src/position.cl~
+/C++/binary_size_range/binary_256/src/reduce.cl
+/C++/binary_size_range/binary_256/src/reduce.cl~
+/C++/binary_size_range/binary_256/src/reduce_mat.cl
+/C++/binary_size_range/binary_256/src/reduce_mat.cl~
+/C++/binary_size_range/binary_256/src/reduce_mat_interm.cl
+/C++/binary_size_range/binary_256/src/reduce_mat_interm.cl~
+/C++/binary_size_range/binary_256/src/reduce_MD_interm.cl
+/C++/binary_size_range/binary_256/src/reduce_pairwise.cl
+/C++/binary_size_range/binary_256/src/reduce_pairwise.cl~
+/C++/binary_size_range/binary_256/src/reduce_pairwise_MD.cl
+/C++/binary_size_range/binary_256/src/spheres.cpp
+/C++/binary_size_range/binary_256/src/spheres.cpp~
+/C++/binary_size_range/binary_256/src/SuchBounce.cpp
+/C++/binary_size_range/binary_256/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_256/src/SuchBounce_mat.cpp
+/C++/binary_size_range/binary_256/src/SuchBounce_mat.cpp~
+/C++/binary_size_range/binary_256/src/SuchBounce_mat_multidev.cpp
+/C++/binary_size_range/binary_256/src/SuchBounce_mat_multidev.cpp~
+/C++/binary_size_range/binary_256/src/SuchBounce_mat_x2.cpp
+/C++/binary_size_range/binary_256/src/SuchBounce_mat_x2.cpp~
+/C++/binary_size_range/binary_256/src/SuchBounce_non_determ.cpp
+/C++/binary_size_range/binary_256/src/SuchBounce_non_determ.cpp~
+/C++/binary_size_range/binary_256/src/SuchBounce.sh~
+/C++/binary_size_range/binary_256/src/test.cpp
+/C++/binary_size_range/binary_256/src/test.cpp~
+/C++/binary_size_range/binary_256/src/time_scaler.cl
+/C++/binary_size_range/binary_256/src/time_scaler.cl~
+/C++/binary_size_range/binary_256/src/translate_0.cl
+/C++/binary_size_range/binary_256/src/translate_0.cl~
+/C++/binary_size_range/binary_256/src/translate.cl
+/C++/binary_size_range/binary_256/src/translate.cl~
+/C++/binary_size_range/binary_256/src/Tv_tracks.dat
+/C++/binary_size_range/binary_256/src/Tw_tracks.dat
+/C++/binary_size_range/binary_256/src/velocity.cl
+/C++/binary_size_range/binary_256/src/velocity.cl~
+/C++/binary_size_range/binary_256/src/velocity_non_determ.cl
+/C++/binary_size_range/binary_256/src/velocity_non_determ.cl~
+/C++/binary_size_range/binary_256/src/V_tracks.dat
+/C++/binary_size_range/binary_256/src/workgroup_map.cpp
+/C++/binary_size_range/binary_256/src/workgroup_map.cpp~
+/C++/binary_size_range/binary_256/src/zero.cl
+/C++/binary_size_range/binary_256/src/zero.cl~
+/C++/binary_size_range/binary_256/src/zero_non_determ.cl
+/C++/binary_size_range/binary_256/src/zero_non_determ.cl~
+/C++/binary_size_range/binary_4096/Settings.h
+/C++/binary_size_range/binary_4096/Settings.h~
+/C++/binary_size_range/binary_4096/Setup/m.vec
+/C++/binary_size_range/binary_4096/Setup/q.vec
+/C++/binary_size_range/binary_4096/Setup/rad.vec
+/C++/binary_size_range/binary_4096/Setup/r.vec
+/C++/binary_size_range/binary_4096/Setup/v.vec
+/C++/binary_size_range/binary_4096/Setup/w.vec
+/C++/binary_size_range/binary_4096/src/a.out
+/C++/binary_size_range/binary_4096/src/F_Hybrid.cl
+/C++/binary_size_range/binary_4096/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_4096/src/F_Hybrid_mat.cl
+/C++/binary_size_range/binary_4096/src/F_Hybrid_mat.cl~
+/C++/binary_size_range/binary_4096/src/F_Hybrid_non_determ.cl
+/C++/binary_size_range/binary_4096/src/F_Hybrid_non_determ.cl~
+/C++/binary_size_range/binary_4096/src_float/a.out
+/C++/binary_size_range/binary_4096/src_float/F_Hybrid.cl
+/C++/binary_size_range/binary_4096/src_float/F_Hybrid.cl~
+/C++/binary_size_range/binary_4096/src_float/F_Hybrid_mat.cl
+/C++/binary_size_range/binary_4096/src_float/F_Hybrid_mat.cl~
+/C++/binary_size_range/binary_4096/src_float/F_Hybrid_non_determ.cl
+/C++/binary_size_range/binary_4096/src_float/F_Hybrid_non_determ.cl~
+/C++/binary_size_range/binary_4096/src_float/hello.c~
+/C++/binary_size_range/binary_4096/src_float/hello.cpp
+/C++/binary_size_range/binary_4096/src_float/hello.cpp~
+/C++/binary_size_range/binary_4096/src_float/Int_tracks.dat
+/C++/binary_size_range/binary_4096/src_float/kinetic.cl
+/C++/binary_size_range/binary_4096/src_float/kinetic.cl~
+/C++/binary_size_range/binary_4096/src_float/logic.cl
+/C++/binary_size_range/binary_4096/src_float/logic.cl~
+/C++/binary_size_range/binary_4096/src_float/logic_comms.cl~
+/C++/binary_size_range/binary_4096/src_float/logic_interact.cl~
+/C++/binary_size_range/binary_4096/src_float/log.txt
+/C++/binary_size_range/binary_4096/src_float/Old/src/F_Hybrid.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_4096/src_float/Old/src/kinetic.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/kinetic.cl~
+/C++/binary_size_range/binary_4096/src_float/Old/src/logic.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/logic.cl~
+/C++/binary_size_range/binary_4096/src_float/Old/src/Particle_tracks.dat
+/C++/binary_size_range/binary_4096/src_float/Old/src/position.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/position.cl~
+/C++/binary_size_range/binary_4096/src_float/Old/src/reduce.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/reduce.cl~
+/C++/binary_size_range/binary_4096/src_float/Old/src/spheres.cpp
+/C++/binary_size_range/binary_4096/src_float/Old/src/spheres.cpp~
+/C++/binary_size_range/binary_4096/src_float/Old/src/SuchBounce.cpp
+/C++/binary_size_range/binary_4096/src_float/Old/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_4096/src_float/Old/src/SuchBounce.sh~
+/C++/binary_size_range/binary_4096/src_float/Old/src/test.cpp
+/C++/binary_size_range/binary_4096/src_float/Old/src/test.cpp~
+/C++/binary_size_range/binary_4096/src_float/Old/src/time_scaler.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/time_scaler.cl~
+/C++/binary_size_range/binary_4096/src_float/Old/src/translate_0.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/translate_0.cl~
+/C++/binary_size_range/binary_4096/src_float/Old/src/translate.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/translate.cl~
+/C++/binary_size_range/binary_4096/src_float/Old/src/velocity.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/velocity.cl~
+/C++/binary_size_range/binary_4096/src_float/Old/src/zero.cl
+/C++/binary_size_range/binary_4096/src_float/Old/src/zero.cl~
+/C++/binary_size_range/binary_4096/src_float/OpenCL_devices.txt
+/C++/binary_size_range/binary_4096/src_float/OpenCL_dev_info.cpp
+/C++/binary_size_range/binary_4096/src_float/OpenCL_dev_info.cpp~
+/C++/binary_size_range/binary_4096/src_float/OpenCL_info.run
+/C++/binary_size_range/binary_4096/src_float/Particle_tracks.dat
+/C++/binary_size_range/binary_4096/src_float/position.cl
+/C++/binary_size_range/binary_4096/src_float/position.cl~
+/C++/binary_size_range/binary_4096/src_float/reduce.cl
+/C++/binary_size_range/binary_4096/src_float/reduce.cl~
+/C++/binary_size_range/binary_4096/src_float/reduce_mat.cl
+/C++/binary_size_range/binary_4096/src_float/reduce_mat.cl~
+/C++/binary_size_range/binary_4096/src_float/reduce_mat_interm.cl
+/C++/binary_size_range/binary_4096/src_float/reduce_mat_interm.cl~
+/C++/binary_size_range/binary_4096/src_float/reduce_MD_interm.cl
+/C++/binary_size_range/binary_4096/src_float/reduce_MD_interm.cl~
+/C++/binary_size_range/binary_4096/src_float/reduce_pairwise.cl
+/C++/binary_size_range/binary_4096/src_float/reduce_pairwise.cl~
+/C++/binary_size_range/binary_4096/src_float/reduce_pairwise_MD.cl
+/C++/binary_size_range/binary_4096/src_float/reduce_pairwise_MD.cl~
+/C++/binary_size_range/binary_4096/src_float/spheres.cpp
+/C++/binary_size_range/binary_4096/src_float/spheres.cpp~
+/C++/binary_size_range/binary_4096/src_float/SuchBounce.cpp
+/C++/binary_size_range/binary_4096/src_float/SuchBounce.cpp~
+/C++/binary_size_range/binary_4096/src_float/SuchBounce_mat.cpp
+/C++/binary_size_range/binary_4096/src_float/SuchBounce_mat.cpp~
+/C++/binary_size_range/binary_4096/src_float/SuchBounce_mat_multidev.cpp
+/C++/binary_size_range/binary_4096/src_float/SuchBounce_mat_multidev.cpp~
+/C++/binary_size_range/binary_4096/src_float/SuchBounce_mat_x2.cpp
+/C++/binary_size_range/binary_4096/src_float/SuchBounce_mat_x2.cpp~
+/C++/binary_size_range/binary_4096/src_float/SuchBounce_non_determ.cpp
+/C++/binary_size_range/binary_4096/src_float/SuchBounce_non_determ.cpp~
+/C++/binary_size_range/binary_4096/src_float/SuchBounce.s
+/C++/binary_size_range/binary_4096/src_float/SuchBounce.sh~
+/C++/binary_size_range/binary_4096/src_float/test.cpp
+/C++/binary_size_range/binary_4096/src_float/test.cpp~
+/C++/binary_size_range/binary_4096/src_float/time_scaler.cl
+/C++/binary_size_range/binary_4096/src_float/time_scaler.cl~
+/C++/binary_size_range/binary_4096/src_float/translate_0.cl
+/C++/binary_size_range/binary_4096/src_float/translate_0.cl~
+/C++/binary_size_range/binary_4096/src_float/translate.cl
+/C++/binary_size_range/binary_4096/src_float/translate.cl~
+/C++/binary_size_range/binary_4096/src_float/Tv_tracks.dat
+/C++/binary_size_range/binary_4096/src_float/Tw_tracks.dat
+/C++/binary_size_range/binary_4096/src_float/velocity.cl
+/C++/binary_size_range/binary_4096/src_float/velocity.cl~
+/C++/binary_size_range/binary_4096/src_float/velocity_non_determ.cl
+/C++/binary_size_range/binary_4096/src_float/velocity_non_determ.cl~
+/C++/binary_size_range/binary_4096/src_float/V_tracks.dat
+/C++/binary_size_range/binary_4096/src_float/workgroup_map.cpp
+/C++/binary_size_range/binary_4096/src_float/workgroup_map.cpp~
+/C++/binary_size_range/binary_4096/src_float/xF_Hybrid_mat.cl
+/C++/binary_size_range/binary_4096/src_float/zero.cl
+/C++/binary_size_range/binary_4096/src_float/zero.cl~
+/C++/binary_size_range/binary_4096/src_float/zero_non_determ.cl
+/C++/binary_size_range/binary_4096/src_float/zero_non_determ.cl~
+/C++/binary_size_range/binary_4096/src/hello.c~
+/C++/binary_size_range/binary_4096/src/hello.cpp
+/C++/binary_size_range/binary_4096/src/hello.cpp~
+/C++/binary_size_range/binary_4096/src/Int_tracks.dat
+/C++/binary_size_range/binary_4096/src/kinetic.cl
+/C++/binary_size_range/binary_4096/src/kinetic.cl~
+/C++/binary_size_range/binary_4096/src/logic.cl
+/C++/binary_size_range/binary_4096/src/logic.cl~
+/C++/binary_size_range/binary_4096/src/logic_comms.cl~
+/C++/binary_size_range/binary_4096/src/logic_interact.cl~
+/C++/binary_size_range/binary_4096/src/log.txt
+/C++/binary_size_range/binary_4096/src/Old/src/F_Hybrid.cl
+/C++/binary_size_range/binary_4096/src/Old/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_4096/src/Old/src/kinetic.cl
+/C++/binary_size_range/binary_4096/src/Old/src/kinetic.cl~
+/C++/binary_size_range/binary_4096/src/Old/src/logic.cl
+/C++/binary_size_range/binary_4096/src/Old/src/logic.cl~
+/C++/binary_size_range/binary_4096/src/Old/src/Particle_tracks.dat
+/C++/binary_size_range/binary_4096/src/Old/src/position.cl
+/C++/binary_size_range/binary_4096/src/Old/src/position.cl~
+/C++/binary_size_range/binary_4096/src/Old/src/reduce.cl
+/C++/binary_size_range/binary_4096/src/Old/src/reduce.cl~
+/C++/binary_size_range/binary_4096/src/Old/src/spheres.cpp
+/C++/binary_size_range/binary_4096/src/Old/src/spheres.cpp~
+/C++/binary_size_range/binary_4096/src/Old/src/SuchBounce.cpp
+/C++/binary_size_range/binary_4096/src/Old/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_4096/src/Old/src/SuchBounce.sh~
+/C++/binary_size_range/binary_4096/src/Old/src/test.cpp
+/C++/binary_size_range/binary_4096/src/Old/src/test.cpp~
+/C++/binary_size_range/binary_4096/src/Old/src/time_scaler.cl
+/C++/binary_size_range/binary_4096/src/Old/src/time_scaler.cl~
+/C++/binary_size_range/binary_4096/src/Old/src/translate_0.cl
+/C++/binary_size_range/binary_4096/src/Old/src/translate_0.cl~
+/C++/binary_size_range/binary_4096/src/Old/src/translate.cl
+/C++/binary_size_range/binary_4096/src/Old/src/translate.cl~
+/C++/binary_size_range/binary_4096/src/Old/src/velocity.cl
+/C++/binary_size_range/binary_4096/src/Old/src/velocity.cl~
+/C++/binary_size_range/binary_4096/src/Old/src/zero.cl
+/C++/binary_size_range/binary_4096/src/Old/src/zero.cl~
+/C++/binary_size_range/binary_4096/src/OpenCL_devices.txt
+/C++/binary_size_range/binary_4096/src/OpenCL_dev_info.cpp
+/C++/binary_size_range/binary_4096/src/OpenCL_dev_info.cpp~
+/C++/binary_size_range/binary_4096/src/OpenCL_info.run
+/C++/binary_size_range/binary_4096/src/Particle_tracks.dat
+/C++/binary_size_range/binary_4096/src/position.cl
+/C++/binary_size_range/binary_4096/src/position.cl~
+/C++/binary_size_range/binary_4096/src/reduce.cl
+/C++/binary_size_range/binary_4096/src/reduce.cl~
+/C++/binary_size_range/binary_4096/src/reduce_mat.cl
+/C++/binary_size_range/binary_4096/src/reduce_mat.cl~
+/C++/binary_size_range/binary_4096/src/reduce_mat_interm.cl
+/C++/binary_size_range/binary_4096/src/reduce_mat_interm.cl~
+/C++/binary_size_range/binary_4096/src/reduce_MD_interm.cl
+/C++/binary_size_range/binary_4096/src/reduce_pairwise.cl
+/C++/binary_size_range/binary_4096/src/reduce_pairwise.cl~
+/C++/binary_size_range/binary_4096/src/reduce_pairwise_MD.cl
+/C++/binary_size_range/binary_4096/src/spheres.cpp
+/C++/binary_size_range/binary_4096/src/spheres.cpp~
+/C++/binary_size_range/binary_4096/src/SuchBounce.cpp
+/C++/binary_size_range/binary_4096/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_4096/src/SuchBounce_mat.cpp
+/C++/binary_size_range/binary_4096/src/SuchBounce_mat.cpp~
+/C++/binary_size_range/binary_4096/src/SuchBounce_mat_multidev.cpp
+/C++/binary_size_range/binary_4096/src/SuchBounce_mat_multidev.cpp~
+/C++/binary_size_range/binary_4096/src/SuchBounce_mat_x2.cpp
+/C++/binary_size_range/binary_4096/src/SuchBounce_mat_x2.cpp~
+/C++/binary_size_range/binary_4096/src/SuchBounce_non_determ.cpp
+/C++/binary_size_range/binary_4096/src/SuchBounce_non_determ.cpp~
+/C++/binary_size_range/binary_4096/src/SuchBounce.s
+/C++/binary_size_range/binary_4096/src/SuchBounce.sh~
+/C++/binary_size_range/binary_4096/src/test.cpp
+/C++/binary_size_range/binary_4096/src/test.cpp~
+/C++/binary_size_range/binary_4096/src/time_scaler.cl
+/C++/binary_size_range/binary_4096/src/time_scaler.cl~
+/C++/binary_size_range/binary_4096/src/translate_0.cl
+/C++/binary_size_range/binary_4096/src/translate_0.cl~
+/C++/binary_size_range/binary_4096/src/translate.cl
+/C++/binary_size_range/binary_4096/src/translate.cl~
+/C++/binary_size_range/binary_4096/src/Tv_tracks.dat
+/C++/binary_size_range/binary_4096/src/Tw_tracks.dat
+/C++/binary_size_range/binary_4096/src/velocity.cl
+/C++/binary_size_range/binary_4096/src/velocity.cl~
+/C++/binary_size_range/binary_4096/src/velocity_non_determ.cl
+/C++/binary_size_range/binary_4096/src/velocity_non_determ.cl~
+/C++/binary_size_range/binary_4096/src/V_tracks.dat
+/C++/binary_size_range/binary_4096/src/workgroup_map.cpp
+/C++/binary_size_range/binary_4096/src/workgroup_map.cpp~
+/C++/binary_size_range/binary_4096/src/zero.cl
+/C++/binary_size_range/binary_4096/src/zero.cl~
+/C++/binary_size_range/binary_4096/src/zero_non_determ.cl
+/C++/binary_size_range/binary_4096/src/zero_non_determ.cl~
+/C++/binary_size_range/binary_512/Outputs/E_int_tracks.dat
+/C++/binary_size_range/binary_512/Outputs/Particle_tracks.dat
+/C++/binary_size_range/binary_512/Outputs/r.vec
+/C++/binary_size_range/binary_512/Outputs/T_v_tracks.dat
+/C++/binary_size_range/binary_512/Outputs/T_w_tracks.dat
+/C++/binary_size_range/binary_512/Outputs/V_tracks.dat
+/C++/binary_size_range/binary_512/Outputs/v_tracks.dat
+/C++/binary_size_range/binary_512/Outputs/v.vec
+/C++/binary_size_range/binary_512/Outputs/w_tracks.dat
+/C++/binary_size_range/binary_512/Settings.h
+/C++/binary_size_range/binary_512/Settings.h~
+/C++/binary_size_range/binary_512/Setup/m.vec
+/C++/binary_size_range/binary_512/Setup/q.vec
+/C++/binary_size_range/binary_512/Setup/rad.vec
+/C++/binary_size_range/binary_512/Setup/r.vec
+/C++/binary_size_range/binary_512/Setup_static/m.vec
+/C++/binary_size_range/binary_512/Setup_static/q.vec
+/C++/binary_size_range/binary_512/Setup_static/rad.vec
+/C++/binary_size_range/binary_512/Setup_static/r.vec
+/C++/binary_size_range/binary_512/Setup_static/v.vec
+/C++/binary_size_range/binary_512/Setup_static/w.vec
+/C++/binary_size_range/binary_512/Setup/v.vec
+/C++/binary_size_range/binary_512/Setup/w.vec
+/C++/binary_size_range/binary_512/src/F_Hybrid.cl
+/C++/binary_size_range/binary_512/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_512/src/F_Hybrid_mat.cl
+/C++/binary_size_range/binary_512/src/F_Hybrid_mat.cl~
+/C++/binary_size_range/binary_512/src/F_Hybrid_non_determ.cl
+/C++/binary_size_range/binary_512/src/F_Hybrid_non_determ.cl~
+/C++/binary_size_range/binary_512/src/hello.c~
+/C++/binary_size_range/binary_512/src/hello.cpp
+/C++/binary_size_range/binary_512/src/hello.cpp~
+/C++/binary_size_range/binary_512/src/Int_tracks.dat
+/C++/binary_size_range/binary_512/src/kinetic.cl
+/C++/binary_size_range/binary_512/src/kinetic.cl~
+/C++/binary_size_range/binary_512/src/logic.cl
+/C++/binary_size_range/binary_512/src/logic.cl~
+/C++/binary_size_range/binary_512/src/logic_comms.cl~
+/C++/binary_size_range/binary_512/src/logic_interact.cl~
+/C++/binary_size_range/binary_512/src/log.txt
+/C++/binary_size_range/binary_512/src/Old/src/F_Hybrid.cl
+/C++/binary_size_range/binary_512/src/Old/src/F_Hybrid.cl~
+/C++/binary_size_range/binary_512/src/Old/src/kinetic.cl
+/C++/binary_size_range/binary_512/src/Old/src/kinetic.cl~
+/C++/binary_size_range/binary_512/src/Old/src/logic.cl
+/C++/binary_size_range/binary_512/src/Old/src/logic.cl~
+/C++/binary_size_range/binary_512/src/Old/src/Particle_tracks.dat
+/C++/binary_size_range/binary_512/src/Old/src/position.cl
+/C++/binary_size_range/binary_512/src/Old/src/position.cl~
+/C++/binary_size_range/binary_512/src/Old/src/reduce.cl
+/C++/binary_size_range/binary_512/src/Old/src/reduce.cl~
+/C++/binary_size_range/binary_512/src/Old/src/spheres.cpp
+/C++/binary_size_range/binary_512/src/Old/src/spheres.cpp~
+/C++/binary_size_range/binary_512/src/Old/src/SuchBounce.cpp
+/C++/binary_size_range/binary_512/src/Old/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_512/src/Old/src/SuchBounce.sh~
+/C++/binary_size_range/binary_512/src/Old/src/test.cpp
+/C++/binary_size_range/binary_512/src/Old/src/test.cpp~
+/C++/binary_size_range/binary_512/src/Old/src/time_scaler.cl
+/C++/binary_size_range/binary_512/src/Old/src/time_scaler.cl~
+/C++/binary_size_range/binary_512/src/Old/src/translate_0.cl
+/C++/binary_size_range/binary_512/src/Old/src/translate_0.cl~
+/C++/binary_size_range/binary_512/src/Old/src/translate.cl
+/C++/binary_size_range/binary_512/src/Old/src/translate.cl~
+/C++/binary_size_range/binary_512/src/Old/src/velocity.cl
+/C++/binary_size_range/binary_512/src/Old/src/velocity.cl~
+/C++/binary_size_range/binary_512/src/Old/src/zero.cl
+/C++/binary_size_range/binary_512/src/Old/src/zero.cl~
+/C++/binary_size_range/binary_512/src/OpenCL_devices.txt
+/C++/binary_size_range/binary_512/src/OpenCL_dev_info.cpp
+/C++/binary_size_range/binary_512/src/OpenCL_dev_info.cpp~
+/C++/binary_size_range/binary_512/src/OpenCL_info.run
+/C++/binary_size_range/binary_512/src/Particle_tracks.dat
+/C++/binary_size_range/binary_512/src/position.cl
+/C++/binary_size_range/binary_512/src/position.cl~
+/C++/binary_size_range/binary_512/src/reduce.cl
+/C++/binary_size_range/binary_512/src/reduce.cl~
+/C++/binary_size_range/binary_512/src/reduce_mat.cl
+/C++/binary_size_range/binary_512/src/reduce_mat.cl~
+/C++/binary_size_range/binary_512/src/reduce_mat_interm.cl
+/C++/binary_size_range/binary_512/src/reduce_mat_interm.cl~
+/C++/binary_size_range/binary_512/src/reduce_MD_interm.cl
+/C++/binary_size_range/binary_512/src/reduce_pairwise.cl
+/C++/binary_size_range/binary_512/src/reduce_pairwise.cl~
+/C++/binary_size_range/binary_512/src/reduce_pairwise_MD.cl
+/C++/binary_size_range/binary_512/src/spheres.cpp
+/C++/binary_size_range/binary_512/src/spheres.cpp~
+/C++/binary_size_range/binary_512/src/SuchBounce.cpp
+/C++/binary_size_range/binary_512/src/SuchBounce.cpp~
+/C++/binary_size_range/binary_512/src/SuchBounce_mat.cpp
+/C++/binary_size_range/binary_512/src/SuchBounce_mat.cpp~
+/C++/binary_size_range/binary_512/src/SuchBounce_mat_multidev.cpp
+/C++/binary_size_range/binary_512/src/SuchBounce_mat_multidev.cpp~
+/C++/binary_size_range/binary_512/src/SuchBounce_mat_x2.cpp
+/C++/binary_size_range/binary_512/src/SuchBounce_mat_x2.cpp~
+/C++/binary_size_range/binary_512/src/SuchBounce_non_determ.cpp
+/C++/binary_size_range/binary_512/src/SuchBounce_non_determ.cpp~
+/C++/binary_size_range/binary_512/src/SuchBounce.sh~
+/C++/binary_size_range/binary_512/src/test.cpp
+/C++/binary_size_range/binary_512/src/test.cpp~
+/C++/binary_size_range/binary_512/src/time_scaler.cl
+/C++/binary_size_range/binary_512/src/time_scaler.cl~
+/C++/binary_size_range/binary_512/src/translate_0.cl
+/C++/binary_size_range/binary_512/src/translate_0.cl~
+/C++/binary_size_range/binary_512/src/translate.cl
+/C++/binary_size_range/binary_512/src/translate.cl~
+/C++/binary_size_range/binary_512/src/Tv_tracks.dat
+/C++/binary_size_range/binary_512/src/Tw_tracks.dat
+/C++/binary_size_range/binary_512/src/velocity.cl
+/C++/binary_size_range/binary_512/src/velocity.cl~
+/C++/binary_size_range/binary_512/src/velocity_non_determ.cl
+/C++/binary_size_range/binary_512/src/velocity_non_determ.cl~
+/C++/binary_size_range/binary_512/src/V_tracks.dat
+/C++/binary_size_range/binary_512/src/workgroup_map.cpp
+/C++/binary_size_range/binary_512/src/workgroup_map.cpp~
+/C++/binary_size_range/binary_512/src/zero.cl
+/C++/binary_size_range/binary_512/src/zero.cl~
+/C++/binary_size_range/binary_512/src/zero_non_determ.cl
+/C++/binary_size_range/binary_512/src/zero_non_determ.cl~
+/C++/binary_size_range/E_plot.m
+/C++/binary_size_range/fileread.m
+/C++/binary_size_range/filewrite.m
+/C++/binary_size_range/multiWaitbar.m
+/C++/binary_size_range/sim_render_dat.m
+/C++/binary_size_range/spinup.m
+/C++/binary_size_range/SuchBatch.sh
+/C++/binary_size_range/SuchBatch.sh~
+/MATLAB/spinup.m~
+/MATLAB/strains.png
+/MATLAB/tank_pressure.fig
+/MATLAB/tank_pressure.png
+/MATLAB/Vac Test/SD#1/DATA0011.TXT
+/MATLAB/Vac Test/SD#1/DATA0012.TXT
+/MATLAB/Vac Test/SD#1/DATA0013.TXT
+/MATLAB/Vac Test/SD#1/DATA0014.TXT
+/MATLAB/Vac Test/SD#1/DATA0015.TXT
+/MATLAB/Vac Test/SD#1/DATA0016.TXT
+/MATLAB/Vac Test/SD#1/DATA0017.TXT
+/MATLAB/Vac Test/SD#1/DATA0018.TXT
+/MATLAB/Vac Test/SD#1/DATA0019.TXT
+/MATLAB/Vac Test/SD#1/DATA0020.TXT
+/MATLAB/Vac Test/SD#1/DATA0021.TXT
+/MATLAB/Vac Test/SD#1/DATA0022.TXT
+/MATLAB/Vac Test/SD#1/DATA0023.TXT
+/MATLAB/Vac Test/SD#1/DATA0024.TXT
+/MATLAB/Vac Test/SD#2/DATA0011.TXT
+/MATLAB/Vac Test/SD#2/DATA0012.TXT
+/MATLAB/Vac Test/SD#2/DATA0013.TXT
+/MATLAB/Vac Test/SD#2/DATA0014.TXT
+/MATLAB/Vac Test/SD#2/DATA0015.TXT
+/MATLAB/Vac Test/SD#2/DATA0016.TXT
+/MATLAB/Vac Test/SD#2/DATA0017.TXT
+/MATLAB/Vac Test/SD#2/DATA0018.TXT
+/MATLAB/Vac Test/SD#2/DATA0019.TXT
+/MATLAB/Vac Test/SD#2/DATA0020.TXT
+/MATLAB/Vac Test/SD#2/DATA0021.TXT
+/MATLAB/Vac Test/SD#2/DATA0022.TXT
+/MATLAB/Vac Test/SD#2/DATA0023.TXT
+/MATLAB/Vac Test/SD#2/DATA0024.TXT
+/MATLAB/Vac Test/SD#2/DATA0025.TXT
+/SuchBounce_2016-4-12/Setup/impact_prog_2/m.vec
+/SuchBounce_2016-4-12/Setup/impact_prog_2/m.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog_2/q.vec
+/SuchBounce_2016-4-12/Setup/impact_prog_2/q.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog_2/rad.vec
+/SuchBounce_2016-4-12/Setup/impact_prog_2/rad.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog_2/r.vec
+/SuchBounce_2016-4-12/Setup/impact_prog_2/r.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog_2/v.vec
+/SuchBounce_2016-4-12/Setup/impact_prog_2/v.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog_2/w.vec
+/SuchBounce_2016-4-12/Setup/impact_prog_2/w.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog/m.vec
+/SuchBounce_2016-4-12/Setup/impact_prog/m.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog/q.vec
+/SuchBounce_2016-4-12/Setup/impact_prog/q.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog/rad.vec
+/SuchBounce_2016-4-12/Setup/impact_prog/rad.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog/r.vec
+/SuchBounce_2016-4-12/Setup/impact_prog/r.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog/Settings.h
+/SuchBounce_2016-4-12/Setup/impact_prog/v.vec
+/SuchBounce_2016-4-12/Setup/impact_prog/v.vec~
+/SuchBounce_2016-4-12/Setup/impact_prog/w.vec
+/SuchBounce_2016-4-12/Setup/impact_prog/w.vec~
+/SuchBounce_2016-4-12/Setup/m.vec
+/SuchBounce_2016-4-12/Setup/m.vec~
+/SuchBounce_2016-4-12/Setup/new_prog_0/r.vec
+/SuchBounce_2016-4-12/Setup/new_prog_0/v.vec
+/SuchBounce_2016-4-12/Setup/new_prog_0/w.vec
+/SuchBounce_2016-4-12/Setup/old_binary_Setup/m.vec
+/SuchBounce_2016-4-12/Setup/old_binary_Setup/q.vec
+/SuchBounce_2016-4-12/Setup/old_binary_Setup/rad.vec
+/SuchBounce_2016-4-12/Setup/old_binary_Setup/r.vec
+/SuchBounce_2016-4-12/Setup/old_binary_Setup/v.vec
+/SuchBounce_2016-4-12/Setup/old_binary_Setup/w.vec
+/SuchBounce_2016-4-12/Setup/Prog_stuff/m.vec
+/SuchBounce_2016-4-12/Setup/Prog_stuff/m.vec~
+/SuchBounce_2016-4-12/Setup/Prog_stuff/q.vec
+/SuchBounce_2016-4-12/Setup/Prog_stuff/q.vec~
+/SuchBounce_2016-4-12/Setup/Prog_stuff/rad.vec
+/SuchBounce_2016-4-12/Setup/Prog_stuff/rad.vec~
+/SuchBounce_2016-4-12/Setup/Prog_stuff/r.vec
+/SuchBounce_2016-4-12/Setup/Prog_stuff/r.vec~
+/SuchBounce_2016-4-12/Setup/Prog_stuff/v.vec
+/SuchBounce_2016-4-12/Setup/Prog_stuff/v.vec~
+/SuchBounce_2016-4-12/Setup/Prog_stuff/w.vec
+/SuchBounce_2016-4-12/Setup/Prog_stuff/w.vec~
+/SuchBounce_2016-4-12/Outputs/E_int_tracks.dat
+/SuchBounce_2016-4-12/Outputs_float/E_int_tracks.dat
+/SuchBounce_2016-4-12/Outputs_float/Particle_tracks.dat
+/SuchBounce_2016-4-12/Outputs_float/T_v_tracks.dat
+/SuchBounce_2016-4-12/Outputs_float/T_w_tracks.dat
+/SuchBounce_2016-4-12/Outputs_float/V_tracks.dat
+/SuchBounce_2016-4-12/Outputs_float/v_tracks.dat
+/SuchBounce_2016-4-12/Outputs_float/w_tracks.dat
+/SuchBounce_2016-4-12/Outputs/Particle_tracks.dat
+/SuchBounce_2016-4-12/Outputs/T_v_tracks.dat
+/SuchBounce_2016-4-12/Outputs/T_w_tracks.dat
+/SuchBounce_2016-4-12/Outputs/V_tracks.dat
+/SuchBounce_2016-4-12/Outputs/v_tracks.dat
+/SuchBounce_2016-4-12/Outputs/w_tracks.dat
+/MATLAB/accel_mag.fig
+/MATLAB/accel_mag.jpg
+/MATLAB/accel_mag.png
+/MATLAB/accel_split.fig
+/MATLAB/antenna_pressure.fig
+/MATLAB/antenna_pressure.png
+/MATLAB/Bench Test/Bench Test/cold_countdown_1.txt
+/MATLAB/Bench Test/bench test/SD#1/DATA0000.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0001.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0002.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0003.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0004.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0005.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0006.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0007.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0008.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0009.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0010.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0011.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0012.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0013.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0014.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0015.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0016.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0017.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0018.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0019.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0020.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0021.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0022.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0023.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0024.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0025.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0026.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0027.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0028.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0029.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0030.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0031.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0032.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0033.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0034.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0035.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0036.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0037.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0038.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0039.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0040.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0041.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0042.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0043.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0044.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0045.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0046.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0047.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0048.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0049.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0050.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0051.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0052.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0053.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0054.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0055.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0056.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0057.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0058.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0059.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0060.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0061.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0062.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0063.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0064.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0065.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0066.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0067.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0068.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0069.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0070.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0071.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0072.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0073.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0074.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0075.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0076.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0077.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0078.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0079.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0080.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0081.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0082.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0083.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0084.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0085.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0086.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0087.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0088.TXT
+/MATLAB/Bench Test/bench test/SD#1/DATA0089.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0000.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0001.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0002.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0003.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0004.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0005.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0006.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0007.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0008.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0009.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0010.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0011.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0012.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0013.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0014.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0015.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0016.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0017.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0018.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0019.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0020.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0021.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0022.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0023.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0024.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0025.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0026.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0027.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0028.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0029.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0030.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0031.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0032.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0033.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0034.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0035.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0036.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0037.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0038.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0039.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0040.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0041.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0042.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0043.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0044.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0045.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0046.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0047.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0048.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0049.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0050.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0051.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0052.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0053.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0054.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0055.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0056.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0057.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0058.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0059.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0060.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0061.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0062.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0063.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0064.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0065.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0066.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0067.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0068.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0069.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0070.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0071.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0072.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0073.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0074.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0075.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0076.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0077.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0078.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0079.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0080.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0081.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0082.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0083.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0084.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0085.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0086.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0087.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0088.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0089.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0090.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0091.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0092.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0093.TXT
+/MATLAB/Bench Test/bench test/SD#2/DATA0094.TXT
+/MATLAB/Bench Test/Bench Test/test.txt
+/MATLAB/Bench Test.zip
+/GPU_Outputs/E_int_tracks.dat
+/GPU_Outputs/Particle_tracks.dat
+/GPU_Outputs/SuchBounce_mat_multidev.cpp
+/GPU_Outputs/SuchBounce_mat_multidev.cpp~
+/GPU_Outputs/T_v_tracks.dat
+/GPU_Outputs/T_w_tracks.dat
+/GPU_Outputs/V_tracks.dat
+/GPU_Outputs/v_tracks.dat
+/GPU_Outputs/w_tracks.dat
+/LyX/AAS_full/AAS_Binaries_final.aux
+/LyX/AAS_full/AAS_Binaries_final.bbl
+/LyX/AAS_full/AAS_Binaries_final.blg
+/LyX/AAS_full/AAS_Binaries_final.dvi
+/LyX/AAS_full/AAS_Binaries_final.log
+/LyX/AAS_full/AAS_Binaries_final.out
+/LyX/AAS_full/AAS_Binaries_final.pdf
+/LyX/AAS_full/AAS_Binaries_final.synctex.gz
+/LyX/AAS_full/AAS_Binaries_final.tex
+/LyX/AAS_full/deflection_1.png
+/LyX/AAS_full/deleted_snippets.txt
+/LyX/AAS_full/deleted_snippets.txt~
+/LyX/AAS_full/equations.png
+/LyX/AAS_full_old/AAS_Binaries_0.aux
+/LyX/AAS_full_old/AAS_Binaries_0.bbl
+/LyX/AAS_full_old/AAS_Binaries_0.blg
+/LyX/AAS_full_old/AAS_Binaries_0.dvi
+/LyX/AAS_full_old/AAS_Binaries_0.fot
+/LyX/AAS_full_old/AAS_Binaries_0.log
+/LyX/AAS_full_old/AAS_Binaries_0.out
+/LyX/AAS_full_old/AAS_Binaries_0.pdf
+/LyX/AAS_full_old/AAS_Binaries_0.synctex.gz
+/LyX/AAS_full_old/AAS_Binaries_0.tex
+/LyX/AAS_full_old/AAS_Binaries_comments.aux
+/LyX/AAS_full_old/AAS_Binaries_comments.bbl
+/LyX/AAS_full_old/AAS_Binaries_comments.blg
+/LyX/AAS_full_old/AAS_Binaries_comments.dvi
+/LyX/AAS_full_old/AAS_Binaries_comments.log
+/LyX/AAS_full_old/AAS_Binaries_comments.out
+/LyX/AAS_full_old/AAS_Binaries_comments.pdf
+/LyX/AAS_full_old/AAS_Binaries_comments.synctex.gz
+/LyX/AAS_full_old/AAS_Binaries_comments.tex
+/LyX/AAS_full_old/AAS_Binaries.tar
+/LyX/AAS_full_old/AAS.cls
+/LyX/AAS_full_old/AAS_publication.bst
+/LyX/AAS_full_old/binary_3d_alt.png
+/LyX/AAS_full_old/binary_3d.eps
+/LyX/AAS_full_old/binary_3d-eps-converted-to.pdf
+/LyX/AAS_full_old/binary_3d.png
+/LyX/AAS_full_old/binary_analy.eps
+/LyX/AAS_full_old/binary_analy-eps-converted-to.pdf
+/LyX/AAS_full_old/binary_analy.png
+/LyX/AAS_full_old/binary_frag_energy.png
+/LyX/AAS_full_old/binary_frag_num_analy.png
+/LyX/AAS_full_old/binary_num.eps
+/LyX/AAS_full_old/binary_num-eps-converted-to.pdf
+/LyX/AAS_full_old/binary_num.png
+/LyX/AAS_full_old/deflection_0.eps
+/LyX/AAS_full_old/deflection_0.fig
+/LyX/AAS_full_old/EoM.aux
+/LyX/AAS_full_old/EoM.log
+/LyX/AAS_full_old/EoM.out
+/LyX/AAS_full_old/EoM.pdf
+/LyX/AAS_full_old/EoM.synctex.gz
+/LyX/AAS_full_old/EoM.tex
+/LyX/AAS_full_old/omega.eps
+/LyX/AAS_full_old/omega-eps-converted-to.pdf
+/LyX/AAS_full_old/omega.fig
+/LyX/AAS_full_old/phasing_1.fig
+/LyX/AAS_full_old/phasing_2.eps
+/LyX/AAS_full_old/phasing_2-eps-converted-to.pdf
+/LyX/AAS_full_old/phasing_2.fig
+/LyX/AAS_full_old/pure_sin.eps
+/LyX/AAS_full_old/pure_sin-eps-converted-to.pdf
+/LyX/AAS_full_old/pure_sin.fig
+/LyX/AAS_full_old/references_me.bib
+/LyX/AAS_full_old/regolith_v_gravitational.eps
+/LyX/AAS_full_old/regolith_v_gravitational-eps-converted-to.pdf
+/LyX/AAS_full_old/regolith_v_gravitational.fig
+/LyX/AAS_full_old/texput.log
+/LyX/AAS_full/omegasens.png
+/LyX/AAS_full/omega_zoom.eps
+/LyX/AAS_full/omega_zoom-eps-converted-to.pdf
+/LyX/AAS_full/omega_zoom.fig
+/LyX/AAS_full/omega_zoom.png
+/LyX/AAS_full/peak_accel-eps-converted-to.pdf
+/LyX/AAS_full/peak_accel.fig
+/LyX/AAS_full/phasing_energy_full-eps-converted-to.pdf
+/LyX/AAS_full/phasing_energy_full.fig
+/LyX/AAS_full/phasing_energy_zoom-eps-converted-to.pdf
+/LyX/AAS_full/phasing_energy_zoom.fig
+/LyX/AAS_full/phasing_energy_zoom.png
+/LyX/AAS_full/reg_deflect_post0.png
+/LyX/AAS_full/reg_deflect_post1.png
+/LyX/AAS_full/reg_deflect_pre.png
+/LyX/AAS_full/regolith_binary_encounter.pdf
+/LyX/AAS_full/Rsens_accel_1-eps-converted-to.pdf
+/LyX/AAS_full/Rsens_accel_1.fig
+/LyX/AAS_full/Rsens_accel_1.png
+/LyX/AAS_full/Rsens_accel-eps-converted-to.pdf
+/LyX/AAS_full/Rsens_accel.fig
+/LyX/AAS_full/RX19_PICARD_NC-Adapterplate_ver2-0_14Sep15.pdf
+/LyX/AAS_full/theta_sens-eps-converted-to.pdf
+/LyX/AAS_full/theta_sens.fig
+/LyX/AAS_full/theta_sens.png
+/LyX/AAS_full.zip
+/C++/prog_matter_0.fig
+/C++/prog_matter_0.png
+/C++/prog_matter_1_long_vs_short.fig
+/C++/prog_matter_1_long_vs_short.png
+/C++/prog_matter_2_long_vs_short.fig
+/C++/prog_matter_2_long_vs_short.png
+/C++/prog_matter_chain_manual/E_int_tracks.dat
+/C++/prog_matter_chain_manual/m.vec
+/C++/prog_matter_chain_manual/Particle_tracks.dat
+/C++/prog_matter_chain_manual/q.vec
+/C++/prog_matter_chain_manual/rad.vec
+/C++/prog_matter_chain_manual/r.vec
+/C++/prog_matter_chain_manual/T_v_tracks.dat
+/C++/prog_matter_chain_manual/T_w_tracks.dat
+/C++/prog_matter_chain_manual/V_tracks.dat
+/C++/prog_matter_chain_manual/v_tracks.dat
+/C++/prog_matter_chain_manual/v.vec
+/C++/prog_matter_chain_manual/w_tracks.dat
+/C++/prog_matter_chain_manual/w.vec
+/C++/GPU_outputs/Outputs_float/E_int_tracks.dat
+/C++/GPU_outputs/Outputs_float/Particle_tracks.dat
+/C++/GPU_outputs/Outputs_float/T_v_tracks.dat
+/C++/GPU_outputs/Outputs_float/T_w_tracks.dat
+/C++/GPU_outputs/Outputs_float/V_tracks.dat
+/C++/GPU_outputs/Outputs_float/v_tracks.dat
+/C++/GPU_outputs/Outputs_float/w_tracks.dat
+/C++/GPUMD_2016-4-19/a.out

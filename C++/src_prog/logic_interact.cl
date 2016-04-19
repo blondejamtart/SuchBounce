@@ -1,5 +1,5 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void logic_interact(__global const int *k,
+__kernel void interact(__global const int *k,
 					__global const int *l,			
 					__global double *q,
 					__global int *n,
@@ -10,12 +10,13 @@ __kernel void logic_interact(__global const int *k,
 			int x = get_global_id(0);			
 			int a = k[x];
 			int b = l[x];
-			if (opponent[a] == b && opponent[b] == a)
+			double q_control = 1e-10;
+			if (opponent[a] == b && opponent[b] == a && opponent[a] != -1)
 			{
 				if (gespielt[a] == 0)
 				{			
 					q[a] += q_control; q[b] -= q_control;
-					gespielt[a] = 10; gespielt[b] = 10;
+					gespielt[a] = 16; gespielt[b] = 16;
 				} 			
 				else
 				{
@@ -26,5 +27,6 @@ __kernel void logic_interact(__global const int *k,
 						gespielt[a] = 0; gespielt[b] = 0;
 					}
 				}				
-			}					
+			}
+		}					
 					

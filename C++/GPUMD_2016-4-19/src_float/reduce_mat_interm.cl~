@@ -1,0 +1,24 @@
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+__kernel void red_copy(__global double3 *rddp,
+					__global double3 *oddp,
+					__global double3 *accelsum,
+					__global double3 *alphasum,
+					__global const int *n,
+					__global double *Vsum,
+					__global double *Vpart,
+					__global double *Internalsum,
+					__global double *Ipart,
+					__global double *offsets)
+		{
+			int x = get_global_id(0);			
+									
+			Internalsum[x+offsets[0]] = Ipart[n[1]*x];
+			Ipart[n[1]*x] = 0;
+			Vsum[x+offsets[0]] = Vpart[n[1]*x];
+			Vpart[n[1]*x] = 0;				
+			accelsum[x+offsets[0]] = rddp[n[1]*x];
+			rddp[n[1]*x] = (0.0, 0.0, 0.0);					
+			alphasum[x+offsets[0]] = oddp[n[1]*x];
+			oddp[n[1]*x] = (0.0, 0.0, 0.0);	
+				
+		}	

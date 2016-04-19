@@ -67,7 +67,13 @@ cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, 
 	std::string programString(std::istreambuf_iterator<char>(programFile), (std::istreambuf_iterator<char>()));
 	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length()+1));
 	cl::Program program(ctx, source);
-	program.build(ctxdev, "-cl-finite-math-only");		
+	try{ program.build(ctxdev, "-cl-finite-math-only"); }
+	catch (cl::Error e)
+	{
+		std::cout << "File " << file << ": "
+		<< e.what() << ";" << e.err() << "\n";
+		
+	}		
 	cl::Kernel kernel(program, ker_func.c_str());
 	return kernel;
 }
@@ -78,11 +84,12 @@ cl::Buffer buffer_init(cl::Context ctx, ::size_t size)
 	return new_buff;
 }
 
-//cl::Buffer buffer_init(cl::Context ctx, ::size_t size, short a)
-//{
-//	cl::Buffer new_buff(ctx, CL_MEM_READ_WRITE, size);
-//	return new_buff;
-//}
+cl::Buffer buffer_init(cl::Context ctx, ::size_t size, int a)
+{
+	cl::Buffer new_buff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, size, &a);
+	//if (sizeof(a) != size) {std::cout << "You done gone mucked up!\n";}
+	return new_buff;
+}
 
 
 int main() 
@@ -171,20 +178,22 @@ int main()
 	int tempcount = 0;
 	auto E_temp = new double[n];
 	auto I = new double[n];
-	auto l1 = new short[n_el];
-	auto l2 = new short[n_el];
+	auto l1 = new int[n_el];
+	auto l2 = new int[n_el];
+	auto l3 = new int[(n/128)*(n/128+1)/2];
+	auto l4 = new int[(n/128)*(n/128+1)/2];
 	auto l1temp = new int[64*127];
 	auto l2temp = new int[64*127];
 	auto l1_128 = new int[64*127];
 	auto l2_128 = new int[64*127];
-	auto flag = new int[n];
+	
 	
 	int n0[3] = { n_el, n , n};
 
 	for (int x=0; x<n; x++)
 	{
 		I[x] = (2*m[x]*(pow(rad[x],2))/5);
-		flag[x] = 0;
+		
 	}
 	
 	for (int x=1; x<128; x++)
@@ -193,63 +202,90 @@ int main()
 		{	
 			int i = (0.5*x*(x-1)+y);			
 			l1temp[i] = x;
-			l2temp[i] = y;			
+			l2temp[i] = y;
+			l1_128[i] = x;
+			l2_128[i] = y;			
 		}
 		
 	}
+	//for (int x=0; x<n/128; x++)
+	//{
+	//	for (int y=0; y<x+1; y++)	
+	//	{	
+	//		int i = (0.5*x*(x-1)+y);			
+	//		l3[i] = x;
+	//		l4[i] = y;			
+	//	}
+	//	
+	//}
 
 	
-	for (int p=0; p<(64*127); p=p+64)
-	{
-		int j = 0;
-		for (int q=0; q<64; q++)
-		{
-			int i = 0;
-			int k = 0;			
-			while(k == 0)			
-			{	
-				if (q != 0)
-				{		
-					for (int s=0; s<q; s++)
-					{
-						if (l1temp[i] == l1_128[p+s] || l1temp[i] == l2_128[p+s] || l2temp[i] == l1_128[p+s]  || l2temp[i] == l2_128[p+s]){j=1;}   
-					}
-				}		
-				if (j == 0 && l1temp[i] != -1) {l1_128[p+q] = l1temp[i]; l2_128[p+q] = l2temp[i]; l1temp[i] = -1; l2temp[i] = -1; k = 1;}
-				else{i++;}
-				j = 0;
-			}
-		}
-	}
+	//for (int p=0; p<(64*127); p=p+64)
+	//{
+	//	int j = 0;
+	//	for (int q=0; q<64; q++)
+	//	{
+	//		int i = 0;
+	//		int k = 0;			
+	//		while(k == 0)			
+	//		{	
+	//			if (q != 0)
+	//			{		
+	//				for (int s=0; s<q; s++)
+	//				{
+	//					if (l1temp[i] == l1_128[p+s] || l1temp[i] == l2_128[p+s] || l2temp[i] == l1_128[p+s]  || l2temp[i] == l2_128[p+s]){j=1;}   
+	//				}
+	//			}		
+	//			if (j == 0 && l1temp[i] != -1) {l1_128[p+q] = l1temp[i]; l2_128[p+q] = l2temp[i]; l1temp[i] = -1; l2temp[i] = -1; k = 1;}
+	//			else{i++;}
+	//			j = 0;
+	//		}
+	//	}
+	//}
 
-	int count = 0;
-	short offset_list[0.5*(n/128)*((n/128)+1)]; 
+	int count[2] = { 0 };
+	int offsets_0[(n/128)*((n/128)+1)/2]; 
+	int offsets_1[int (pow(n,2)/pow(128,2))];
+	offsets_0[0] = 0;
 	for (int p = 0; p<(n/128); p++)
 	{
 		for (int q = 0; q<p; q++)
 		{
-			offset_list[count] = offset_list[count-1] + 128*128;
+			offsets_0[count[1]+1] = offsets_0[count[1]] + 128*128;
+			l3[count[1]] = p;
+			l4[count[1]] = q;
+			count[1]++;
         		for (int s = 0; s<128; s++)
 			{
             			for (int t = 0; t<128; t++)
 				{
-                			l1[count] = p*128 + t;
-                			l2[count] = q*128 + (s + t - 128*floor((s+t)/128));
-                			count++;
+                			l1[count[0]] = p*128 + t;
+                			l2[count[0]] = q*128 + (s + t - 128*floor((s+t)/128));
+                			count[0]++;
 				}
 			}
 		}
+		
+		//if (count[1] == 0) { offsets_0[count[1]] = 0; }
+		//else { offsets_0[count[1]] = offsets_0[count[1] - 1] + 64*127;  }
+		offsets_0[count[1]+1] = offsets_0[count[1]] + 64*127;		
+		l3[count[1]] = p; l4[count[1]] = p;
+		count[1]++;
 		for (int i=0; i<(64*127); i++)
 		{    		
-			if (count == 0) { offset_list[count] = 0; }
-			else { offset_list[count] = offset_list[count - 1] + 64*127; }
-			el			
-			l1[count] = l1_128[i] + 128*p;
-    			l2[count] = l2_128[i] + 128*p;
-    			count++;
+							
+			l1[count[0]] = l1_128[i] + 128*p;
+    			l2[count[0]] = l2_128[i] + 128*p;
+    			count[0]++;
+		}
+		for (int u = 0; u<(n/128); u++)
+		{
+			offsets_1[(n/128)*p+u] = n*p+u;
+			//std::cout << (n/128)*(offsets_1[(n/128)*p+u]/(n/128)) << ", " << offsets_1[(n/128)*p+u] - (n/128)*(offsets_1[(n/128)*p+u]/(n/128)) << "; ";
 		}
     		
 	}
+	
 	//int fail = 0;
 	//for (int p = 0; p<64*127; p = p + 64)
 	//{
@@ -266,7 +302,7 @@ int main()
 
 
 	//}
-	//std::cout << fail << "!\n";
+	//std::cout << "Generated interaction maps...\n";
 	delete [] l1temp;
 	delete [] l2temp; 
 	delete [] l1_128;
@@ -284,7 +320,7 @@ int main()
 	
 		
 	std::cout << "Please Choose Device:\n\n";
-	for (unsigned int i = 0; i < platformDevices.size(); i++)
+	for (int i = 0; i < platformDevices.size(); i++)
 	{
 		device_name = platformDevices[i].getInfo<CL_DEVICE_NAME>();
 		std::cout << "Device " << i << ": "
@@ -305,6 +341,7 @@ int main()
 	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices);
 	cl::Kernel ker_S = kernel_init("reduce_mat.cl", "red", ctx, ctxDevices);
 	cl::Kernel ker_Sp = kernel_init("reduce_pairwise.cl", "red_pair", ctx, ctxDevices);
+	cl::Kernel ker_S_interm = kernel_init("reduce_mat_interm.cl", "red_copy", ctx, ctxDevices);	
 	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices);
 	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices);
 	cl::Kernel ker_v_0 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
@@ -318,8 +355,8 @@ int main()
 	::size_t vecsize = ::size_t(4*n*8);
 
 	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
-	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(2*n_el), l2);
-	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(2*n_el), l1);
+	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l2);
+	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l1);
 	cl::Buffer cbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
 	cl::Buffer mbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), m);
 	cl::Buffer radbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), rad);
@@ -333,23 +370,34 @@ int main()
 
 	std::vector<cl::Buffer> vincbuff = { buffer_init(ctx,::size_t (8*128*128*4)) };
 	std::vector<cl::Buffer> wincbuff = { buffer_init(ctx,::size_t (8*128*128*4)) };
-	std::vector<cl::Buffer> offsets = { buffer_init(ctx,::size_t (2), short (0)) };
+	std::vector<cl::Buffer> offset_buff_0 = { buffer_init(ctx,::size_t (4), 0) };
+	std::vector<cl::Buffer> offset_buff_1 = { buffer_init(ctx,::size_t (4), 0) };
 	std::vector<cl::Buffer> Vincbuff = { buffer_init(ctx,::size_t (8*128*128)) };
 	std::vector<cl::Buffer> Intincbuff = { buffer_init(ctx,::size_t (8*128*128)) };
-		
+	//std::cout << "Attempting to split " << (pow(n,2)/pow(128,2)) << " ways...\n";	
 	for (int i = 1; i<(pow(n,2)/pow(128,2)); i++)
 	{
 		vincbuff += { buffer_init(ctx,::size_t (8*128*128*4)) };
 		wincbuff += { buffer_init(ctx,::size_t (8*128*128*4)) };
-		Vincbuff += { buffer init(ctx,::size_t (8*128*128)) };
-		Intincbuff += { buffer init(ctx,::size_t (8*128*128)) };		
-		
+		Vincbuff += { buffer_init(ctx,::size_t (8*128*128)) };
+		Intincbuff += { buffer_init(ctx,::size_t (8*128*128)) };		
 	}
+	
 	for (int i = 1; i<0.5*(n/128)*((n/128)+1); i++)
 	{
-		offsets += { buffer_init(ctx, ::size_t (2), offset_list[i] };
+		offset_buff_0 += { buffer_init(ctx, ::size_t (4), offsets_0[i]) };
+		//ker_F += { kernel_init("F_Hybrid_mat.cl", "Fimp", ctx, ctxDevices) };		
+		//std::cout << offsets_0[i] << "; ";
 		
 	}
+	
+	for (int i = 1; i<pow(n,2)/pow(128,2); i++)
+	{
+		offset_buff_1 += { buffer_init(ctx, ::size_t (4), offsets_1[i]) };
+		//std::cout << offsets_1[i] << "; ";
+		
+	}
+	
 	std::cout << "Split particles into " << vincbuff.size() << " blocks\n";
 
 	
@@ -358,6 +406,8 @@ int main()
 
 	cl::Buffer accelsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/128*4));
 	cl::Buffer alphasumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/128*4));
+	cl::Buffer Vsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/128));
+	cl::Buffer Intsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/128));
 
 	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
@@ -379,7 +429,7 @@ int main()
 	
 
 	//Set Kernel Arguments
-	//for (int i = 0; i<n_el/(64*127); i++)
+	//for (int i = 0; i<1 ; i++) //0.5*(n/128)*((n/128)+1); i++)
 	//{
 	//	ker_F[i].setArg(0, cbuff);
 	//	ker_F[i].setArg(1, mbuff);
@@ -390,13 +440,22 @@ int main()
 	//	ker_F[i].setArg(6, tbuff);
 	//	ker_F[i].setArg(7, rbuff);
 	//	ker_F[i].setArg(8, vbuff);
-	//	ker_F[i].setArg(9, wbuff);
-	//	ker_F[i].setArg(10, vincbuff[i]);
-	//	ker_F[i].setArg(11, wincbuff[i]);
-	//	ker_F[i].setArg(12, Vincbuff);
-	//	ker_F[i].setArg(13, Intincbuff);
-	//	ker_F[i].setArg(14, Ftmp);
-	//	ker_F[i].setArg(15, nbuff);
+	///	ker_F[i].setArg(9, wbuff);
+	//	int a = l3[i];
+	//	int b = l4[i];
+	//	//std::cout << a << "," << b << "\n";
+	//	ker_F[i].setArg(10, vincbuff[a*(n/128)+b]);
+	//	ker_F[i].setArg(11, wincbuff[a*(n/128)+b]);
+	//	ker_F[i].setArg(14, Vincbuff[a*(n/128)+b]);
+	//	ker_F[i].setArg(15, Intincbuff[a*(n/128)+b]);
+	//	ker_F[i].setArg(12, vincbuff[b*(n/128)+a]);
+	//	ker_F[i].setArg(13, wincbuff[b*(n/128)+a]);
+	//	ker_F[i].setArg(16, Vincbuff[b*(n/128)+a]);
+	//	ker_F[i].setArg(17, Intincbuff[b*(n/128)+a]);			
+	//	ker_F[i].setArg(20, offset_buff_0[i]);
+	//	ker_F[i].setArg(18, Ftmp);
+	//	ker_F[i].setArg(19, nbuff);
+	//
 	//}
 
 	ker_F.setArg(0, cbuff);
@@ -409,13 +468,21 @@ int main()
 	ker_F.setArg(7, rbuff);
 	ker_F.setArg(8, vbuff);
 	ker_F.setArg(9, wbuff);
-	ker_F.setArg(10, vincbuff[0]);
-	ker_F.setArg(11, wincbuff[0]);
-	ker_F.setArg(12, Vincbuff);
-	ker_F.setArg(13, Intincbuff);
+	int a = l3[0];
+	int b = l4[0];
+	//std::cout << a << "," << b << "\n";
+	ker_F.setArg(10, vincbuff[a*(n/128)+b]);
+	ker_F.setArg(11, wincbuff[a*(n/128)+b]);
+	ker_F.setArg(14, Vincbuff[a*(n/128)+b]);
+	ker_F.setArg(15, Intincbuff[a*(n/128)+b]);
+	ker_F.setArg(12, vincbuff[b*(n/128)+a]);
+	ker_F.setArg(13, wincbuff[b*(n/128)+a]);
+	ker_F.setArg(16, Vincbuff[b*(n/128)+a]);
+	ker_F.setArg(17, Intincbuff[b*(n/128)+a]);			
+	ker_F.setArg(20, offset_buff_0[0]);
 	ker_F.setArg(18, Ftmp);
 	ker_F.setArg(19, nbuff);
-	ker_F.setArg(20, offsets[0]);
+	
 	
 	
 	ker_S.setArg(0, vincbuff[0]);
@@ -427,22 +494,22 @@ int main()
 	ker_S.setArg(6, radbuff);
 	ker_S.setArg(7, nbuff);
 	ker_S.setArg(8, Vbuff);
-	ker_S.setArg(9, Vincbuff);
+	ker_S.setArg(9, Vincbuff[0]);
 	ker_S.setArg(10, Intbuff);
-	ker_S.setArg(11, Intincbuff);
+	ker_S.setArg(11, Intincbuff[0]);
+
+	ker_S_interm.setArg(2, accelsumbuff);
+	ker_S_interm.setArg(3, alphasumbuff);
+	ker_S_interm.setArg(4, nbuff);
+	ker_S_interm.setArg(5, Vsumbuff);
+	ker_S_interm.setArg(7, Intsumbuff);
+
 
 	ker_Sp.setArg(0, vincbuff[0]);
-	ker_Sp.setArg(1, wincbuff[0]);
-	ker_Sp.setArg(2, accelbuff);
-	ker_Sp.setArg(3, alphabuff);
-	ker_Sp.setArg(4, mbuff);
-	ker_Sp.setArg(5, Ibuff);
-	ker_Sp.setArg(6, radbuff);
-	ker_Sp.setArg(7, nbuff);
-	ker_Sp.setArg(8, Vbuff);
-	ker_Sp.setArg(9, Vincbuff);
-	ker_Sp.setArg(10, Intbuff);
-	ker_Sp.setArg(11, Intincbuff);
+	ker_Sp.setArg(1, wincbuff[0]);	
+	ker_Sp.setArg(2, nbuff);	
+	ker_Sp.setArg(3, Vincbuff[0]);
+	ker_Sp.setArg(4, Intincbuff[0]);
 
 	ker_0_0.setArg(0, accelbuff);
 	ker_0_0.setArg(1, Vbuff);
@@ -473,8 +540,8 @@ int main()
 	cl::NDRange gsize1m(n-1);
 	cl::NDRange unitsize(1);
 	std::vector<cl::NDRange> gsize2 = { n_el, 64*127, 128*128 };
-	cl::NDRange local_size(1);
-	//std::cout << local_size.dimensions() << "\n";
+	cl::NDRange local_size(workgroup_size);
+	std::cout << "Kernels & Buffers set...";
 
 		
 	
@@ -492,9 +559,8 @@ int main()
 	
 	double F1[4] = { 0 };
 	
-	
-	
-	queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size);
+		
+	//queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size);
 	
 	//queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t (0), ::size_t (32), &F1);
 	
@@ -520,8 +586,14 @@ int main()
 
 	queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 	queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
+	
+	tempstring = arraytostring(r,n);
+	r_tracker << tempstring;
 
-	std::cout << "Kernels & Buffers set: simulation started.\n";
+	tempstring = arraytostring(v, n);
+	v_tracker << tempstring;
+
+	std::cout << "..simulation started.\n";
 	//for (int i=0; i<100; i++){std::cout << "-";}
 	std::cout << "\n";
 	//clock_t t0 = clock();
@@ -537,21 +609,16 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
 
 		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 		// Evaluate Kinetic Energy
-		queue.flush();
-		queue.finish();				
-
+		queue.finish();		
+		
 
 		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
 			framecount++;
-			if (floor(100 * framecount / n_frames) > 4+floor(prog))
-			{
-				prog = floor(100 * framecount / n_frames); 
-				std::cout << prog << "%\n";
-			}		
+			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}		
 			
 			
-			queue.enqueueReadBuffer(rbuff, CL_FALSE, ::size_t (0), vecsize, r);
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
 			r_tracker << tempstring;
 
@@ -581,11 +648,10 @@ int main()
 			
 
 			t_last = t_now;
-			
-		}
+		
 
+		}
 		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
-		//std::cout << stuff[0] << ", ";
 		t_now += stuff[0];
 		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
 		
@@ -594,11 +660,13 @@ int main()
 		
 	
 		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
-
-		for (int i = 0; i < n_split_elements; i++)
+		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
 		{
-			short a = l3[i];
-			short b = l4[i];
+			int a = l3[i];
+			int b = l4[i];
+			int waitcount = 0;
+			//std::cout << offsets_0[i] << "\n";
+			queue.flush();
 			ker_F.setArg(10, vincbuff[a*(n/128)+b]);
 			ker_F.setArg(11, wincbuff[a*(n/128)+b]);
 			ker_F.setArg(14, Vincbuff[a*(n/128)+b]);
@@ -607,11 +675,18 @@ int main()
 			ker_F.setArg(13, wincbuff[b*(n/128)+a]);
 			ker_F.setArg(16, Vincbuff[b*(n/128)+a]);
 			ker_F.setArg(17, Intincbuff[b*(n/128)+a]);			
-			ker_F.setArg(20, offsets[i]);
-			if ( a == b) { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[1], local_size); } 		// Compute force
-			else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 
+			ker_F.setArg(20, offset_buff_0[i]);
+			try
+			{
+							
+				if (a == b) {queue.enqueueNDRangeKernel(ker_F, offset, gsize2[1], local_size); } 		// Compute force
+				else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 
+				
+			}
+			catch(cl::Error e) { queue.flush(); i--; std::cout << "Waiting for memory space...(" << waitcount << ")\r"; waitcount++;}
+			//catch(cl::Error e) {std::cout << "1:" << e.what() << "," << e.err() << "\n";break;}
 		}
-
+		//std::cout << "b";
 		n0[2] = 128;
 		n0[1] = 128;
 		
@@ -622,36 +697,75 @@ int main()
 			
 			for (int i = 0; i < pow(n,2)/pow(128,2); i++)
 			{	
+				queue.flush();				
 				ker_Sp.setArg(0, vincbuff[i]);
-				ker_Sp.setArg(1, wincbuff[i]);			
+				ker_Sp.setArg(1, wincbuff[i]);
+				ker_Sp.setArg(3, Vincbuff[i]);
+				ker_Sp.setArg(4, Intincbuff[i]);			
 					
-				queue.enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);		// Reduce
+				try{queue.enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);}
+				catch(cl::Error e) { queue.flush(); i--; }
+				//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
+				//queue.flush();		// Reduce blocks
 						
 			}
 
 			n0[2] = 0.5*n0[2];		
 		}
-			
-
+		//std::cout << "c";
 		
-
-		n0[1] = n/128;
+		n0[1] = n;
 		n0[2] = n/128;
+		
+		queue.enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);	
+
+		for (int i = 0; i < pow(n,2)/pow(128,2); i++)
+		{	
+			queue.flush();
+			ker_S_interm.setArg(0, vincbuff[i]);
+			ker_S_interm.setArg(1, wincbuff[i]);
+			ker_S_interm.setArg(6, Vincbuff[i]);
+			ker_S_interm.setArg(8, Intincbuff[i]);
+			ker_S_interm.setArg(9, offset_buff_1[i]);			
+			cl::NDRange gsizeRed(128);		
+			try{queue.enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);}
+			//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
+			catch(cl::Error e) { queue.flush(); i--; }
+			
+			
+		}	
+
+		//std::cout << "d";
+		queue.flush();
 		ker_Sp.setArg(0, accelsumbuff);
 		ker_Sp.setArg(1, alphasumbuff);
+		ker_Sp.setArg(3, Vsumbuff);
+		ker_Sp.setArg(4, Intsumbuff);
 		ker_S.setArg(0, accelsumbuff);
 		ker_S.setArg(1, alphasumbuff);
+		ker_S.setArg(9, Vsumbuff);
+		ker_S.setArg(11, Intsumbuff);
+		n0[1] = n/128;
+		//n0[2] = n/128;
 		while(n0[2] > 1)
 		{
 			queue.enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);			
-			cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);		
-			queue.enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);		// Reduce
-			n0[2] = 0.5*n0[2];			
+			cl::NDRange gsizeRed(0.5*n*n0[2]);		
+			try
+			{
+				queue.enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size); 
+				n0[2] = 0.5*n0[2];
+			}
+			catch(cl::Error e) { queue.flush(); }
+			//catch(cl::Error e) {std::cout << "4:" << e.what() << "," << e.err() << "\n"; break;}		// Reduce
+						
 		}
-		n0[1] = n;
-
+		//n0[1] = n;
+		
+		//std::cout << "e\n";
 
 		queue.enqueueNDRangeKernel(ker_S, offset, gsize1, local_size);
+
 
 		//counter++;
 		
@@ -660,9 +774,7 @@ int main()
 
 		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
 		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
-		queue.flush();
-		//t_temp = clock()-t_temp;
-		//std::cout << float(t_temp)/(7.1*CLOCKS_PER_SEC) << "\n";
+		queue.finish();
 
 	}
 	
@@ -682,8 +794,8 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
 
 		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 		// Evaluate Kinetic Energy
-		queue.flush();		
-		queue.finish();
+		queue.finish();		
+		
 
 		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
@@ -691,7 +803,7 @@ int main()
 			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}		
 			
 			
-			queue.enqueueReadBuffer(rbuff, CL_FALSE, ::size_t (0), vecsize, r);
+			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
 			r_tracker << tempstring;
 
@@ -733,19 +845,113 @@ int main()
 		
 	
 		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
-
-		queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size); 		// Compute force
-
-		n0[2] = n0[1];
+		for (int i = 0; i < 0.5*(n/128)*(n/128+1); i++)
+		{
+			int a = l3[i];
+			int b = l4[i];
+			int waitcount = 0;
+			//std::cout << offsets_0[i] << "\n";
+			queue.flush();
+			ker_F.setArg(10, vincbuff[a*(n/128)+b]);
+			ker_F.setArg(11, wincbuff[a*(n/128)+b]);
+			ker_F.setArg(14, Vincbuff[a*(n/128)+b]);
+			ker_F.setArg(15, Intincbuff[a*(n/128)+b]);
+			ker_F.setArg(12, vincbuff[b*(n/128)+a]);
+			ker_F.setArg(13, wincbuff[b*(n/128)+a]);
+			ker_F.setArg(16, Vincbuff[b*(n/128)+a]);
+			ker_F.setArg(17, Intincbuff[b*(n/128)+a]);			
+			ker_F.setArg(20, offset_buff_0[i]);
+			try
+			{
+							
+				if (a == b) {queue.enqueueNDRangeKernel(ker_F, offset, gsize2[1], local_size); } 		// Compute force
+				else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 
+				
+			}
+			catch(cl::Error e) { queue.flush(); i--; std::cout << "Waiting for memory space...(" << waitcount << ")\r"; waitcount++;}
+			//catch(cl::Error e) {std::cout << "1:" << e.what() << "," << e.err() << "\n";break;}
+		}
+		//std::cout << "b";
+		n0[2] = 128;
+		n0[1] = 128;
 		
 		while(n0[2] > 1)
 		{
-			queue.enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);
-			cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);		
-			queue.enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);		// Reduce
-			n0[2] = 0.5*n0[2];			
+			queue.enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);			
+			cl::NDRange gsizeRed(0.5*n0[1]*n0[2]);				
+			
+			for (int i = 0; i < pow(n,2)/pow(128,2); i++)
+			{	
+				queue.flush();				
+				ker_Sp.setArg(0, vincbuff[i]);
+				ker_Sp.setArg(1, wincbuff[i]);
+				ker_Sp.setArg(3, Vincbuff[i]);
+				ker_Sp.setArg(4, Intincbuff[i]);			
+					
+				try{queue.enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size);}
+				catch(cl::Error e) { queue.flush(); i--; }
+				//catch(cl::Error e) {std::cout << "2:" << e.what() << "," << e.err() << "\n";break;}
+				//queue.flush();		// Reduce blocks
+						
+			}
+
+			n0[2] = 0.5*n0[2];		
 		}
+		//std::cout << "c";
+		
+		n0[1] = n;
+		n0[2] = n/128;
+		
+		queue.enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);	
+
+		for (int i = 0; i < pow(n,2)/pow(128,2); i++)
+		{	
+			queue.flush();
+			ker_S_interm.setArg(0, vincbuff[i]);
+			ker_S_interm.setArg(1, wincbuff[i]);
+			ker_S_interm.setArg(6, Vincbuff[i]);
+			ker_S_interm.setArg(8, Intincbuff[i]);
+			ker_S_interm.setArg(9, offset_buff_1[i]);			
+			cl::NDRange gsizeRed(128);		
+			try{queue.enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);}
+			//catch(cl::Error e) {std::cout << "3:" << e.what() << "," << e.err() << "\n";break;}		// Copy & collate blocks
+			catch(cl::Error e) { queue.flush(); i--; }
+			
+			
+		}	
+
+		//std::cout << "d";
+		queue.flush();
+		ker_Sp.setArg(0, accelsumbuff);
+		ker_Sp.setArg(1, alphasumbuff);
+		ker_Sp.setArg(3, Vsumbuff);
+		ker_Sp.setArg(4, Intsumbuff);
+		ker_S.setArg(0, accelsumbuff);
+		ker_S.setArg(1, alphasumbuff);
+		ker_S.setArg(9, Vsumbuff);
+		ker_S.setArg(11, Intsumbuff);
+		n0[1] = n/128;
+		//n0[2] = n/128;
+		while(n0[2] > 1)
+		{
+			queue.enqueueWriteBuffer(nbuff, CL_TRUE, ::size_t (0), sizeof(n0), n0);			
+			cl::NDRange gsizeRed(0.5*n*n0[2]);		
+			try
+			{
+				queue.enqueueNDRangeKernel(ker_Sp, offset, gsizeRed, local_size); 
+				n0[2] = 0.5*n0[2];
+			}
+			catch(cl::Error e) { queue.flush(); }
+			//catch(cl::Error e) {std::cout << "4:" << e.what() << "," << e.err() << "\n"; break;}		// Reduce
+						
+		}
+		//n0[1] = n;
+		
+		//std::cout << "e\n";
+
 		queue.enqueueNDRangeKernel(ker_S, offset, gsize1, local_size);
+
+
 		//counter++;
 		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
@@ -753,9 +959,9 @@ int main()
 
 		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
 		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
-		queue.flush();
+		queue.finish();
 	}
-  
+  	queue.finish();
 
 	std::cout << "\nSimulation complete!\n\n";
 	t_elap = difftime(time(NULL),t0);
@@ -769,7 +975,9 @@ int main()
 	delete [] E_temp;
 	delete [] I;
 	delete [] l1;
-	delete [] l2; 
+	delete [] l2;
+	delete [] l4;
+	delete [] l3;
 	
 	//long hold = 0;
 	//while (true)
@@ -777,6 +985,5 @@ int main()
 		//hold++;
 		//hold--;
 	//}
-
 	return 0;
 }

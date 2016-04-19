@@ -1,0 +1,26 @@
+#define __CL_ENABLE_EXCEPTIONS
+#define linux
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
+#include <CL/cl.hpp>
+#include <array>
+#include <stdio.h>
+#include <time.h>
+
+//Settings:
+
+const int n = 512;
+// [ t_max, dt_init, dt_min, soft body energy loss, VdW attraction, VdW repulsion (Deprecated), mu_static, mu_dynamic, soft body parameter, render warp]  
+const double settings[10] = {pow(2.0,0), pow(2.0,-12), pow(2.0,-12), 0e+02, 6e-12, 0.0, 0.0, 0.0, 1e+02, pow(2.0,-4)};
+
+const double max_time = settings[0];
+const double warp = settings[9];
+const int workgroup_size = 8;
+const int nDevs = 1;
+int Devs[3] = { 0, 1, 2 };
+double ranges[2] = { 10e-2, 5e-1 };
+int n_block[3] = { 128, 127, 64 };
