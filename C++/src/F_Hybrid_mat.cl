@@ -78,19 +78,19 @@ __kernel void Fimp(__global const double *q,
 			double fdyn = (F*t_step + 0.5*dF*t_step*t_step);
 			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}
 			
-			int a_sub = a - 128*(a/128);
-			int b_sub = b - 128*(b/128);
-			accel_part_lower[a_sub*128+b_sub] = -(j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel)); 
-			alpha_part_lower[a_sub*128+b_sub] = cross(Runit,step(0,jf)*jf*v_rel);			
+			int a_sub = a - n[4]*(a/n[4]);
+			int b_sub = b - n[4]*(b/n[4]);
+			accel_part_lower[a_sub*n[4]+b_sub] = -(j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel)); 
+			alpha_part_lower[a_sub*n[4]+b_sub] = cross(Runit,step(0,jf)*jf*v_rel);			
 			
-			accel_part_upper[b_sub*128+a_sub] = (j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel)); 
-			alpha_part_upper[b_sub*128+a_sub] = cross(Runit,step(0,jf)*jf*v_rel);	
+			accel_part_upper[b_sub*n[4]+a_sub] = (j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel)); 
+			alpha_part_upper[b_sub*n[4]+a_sub] = cross(Runit,step(0,jf)*jf*v_rel);	
 
-			Ipart_lower[a_sub*128+b_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-			Vpart_lower[a_sub*128+b_sub] = Vtemp;	
+			Ipart_lower[a_sub*n[4]+b_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
+			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp;	
 			
-			Ipart_upper[b_sub*128+a_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-			Vpart_upper[b_sub*128+a_sub] = Vtemp;	
+			Ipart_upper[b_sub*n[4]+a_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
+			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp;	
 
 
 			

@@ -193,9 +193,8 @@ int main()
 	auto l2temp = new int[n_block[2]*n_block[1]];
 	auto l1_blocks = new int[n_block[2]*n_block[1]];
 	auto l2_blocks = new int[n_block[2]*n_block[1]];
-	
-	
-	int n0[4] = { n_el, n, n , n};
+		
+	int n0[5] = { n_el, n, n , n, n_block[0]};
 
 	for (int x=0; x<n; x++)
 	{
@@ -559,7 +558,7 @@ int main()
 	cl::NDRange gsize1(n);
 	cl::NDRange gsize1m(n-1);
 	cl::NDRange unitsize(1);
-	std::vector<cl::NDRange> gsize2 = { n_el, n_block[2]*n_block[1], n_block[0]*n_block[0] };
+	std::vector<cl::NDRange> gsize2 = { n_el, ::size_t(n_block[2]*n_block[1]), ::size_t(n_block[0]*n_block[0]) };
 	cl::NDRange local_size(workgroup_size);
 	std::cout << "Kernels & Buffers set...";
 

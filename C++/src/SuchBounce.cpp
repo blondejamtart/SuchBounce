@@ -407,7 +407,7 @@ int main()
 	
 	time_t t0 = time(NULL);
 
-	for(int init_x=0; init_x<2048; init_x ++)
+	for(int init_x=0; init_x<t_test; init_x ++)
 	{
 		//std::cout << init_x << "\n";		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
@@ -481,8 +481,8 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
+		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
 		queue.flush();
 		//t_temp = clock()-t_temp;
 		//std::cout << float(t_temp)/(7.1*CLOCKS_PER_SEC) << "\n";
@@ -491,11 +491,11 @@ int main()
 	
 	//clock_t t_elap = clock()-t0;
 	time_t t_elap = difftime(time(NULL),t0);	
-	float est_time = (1.0/2048.0)*float(t_elap)*(float(max_time)/stuff[0]);
+	float est_time = (1.0/float(t_test))*float(t_elap)*(float(max_time)/stuff[0]);
 	int est_h = floor(est_time/3600);
 	int est_m = floor((est_time/60)-60*est_h);
 	int est_s = floor(est_time-60*est_m-3600*est_h);
-	std::cout << "First 2048 steps runtime: " << float(t_elap) << "s; Estimated run time: " << est_h << "h" << est_m << "m" << est_s << "s\n";
+	std::cout << "First "<< t_test << " steps runtime: " << float(t_elap) << "s; Estimated run time: " << est_h << "h" << est_m << "m" << est_s << "s\n";
 
 	while (t_now < max_time)
 	{
@@ -565,8 +565,8 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);
+		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);
 		queue.flush();
 
 	}

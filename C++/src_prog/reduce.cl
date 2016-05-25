@@ -11,7 +11,11 @@ __kernel void red(__global double3 *rddp,
 					__global double *V,
 					__global double *Vpart,
 					__global double *Internal,
-					__global double *Ipart)
+					__global double *Ipart,
+					__global double *thermpart,
+					__global double *therm,
+					__global double *VCpart,					
+					__global double *VC)
 		{
 			int x = get_global_id(0);			
 									
@@ -21,7 +25,9 @@ __kernel void red(__global double3 *rddp,
 				if (b[c+n[1]*x] != 0)
 				{
 					Internal[x] += Ipart[abs(b[c+n[1]*x])-1];				
-					V[x] += 0.5*Vpart[abs(b[c+n[1]*x])-1];				
+					V[x] += 0.5*Vpart[abs(b[c+n[1]*x])-1];
+					VC[x] += 0.5*VCpart[abs(b[c+n[1]*x])-1];
+					therm[x] += thermpart[abs(b[c+n[1]*x])-1];				
 					accel[x] -= sign(flag)*rddp[abs(b[c+n[1]*x])-1]/m[x];					
 					alpha[x] += oddp[abs(b[c+n[1]*x])-1]*rad[x]/I[x];	
 				}			
