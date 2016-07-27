@@ -49,14 +49,13 @@ __kernel void Fimp(__global const double *q,
 			{
 				Vpart[x] -= (1.0/6.0)*stuff[2]*(2*rad_a*rad_b*(fplus+fminus)-log(fplus)+log(fminus));
 				F -= (1.0/3.0)*stuff[2]*d*(fplus-fminus-2*rad_a*rad_b*(pow(fplus,2)+pow(fminus,2)));
-				//dF -= (1.0/3.0)*stuff[2]*((fplus-fminus-2*rad_a*rad_b*(pow(fplus,2)+pow(fminus,2)))+2*pow(d,2)*(4*rad_a*rad_b*(pow(fplus,3)+pow(fminus,3))+pow(fminus,2)-pow(fplus,2)))*p; 		
+					
 			}
 			else 
 			{
 				Vpart[x] -= ((1.0/6.0)*stuff[2]*(cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2)))*pow((d-hard_rad),2)/(cut_off-hard_rad) + (2*rad_a*rad_b*(fpe+fme)-log(fpe)+log(fme)) - cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2)))*(cut_off-hard_rad)));
-//((1.0/6.0)*stuff[2]*cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2))))*(pow((d-hard_rad),2)/(cut_off-hard_rad) - (cut_off-hard_rad)) + (1.0/6.0)*stuff[2]*(2*rad_a*rad_b*(fpe+fme)-log(fpe)+log(fme));
 				F -=  ((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2))))*(d-hard_rad)/(cut_off-hard_rad);
-				//dF -= ((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2))))*p/(cut_off-hard_rad);
+				
 			}
 
 			F_track[1] = maxmag(F_track[1],F);

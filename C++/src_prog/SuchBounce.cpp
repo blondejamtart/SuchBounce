@@ -97,6 +97,7 @@ int main()
 	auto q = new double[n];
 	auto m = new double[n];
 	auto rad = new double[n];
+	auto gene_list = new int[n];
 	std::string path;
 	std::string root = "../Setup";
 
@@ -107,6 +108,7 @@ int main()
 	std::ifstream rad_in(path + "rad.vec");	
 	std::ifstream q_in(path + "q.vec");
 	std::ifstream m_in(path + "m.vec");
+	std::ifstream genes_in(path + "genes.vec");
 	
 	for (int i = 0; i < n; i++)
 	{
@@ -115,13 +117,16 @@ int main()
 		std::string w_str = "";
 		std::string q_str = "";
 		std::string m_str = "";
-		std::string rad_str = "";				
+		std::string rad_str = "";
+		std::string gene_str = "";		
+					
 		double r_temp[4] = {0.0, 0.0, 0.0, 0.0};
 		double v_temp[4] = {0.0, 0.0, 0.0, 0.0};
 		double w_temp[4] = {0.0, 0.0, 0.0, 0.0};
 		double q_temp = 0.0;
 		double rad_temp = 0.0;
-		double m_temp = 0.0;		
+		double m_temp = 0.0;
+		int gene_temp = 0;		
 
 		std::getline(r_in,r_str);
 		std::getline(v_in,v_str);
@@ -129,6 +134,7 @@ int main()
 		std::getline(q_in,q_str);
 		std::getline(m_in,m_str);
 		std::getline(rad_in,rad_str);
+		std::getline(genes_in,gene_str);
 		
 		string2array(r_str,r_temp);
 		string2array(v_str,v_temp);
@@ -137,10 +143,12 @@ int main()
 		q_temp = std::stod(q_str);		
 		m_temp = std::stod(m_str);		
 		rad_temp = std::stod(rad_str);	
+		gene_temp = std::stod(gene_str);
 		
 		q[i] = q_temp;
 		rad[i] = rad_temp;
 		m[i] = m_temp;
+		gene_list[i] = gene_temp;
 		
 		for (int j = 0; j < 4; j++)
 		{		
@@ -174,21 +182,22 @@ int main()
 	int framecount = 0;
 	int tempcount = 0;
 	auto E_temp = new double[n];
+	auto int_temp = new int[n];
 	auto I = new double[n];
 	auto l1 = new int[n_el];
 	auto l2 = new int[n_el];
 	auto l3 = new int[n][n];
-	auto gene_list = new int[n];
+	//auto gene_list = new int[n];
 	//short l4[n] = {0};
 	int n0[2] = { n_el, n };
 
 	for (int x=0; x<n; x++)
 	{
 		I[x] = (2*m[x]*(pow(rad[x],2))/5);	
-		if (x-2*floor(x/2) == 1)
-		{
-			gene_list[x] = 1;
-		}
+		//if (x-2*floor(x/2) == 1)
+		//{
+		//	gene_list[x] = 1;
+		//}
 		//std::cout << gene_list[x];
 	}
 	//std::cout << "\n";
@@ -551,8 +560,8 @@ int main()
 			tempstring = arraytostring(E_temp, n);
 			q_tracker << tempstring;
 			
-			queue.enqueueReadBuffer(E_spent_buff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
-			tempstring = arraytostring(E_temp, n);
+			queue.enqueueReadBuffer(oppbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), int_temp);
+			tempstring = arraytostring(int_temp, n);
 			E_spent_tracker << tempstring;
 
 			queue.enqueueReadBuffer(E_lost_buff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
@@ -668,9 +677,13 @@ int main()
 			tempstring = arraytostring(E_temp, n);
 			q_tracker << tempstring;
 		
-			queue.enqueueReadBuffer(E_spent_buff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
-			tempstring = arraytostring(E_temp, n);
-			E_spent_tracker << tempstring;
+			//queue.enqueueReadBuffer(E_spent_buff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
+			//tempstring = arraytostring(E_temp, n);
+			//E_spent_tracker << tempstring;
+
+			queue.enqueueReadBuffer(oppbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), int_temp);
+			tempstring = arraytostring(int_temp, n);
+			E_spent_tracker << tempstring;			
 
 			queue.enqueueReadBuffer(E_lost_buff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);

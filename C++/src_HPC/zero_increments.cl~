@@ -1,0 +1,10 @@
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+__kernel void zero_incs(__global double3 *vec_inc,
+			__global double *scal_inc)
+
+	{
+		int x = get_global_id(0);
+		vec_inc[x] = (0.0, 0.0, 0.0);
+		scal_inc[x] = 0.0;
+	}
+

@@ -612,6 +612,8 @@ int main()
 	tempstring = arraytostring(v, n);
 	v_tracker << tempstring;
 
+	std::cout << "Space required for data: ~" << sizeof(v_tracker)*3.0/(pow(1024.0,3) << "GiB\n";
+
 	std::cout << "..simulation started.\n";
 	//for (int i=0; i<100; i++){std::cout << "-";}
 	std::cout << "\n";

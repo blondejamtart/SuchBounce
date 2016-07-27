@@ -7,6 +7,8 @@ __kernel void mustep(__global const double *stuff,
 			double dt = stuff[0];						
 			double3 mu_1 = normalize(mu[x]);	
 			double mu_mag = length(mu[x]);			
-			mu_1 += dt*cross(mu_1,w[x]);
+			double a = dt*length(w[x])*length(mu[x]-w[x]*dot(mu[x],w[x]));
+			double3 b = normalize(cross(mu_1,w[x]));
+			mu_1 = mu_1 + a*b;
 			mu[x] = mu_mag * normalize(mu_1);						
 		}

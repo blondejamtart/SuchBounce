@@ -41,7 +41,7 @@ __kernel void Fimp(__global const double *q,
 			double 	collisionflag = step(d0,(rad_a+rad_b));
 
 			double 	cut_off = (rad_a+rad_b) + 0.01*min(rad_a,rad_b);
-			double 	hard_rad = (rad_a+rad_b) - 0.005*min(rad_a,rad_b);		
+			double 	hard_rad = (rad_a+rad_b) - 0.01*min(rad_a,rad_b);		
 			double 	fplus = 1/(pow(d,2) - pow((rad_a+rad_b),2));		
 			double 	fminus = 1/(pow(d,2) - pow((rad_b-rad_a),2));
 			double 	fpe = 1/(pow(cut_off,2) - pow((rad_a+rad_b),2));		
@@ -50,52 +50,54 @@ __kernel void Fimp(__global const double *q,
 			double  Vtemp = (-(m_a*m_b*G)+(q_a*q_b*e0))/d;			
 			double 	F = (((m_a*m_b*G) - (q_a*q_b*e0))/(d*d));
 			double 	dF = ((-2*(m_a*m_b*G) + 2*(q_a*q_b*e0))/(d*d*d))*p;	
+			double  F_VdW = 0.0;
 		
 
 			if (d > cut_off) 
 			{
 				Vtemp -= (1.0/6.0)*stuff[2]*(2*rad_a*rad_b*(fplus+fminus)-log(fplus)+log(fminus));
-				F -= (1.0/3.0)*stuff[2]*d*(fplus-fminus-2*rad_a*rad_b*(pow(fplus,2)+pow(fminus,2)));
-				//dF -= (1.0/3.0)*stuff[2]*((fplus-fminus-2*rad_a*rad_b*(pow(fplus,2)+pow(fminus,2)))+2*pow(d,2)*(4*rad_a*rad_b*(pow(fplus,3)+pow(fminus,3))+pow(fminus,2)-pow(fplus,2)))*p; 		
+				F_VdW = -(1.0/3.0)*stuff[2]*d*(fplus-fminus-2*rad_a*rad_b*(pow(fplus,2)+pow(fminus,2)));
+						
 			}
 			else 
 			{
 				Vtemp -= ((1.0/6.0)*stuff[2]*(cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2)))*pow((d-hard_rad),2)/(cut_off-hard_rad) + (2*rad_a*rad_b*(fpe+fme)-log(fpe)+log(fme)) - cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2)))*(cut_off-hard_rad)));
-//((1.0/6.0)*stuff[2]*cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2))))*(pow((d-hard_rad),2)/(cut_off-hard_rad) - (cut_off-hard_rad)) + (1.0/6.0)*stuff[2]*(2*rad_a*rad_b*(fpe+fme)-log(fpe)+log(fme));
-				F -=  ((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2))))*(d-hard_rad)/(cut_off-hard_rad);
-				//dF -= ((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2))))*p/(cut_off-hard_rad);
+				F_VdW =  -((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2))))*(d-hard_rad)/(cut_off-hard_rad);
 			}
 
 			F_track[1] = maxmag(F_track[1],F);
 
-			double3 F_magn = 3.0*SOME_CONSTANTS*pow(d,-4.0)*(dot(mu[a],Runit)*mu[b]+dot(mu[b],Runit)*mu[a]-(5*dot(mu[a],Runit)*dot(mu[b],Runit)+dot(mu[a],mu[b]))*Runit);
+			double k_mu = 5.0e-18;
 
-			double3 T_magn = SOME_CONSTANTS*pow(d,-3.0)*(3*dot(mu[a],Runit)*cross(mu[b],Runit) - cross(mu[b],mu[a])); 
+			double3 F_magn = t_step*3.0*k_mu*pow(d,-4.0)*(dot(mu[a],Runit)*mu[b]+dot(mu[b],Runit)*mu[a]-(5*dot(mu[a],Runit)*dot(mu[b],Runit)+dot(mu[a],mu[b]))*Runit);
+
+			double3 T_magn_a = t_step*k_mu*pow(d,-3.0)*(3*dot(mu[a],Runit)*cross(mu[b],Runit) - cross(mu[b],mu[a]));
+			double3 T_magn_b = t_step*k_mu*pow(d,-3.0)*(3*dot(mu[b],-Runit)*cross(mu[a],-Runit) - cross(mu[a],mu[b]));  
 
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
 			
 			double dt = fmax((t_step-(d0-rad_a-rad_b)/p0)*step((d0-rad_a-rad_b)/p0,t_step)*step(0,(d0-rad_a-rad_b)/p0),0);
 						
-			double j = (F*t_step+0.5*dF*t_step*t_step)-m_a*m_b/(m_a+m_b)*(collisionflag*(stuff[1]*p0*(t_step-dt)+stuff[8]*(rad_a+rad_b-d0)*(t_step-dt)+0.5*stuff[8]*p0*(t_step-dt)*(t_step-dt))-(collisionflag-1)*(stuff[1]*p0*dt+0.5*stuff[8]*p0*dt*dt));
+			double j = ((F+F_VdW)*t_step+0.5*dF*t_step*t_step)-m_a*m_b/(m_a+m_b)*(collisionflag*(stuff[1]*p0*(t_step-dt)+stuff[8]*(rad_a+rad_b-d0)*(t_step-dt)+0.5*stuff[8]*p0*(t_step-dt)*(t_step-dt))-(collisionflag-1)*(stuff[1]*p0*dt+0.5*stuff[8]*p0*dt*dt));
 				
 			double jf = collisionflag*length(v_rel)/((pow(rad_a,2)/I[a]+pow(rad_b,2)/I[b])+(1/m_a+1/m_b));
 			
 			double fdyn = (F*t_step + 0.5*dF*t_step*t_step);
 			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}
 			
-			int a_sub = a - 128*(a/128);
-			int b_sub = b - 128*(b/128);
-			accel_part_lower[a_sub*128+b_sub] = -(j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel) + F_magn); 
-			alpha_part_lower[a_sub*128+b_sub] = cross(Runit,step(0,jf)*jf*v_rel) + T_magn;			
+			int a_sub = a - n[4]*(a/n[4]);
+			int b_sub = b - n[4]*(b/n[4]);
+			accel_part_lower[a_sub*n[4]+b_sub] = -(j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel) + F_magn); 
+			alpha_part_lower[a_sub*n[4]+b_sub] = cross(Runit,step(0,jf)*jf*v_rel) + T_magn_a;			
 			
-			accel_part_upper[b_sub*128+a_sub] = (j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel) + F_magn); 
-			alpha_part_upper[b_sub*128+a_sub] = cross(Runit,step(0,jf)*jf*v_rel) + T_magn;	
+			accel_part_upper[b_sub*n[4]+a_sub] = (j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel) + F_magn); 
+			alpha_part_upper[b_sub*n[4]+a_sub] = cross(Runit,step(0,jf)*jf*v_rel) + T_magn_b;	
 
-			Ipart_lower[a_sub*128+b_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-			Vpart_lower[a_sub*128+b_sub] = Vtemp;	
+			Ipart_lower[a_sub*n[4]+b_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
+			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp - k_mu*pow(d,-3.0)*(3*dot(mu[b],Runit)*dot(mu[a],Runit) - dot(mu[a],mu[b]));	
 			
-			Ipart_upper[b_sub*128+a_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-			Vpart_upper[b_sub*128+a_sub] = Vtemp;	
+			Ipart_upper[b_sub*n[4]+a_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
+			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp - k_mu*pow(d,-3.0)*(3*dot(mu[b],Runit)*dot(mu[a],Runit) - dot(mu[a],mu[b])); 	
 
 
 			

@@ -15,7 +15,7 @@ if nargin == 1
         l = l + 1;
         if d == 0
             try
-                temp = double(eval(tempstr));
+                temp = double(eval([ '[' tempstr ']' ]));
                 d = 1;
             end
         end
@@ -58,7 +58,7 @@ begun = 0;
 while ~begun
     tempstr = fgetl(file);
     try
-        tempvar(i,:,:) = double(eval(tempstr));
+        tempvar(i,:,:) = double(eval([ '[' tempstr ']' ]));
         i = i + 1;
         begun = 1;
     end
@@ -68,7 +68,7 @@ tempstr = fgetl(file);
 
 while tempstr ~= -1
     multiWaitbar('Current File:',i/l);
-    tempvar(i,:,:) = (eval(tempstr));
+    tempvar(i,:,:) = double(eval([ '[' tempstr ']' ]));
     i = i + 1;
     tempstr = fgetl(file);
 end
