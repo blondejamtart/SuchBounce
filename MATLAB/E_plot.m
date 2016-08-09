@@ -40,7 +40,7 @@ if do_zero
     T0(1:2) = [0 0];
 end
 
-
+T_part = 2*E + 2*V + Tv;
 plot((1:ii)/64,sum(E0,2),(1:ii)/64,sum(V0,2),(1:ii)/64,sum(Tv0,2)+sum(Tw0,2),(1:ii)/64,T0)
 legend('Internal','Potential','Kinetic','Total')
 

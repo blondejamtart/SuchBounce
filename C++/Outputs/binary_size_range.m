@@ -1,4 +1,4 @@
-for n =  [128 256 512 1024]
+for n =  192
     for i = 1:5
         root = ['binary_' num2str(n) '_' num2str(i) '/'];
         eval(['mkdir ' root])

@@ -1,4 +1,6 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+
+
 __kernel void Fimp(__global const double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
@@ -42,10 +44,10 @@ __kernel void Fimp(__global const double *q,
 
 			double 	cut_off = (rad_a+rad_b) + 0.01*min(rad_a,rad_b);
 			double 	hard_rad = (rad_a+rad_b) - 0.01*min(rad_a,rad_b);		
-			double 	fplus = 1/(pow(d,2) - pow((rad_a+rad_b),2));		
-			double 	fminus = 1/(pow(d,2) - pow((rad_b-rad_a),2));
-			double 	fpe = 1/(pow(cut_off,2) - pow((rad_a+rad_b),2));		
-			double 	fme = 1/(pow(cut_off,2) - pow((rad_b-rad_a),2));					
+			double 	fplus = 1.0/(pow(d,2.0) - pow((rad_a+rad_b),2.0));		
+			double 	fminus = 1.0/(pow(d,2.0) - pow((rad_b-rad_a),2.0));
+			double 	fpe = 1.0/(pow(cut_off,2.0) - pow((rad_a+rad_b),2.0));		
+			double 	fme = 1.0/(pow(cut_off,2.0) - pow((rad_b-rad_a),2.0));					
 					
 			double  Vtemp = (-(m_a*m_b*G)+(q_a*q_b*e0))/d;			
 			double 	F = (((m_a*m_b*G) - (q_a*q_b*e0))/(d*d));
@@ -69,10 +71,14 @@ __kernel void Fimp(__global const double *q,
 
 			double k_mu = 5.0e-18;
 
-			double3 F_magn = t_step*3.0*k_mu*pow(d,-4.0)*(dot(mu[a],Runit)*mu[b]+dot(mu[b],Runit)*mu[a]-(5*dot(mu[a],Runit)*dot(mu[b],Runit)+dot(mu[a],mu[b]))*Runit);
+			//double3 F_magn = t_step*3.0*k_mu*pow(d,-4.0)*(cross(cross(Runit,m[a]),m[b]) + cross(cross(Runit,m[b]),m[a]) - 2*Runit*dot(m[a],m[b]) + 5*Runit*dot(cross(Runit,m[a]),cross(Runit,m[b])));
 
-			double3 T_magn_a = t_step*k_mu*pow(d,-3.0)*(3*dot(mu[a],Runit)*cross(mu[b],Runit) - cross(mu[b],mu[a]));
-			double3 T_magn_b = t_step*k_mu*pow(d,-3.0)*(3*dot(mu[b],-Runit)*cross(mu[a],-Runit) - cross(mu[a],mu[b]));  
+			double3 F_magn = t_step*3.0*k_mu*pow(d,-4.0)*(dot(mu[a],Runit)*mu[b]+dot(mu[b],Runit)*mu[a]-Runit*(5*dot(mu[a],Runit)*dot(mu[b],Runit)-dot(mu[a],mu[b])));
+
+			double3 B_a = k_mu*pow(d,-3.0)*(3*dot(mu[a],Runit)*Runit - mu[a]);
+			double3 B_b = k_mu*pow(d,-3.0)*(3*dot(mu[b],Runit)*Runit - mu[b]);
+			double3 T_magn_b = t_step*cross(mu[b],B_a);
+			double3 T_magn_a = t_step*cross(mu[a],B_b);  
 
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
 			
@@ -87,17 +93,17 @@ __kernel void Fimp(__global const double *q,
 			
 			int a_sub = a - n[4]*(a/n[4]);
 			int b_sub = b - n[4]*(b/n[4]);
-			accel_part_lower[a_sub*n[4]+b_sub] = -(j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel) + F_magn); 
-			alpha_part_lower[a_sub*n[4]+b_sub] = cross(Runit,step(0,jf)*jf*v_rel) + T_magn_a;			
+			accel_part_lower[a_sub*n[4]+b_sub] = -(j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel) - F_magn); 
+			alpha_part_lower[a_sub*n[4]+b_sub] = cross(Runit,step(0,jf)*jf*v_rel)*rad[a] + T_magn_a;			
 			
-			accel_part_upper[b_sub*n[4]+a_sub] = (j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel) + F_magn); 
-			alpha_part_upper[b_sub*n[4]+a_sub] = cross(Runit,step(0,jf)*jf*v_rel) + T_magn_b;	
+			accel_part_upper[b_sub*n[4]+a_sub] = (j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel) - F_magn); 
+			alpha_part_upper[b_sub*n[4]+a_sub] = cross(Runit,step(0,jf)*jf*v_rel)*rad[b] + T_magn_b;	
 
 			Ipart_lower[a_sub*n[4]+b_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp - k_mu*pow(d,-3.0)*(3*dot(mu[b],Runit)*dot(mu[a],Runit) - dot(mu[a],mu[b]));	
+			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp - dot(mu[a],B_b);	
 			
 			Ipart_upper[b_sub*n[4]+a_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp - k_mu*pow(d,-3.0)*(3*dot(mu[b],Runit)*dot(mu[a],Runit) - dot(mu[a],mu[b])); 	
+			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp - dot(mu[b],B_a); 	
 
 
 			

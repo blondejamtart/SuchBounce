@@ -20,7 +20,7 @@ __kernel void red(__global double3 *rddp,
 			Vpart[n[1]*x] = 0;				
 			accel[x] = rddp[n[1]*x]/m[x];
 			rddp[n[1]*x] = (0.0, 0.0, 0.0);					
-			alpha[x] = oddp[n[1]*x]*rad[x]/I[x];
+			alpha[x] = oddp[n[1]*x]/I[x];
 			oddp[n[1]*x] = (0.0, 0.0, 0.0);	
 				
 		}	

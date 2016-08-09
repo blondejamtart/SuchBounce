@@ -61,8 +61,9 @@ std::string arraytostring(double a[n], int n)
 	return out;
 }
 
-cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, std::vector<cl::Device> ctxdev)
+cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, std::vector<cl::Device> ctxdev, std::ofstream &logfile)
 {
+	logfile << "File: " << file << ":\n";
 	std::ifstream programFile(file);
 	std::string programString(std::istreambuf_iterator<char>(programFile), (std::istreambuf_iterator<char>()));
 	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length()+1));
@@ -75,8 +76,13 @@ cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, 
 		
 	}		
 	cl::Kernel kernel(program, ker_func.c_str());
+	
+	logfile << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(ctxdev[0]) << "\n";
+	
+
 	return kernel;
 }
+
 
 cl::Buffer buffer_init(cl::Context ctx, ::size_t size)
 {
@@ -288,24 +294,33 @@ int main()
 	std::vector<cl::Device> ctxDevices = { platformDevices[nDev] };
 	cl::Context ctx(ctxDevices[0]);
 	cl::CommandQueue queue(ctx, ctxDevices[0]);
+
+	//std::cout << "1\n"; std::cout.flush();
+
+	root = "../Outputs";	
+	path = root + "/";
+	std::ofstream OpenCL_log(path + "OpenCL_log.txt", std::ios::out);
 	
 		
 	// Build Kernels
 	//std::vector<cl::Kernel> ker_F = {kernel_init("F_Hybrid_mat.cl", "Fimp", ctx, ctxDevices)};
-	cl::Kernel ker_F = kernel_init("F_Hybrid_mat.cl", "Fimp", ctx, ctxDevices);
-	cl::Kernel ker_T = kernel_init("kinetic.cl", "Tstep", ctx, ctxDevices);
-	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices);
-	cl::Kernel ker_S = kernel_init("reduce_mat.cl", "red", ctx, ctxDevices);
-	cl::Kernel ker_Sp = kernel_init("reduce_pairwise.cl", "red_pair", ctx, ctxDevices);
-	cl::Kernel ker_S_interm = kernel_init("reduce_mat_interm.cl", "red_copy", ctx, ctxDevices);	
-	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices);
-	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices);
-	cl::Kernel ker_v_0 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
-	cl::Kernel ker_v_1 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
-	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
-	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
-	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices);
-	cl::Kernel ker_rot = kernel_init("rotation.cl", "mustep", ctx, ctxDevices);	
+	cl::Kernel ker_F = kernel_init("F_Hybrid_mat.cl", "Fimp", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_T = kernel_init("kinetic.cl", "Tstep", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_S = kernel_init("reduce_mat.cl", "red", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_Sp = kernel_init("reduce_pairwise.cl", "red_pair", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_S_interm = kernel_init("reduce_mat_interm.cl", "red_copy", ctx, ctxDevices, OpenCL_log);	
+	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_v_0 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_v_1 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_0_2 = kernel_init("zero_vec.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_rot = kernel_init("rotation.cl", "mustep", ctx, ctxDevices, OpenCL_log);	
+
+	//std::cout << "2\n"; std::cout.flush();
 
 	// Assign Buffers
 	double zerotemp_4[4] = { 0.0, 0.0, 0.0, 0.0 }; 
@@ -326,6 +341,8 @@ int main()
 	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, w);
 	cl::Buffer mubuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, mu);	
 
+	//std::cout << "3\n"; std::cout.flush();
+
 	std::vector<cl::Buffer> vincbuff = { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0]*4)) };
 	std::vector<cl::Buffer> wincbuff = { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0]*4)) };
 	std::vector<cl::Buffer> offset_buff_0 = { buffer_init(ctx,::size_t (4), 0) };
@@ -333,6 +350,7 @@ int main()
 	std::vector<cl::Buffer> Vincbuff = { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0])) };
 	std::vector<cl::Buffer> Intincbuff = { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0])) };
 	//std::cout << "Attempting to split " << (pow(n,2)/pow(n_block[0],2)) << " ways...\n";	
+	//std::cout << "4\n"; std::cout.flush();
 	for (int i = 1; i<(pow(n,2)/pow(n_block[0],2)); i++)
 	{
 		vincbuff += { buffer_init(ctx,::size_t (8*n_block[0]*n_block[0]*4)) };
@@ -355,7 +373,7 @@ int main()
 		//std::cout << offsets_1[i] << "; ";
 		
 	}
-	
+	//std::cout << "5\n"; std::cout.flush();
 	std::cout << "Split particles into " << vincbuff.size() << " blocks\n";
 
 	
@@ -480,6 +498,8 @@ int main()
 	ker_0_1.setArg(0, alphabuff);
 	ker_0_1.setArg(1, Intbuff);
 
+	ker_0_2.setArg(0, wbuff);
+
 	ker_v_0.setArg(0, vbuff);
 	ker_v_0.setArg(1, accelbuff);
 	ker_v_1.setArg(0, wbuff);
@@ -549,7 +569,7 @@ int main()
 	double t_now = 0;
 	double t_last = 0;
 	short int prog = 0;
-	//long counter = 0;
+	count[0] = 0;
 	std::string tempstring;
 
 	queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
@@ -609,6 +629,9 @@ int main()
 			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
 			tempstring = arraytostring(mu, n);
 			mu_tracker << tempstring;
+
+			//if (count[0] == 128) { queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); count[0] = 0; }
+			//count[0]++;
 		
 			//queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 			//tempstring = arraytostring(w, n);
@@ -815,6 +838,9 @@ int main()
 			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
 			tempstring = arraytostring(mu, n);
 			mu_tracker << tempstring;
+			
+			//if (count[0] == 128) { queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); count[0] = 0; }
+			//count[0]++;
 		
 			//queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 			//tempstring = arraytostring(w, n);
