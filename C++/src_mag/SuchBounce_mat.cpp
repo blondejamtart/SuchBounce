@@ -1,7 +1,7 @@
 #include "../Settings.h"
 
 //Auto-stuff
-double stuff[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+double stuff[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 double t_step = 0;
 const int n_el = (0.5)*n*(n - 1);
 
@@ -18,16 +18,29 @@ std::vector<T> &operator+=(std::vector<T> &A, const std::vector<T> &B)
 }
 
 
-int string2array(std::string str, double arr[4])
+//int string2array(std::string str, double arr[4])
+//{
+//	std::string::size_type end0;
+//	std::string::size_type end1;
+//	arr[0] = std::stod(str,&end0);
+//	std::string c = str.substr(end0+1);
+//	arr[1] = std::stod(c,&end1);
+//	arr[2] = std::stod(c.substr(end1+2));
+//	return 1;
+//}
+
+int string2array(std::string str, double* arr, int length)
 {
-	std::string::size_type end0;
-	std::string::size_type end1;
-	arr[0] = std::stod(str,&end0);
-	std::string c = str.substr(end0+1);
-	arr[1] = std::stod(c,&end1);
-	arr[2] = std::stod(c.substr(end1+2));
-	return 1;
+	std::stringstream streamy(str);
+	for (int i = 0; i < length; i++)
+	{
+		std::string tempstr;
+		std::getline(streamy, tempstr, ',');
+		arr[i] = std::stod(tempstr);
+	}
+	
 }
+
 
 std::string arraytostring(double a[n][4], int n)
 {	
@@ -47,6 +60,25 @@ std::string arraytostring(double a[n][4], int n)
 	return out;
 }
 
+std::string arraytostring(double a[n][50], int n)
+{	
+	std::string out = "[";
+	for (int j = 0; j < n; j++)
+	{
+		for (int k = 0; k < 50; k++)
+		{	
+			char temp[25];
+			sprintf(temp, "%+.13e", a[j][k]);
+			out.append(std::string(temp));
+			if (k != 49){out.append(", "); }		
+		}
+		if (j != (n - 1)){ out.append("; "); }
+	}
+	out.append("]\n");
+	return out;
+}
+
+
 std::string arraytostring(double a[n], int n)
 {
 	std::string out = "[";
@@ -64,6 +96,7 @@ std::string arraytostring(double a[n], int n)
 cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, std::vector<cl::Device> ctxdev, std::ofstream &logfile)
 {
 	logfile << "File: " << file << ":\n";
+	std::stringstream tempstr;
 	std::ifstream programFile(file);
 	std::string programString(std::istreambuf_iterator<char>(programFile), (std::istreambuf_iterator<char>()));
 	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length()+1));
@@ -74,10 +107,11 @@ cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, 
 		std::cout << "File " << file << ": "
 		<< e.what() << ";" << e.err() << "\n";
 		
-	}		
+	}
+	tempstr << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(ctxdev[0]);	
+	logfile << tempstr.str().substr(0, tempstr.str().size()-1) << "\n";	
+	logfile.flush();
 	cl::Kernel kernel(program, ker_func.c_str());
-	
-	logfile << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(ctxdev[0]) << "\n";
 	
 
 	return kernel;
@@ -107,6 +141,7 @@ int main()
 	auto q = new double[n];
 	auto m = new double[n];
 	auto rad = new double[n];
+	auto weights = new double[net_size][net_size];
 	std::string path;
 	std::string root = "../Setup";
 
@@ -118,6 +153,8 @@ int main()
 	std::ifstream rad_in(path + "rad.vec");	
 	std::ifstream q_in(path + "q.vec");
 	std::ifstream m_in(path + "m.vec");
+
+	std::ifstream weight_in(path + "weights.vec");
 	
 	for (int i = 0; i < n; i++)
 	{
@@ -144,10 +181,10 @@ int main()
 		std::getline(m_in,m_str);
 		std::getline(rad_in,rad_str);
 		
-		string2array(r_str,r_temp);
-		string2array(v_str,v_temp);
-		string2array(w_str,w_temp);
-		string2array(mu_str,mu_temp);
+		string2array(r_str,r_temp,3);
+		string2array(v_str,v_temp,3);
+		string2array(w_str,w_temp,3);
+		string2array(mu_str,mu_temp,3);
 		
 		q_temp = std::stod(q_str);		
 		m_temp = std::stod(m_str);		
@@ -165,6 +202,20 @@ int main()
 			mu[i][j] = mu_temp[j];		
 		}
 	}
+	
+	for (int i = 0; i < net_size; i++)
+	{
+		std::string weight_str = "";						
+		double weight_temp[net_size] = {0.0};			
+		std::getline(weight_in, weight_str);					
+		string2array(weight_str,weight_temp,net_size);	
+		for (int j = 0; j < net_size; j++)
+		{				
+			weights[i][j] = weight_temp[j];
+		}					
+	}
+
+
 	//for (int i = 0; i<n; i++){std::cout << q[i] << "; "; }
 	//std::cout <<"\n";
 
@@ -180,6 +231,9 @@ int main()
 	stuff[8] = settings[8];
 	stuff[9] = settings[2];
 	stuff[10] = settings[1];
+	stuff[11] = net_size;
+	stuff[12] = surface_blocks;
+	stuff[13] = NN_outputs;
 
 	if (n_frames > max_time/stuff[9])
 	{	
@@ -190,6 +244,7 @@ int main()
 	int framecount = 0;
 	int tempcount = 0;
 	auto E_temp = new double[n];
+	auto surf_temp = new double[n][50];
 	auto I = new double[n];
 	auto l1 = new int[n_el];
 	auto l2 = new int[n_el];
@@ -289,8 +344,8 @@ int main()
 		<< device_name
 		<< std::endl;
 	}
-	std::cin >> nDev;
-	
+	//std::cin >> nDev;
+	nDev = 0;
 	std::vector<cl::Device> ctxDevices = { platformDevices[nDev] };
 	cl::Context ctx(ctxDevices[0]);
 	cl::CommandQueue queue(ctx, ctxDevices[0]);
@@ -302,8 +357,8 @@ int main()
 	std::ofstream OpenCL_log(path + "OpenCL_log.txt", std::ios::out);
 	
 		
-	// Build Kernels
-	//std::vector<cl::Kernel> ker_F = {kernel_init("F_Hybrid_mat.cl", "Fimp", ctx, ctxDevices)};
+	// Build Kernels	
+	
 	cl::Kernel ker_F = kernel_init("F_Hybrid_mat.cl", "Fimp", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_T = kernel_init("kinetic.cl", "Tstep", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices, OpenCL_log);
@@ -320,13 +375,19 @@ int main()
 	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_rot = kernel_init("rotation.cl", "mustep", ctx, ctxDevices, OpenCL_log);	
 
+	cl::Kernel ker_surface = kernel_init("surface_coverage.cl", "surface_coverage", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_NN_inputs = kernel_init("NN_inputs.cl", "NN_inputs", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_NN_run = kernel_init("NN_test.cl", "neural_net", ctx, ctxDevices, OpenCL_log);
+	
+	
+
 	//std::cout << "2\n"; std::cout.flush();
 
 	// Assign Buffers
 	double zerotemp_4[4] = { 0.0, 0.0, 0.0, 0.0 }; 
 	::size_t vecsize = ::size_t(4*n*8);
 
-	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);
+	cl::Buffer nbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(n0), n0);	
 	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l2);
 	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l1);
 	cl::Buffer cbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
@@ -340,6 +401,11 @@ int main()
 	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, v);
 	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, w);
 	cl::Buffer mubuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, mu);	
+
+	cl::Buffer coveragebuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*surface_blocks*n));
+	cl::Buffer activationbuff_t1(ctx, CL_MEM_READ_WRITE, ::size_t (8*net_size*n));
+	cl::Buffer activationbuff_t0(ctx, CL_MEM_READ_WRITE, ::size_t (8*net_size*n));
+	cl::Buffer weightsbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(8*net_size*net_size), weights);	
 
 	//std::cout << "3\n"; std::cout.flush();
 
@@ -400,6 +466,7 @@ int main()
 	std::ofstream E_tracker(path + "E_int_tracks.dat", std::ios::out);
 	std::ofstream V_tracker(path + "V_tracks.dat", std::ios::out);
 	std::ofstream mu_tracker(path + "mu_tracks.dat", std::ios::out);
+	std::ofstream coverage_tracker(path + "coverage_tracks.dat", std::ios::out);
 	//std::ofstream w_tracker(path + "w_tracks.dat", std::ios::out);
 
 	std::ofstream r_final(path + "r_final.dat", std::ios::out);
@@ -409,35 +476,7 @@ int main()
 	
 	
 
-	//Set Kernel Arguments
-	//for (int i = 0; i<1 ; i++) //0.5*(n/n_block[0])*((n/n_block[0])+1); i++)
-	//{
-	//	ker_F[i].setArg(0, cbuff);
-	//	ker_F[i].setArg(1, mbuff);
-	//	ker_F[i].setArg(2, Ibuff);
-	//	ker_F[i].setArg(3, l1buff);
-	//	ker_F[i].setArg(4, l2buff);
-	//	ker_F[i].setArg(5, radbuff);
-	//	ker_F[i].setArg(6, tbuff);
-	//	ker_F[i].setArg(7, rbuff);
-	//	ker_F[i].setArg(8, vbuff);
-	///	ker_F[i].setArg(9, wbuff);
-	//	int a = l3[i];
-	//	int b = l4[i];
-	//	//std::cout << a << "," << b << "\n";
-	//	ker_F[i].setArg(10, vincbuff[a*(n/n_block[0])+b]);
-	//	ker_F[i].setArg(11, wincbuff[a*(n/n_block[0])+b]);
-	//	ker_F[i].setArg(14, Vincbuff[a*(n/n_block[0])+b]);
-	//	ker_F[i].setArg(15, Intincbuff[a*(n/n_block[0])+b]);
-	//	ker_F[i].setArg(12, vincbuff[b*(n/n_block[0])+a]);
-	//	ker_F[i].setArg(13, wincbuff[b*(n/n_block[0])+a]);
-	//	ker_F[i].setArg(16, Vincbuff[b*(n/n_block[0])+a]);
-	//	ker_F[i].setArg(17, Intincbuff[b*(n/n_block[0])+a]);			
-	//	ker_F[i].setArg(20, offset_buff_0[i]);
-	//	ker_F[i].setArg(18, Ftmp);
-	//	ker_F[i].setArg(19, nbuff);
-	//
-	//}
+	//Set Kernel Arguments	
 
 	ker_F.setArg(0, cbuff);
 	ker_F.setArg(1, mbuff);
@@ -451,8 +490,7 @@ int main()
 	ker_F.setArg(9, wbuff);
 	ker_F.setArg(10, mubuff);
 	int a = l3[0];
-	int b = l4[0];
-	//std::cout << a << "," << b << "\n";
+	int b = l4[0];	
 	ker_F.setArg(11, vincbuff[a*(n/n_block[0])+b]);
 	ker_F.setArg(12, wincbuff[a*(n/n_block[0])+b]);
 	ker_F.setArg(15, Vincbuff[a*(n/n_block[0])+b]);
@@ -464,8 +502,7 @@ int main()
 	ker_F.setArg(21, offset_buff_0[0]);
 	ker_F.setArg(19, Ftmp);
 	ker_F.setArg(20, nbuff);
-	
-	
+		
 	
 	ker_S.setArg(0, vincbuff[0]);
 	ker_S.setArg(1, wincbuff[0]);
@@ -522,6 +559,26 @@ int main()
 	ker_T.setArg(3, Twbuff);
 	ker_T.setArg(4, mbuff);
 	ker_T.setArg(5, Ibuff);
+
+	ker_surface.setArg(0, rbuff);
+	ker_surface.setArg(1, mubuff);
+	ker_surface.setArg(2, coveragebuff);
+	ker_surface.setArg(3, nbuff); 
+	ker_surface.setArg(4, radbuff);
+	ker_surface.setArg(5, l1buff);
+	ker_surface.setArg(6, l2buff);
+	ker_surface.setArg(7, tbuff);
+
+	ker_NN_inputs.setArg(0, activationbuff_t0);
+	ker_NN_inputs.setArg(1, activationbuff_t1);
+	ker_NN_inputs.setArg(2, coveragebuff);
+	ker_NN_inputs.setArg(3, tbuff);
+
+	ker_NN_run.setArg(0, weightsbuff);
+	ker_NN_run.setArg(1, activationbuff_t0);
+	ker_NN_run.setArg(2, activationbuff_t1);
+	ker_NN_run.setArg(3, mubuff);
+	ker_NN_run.setArg(4, tbuff);
 	
 	cl::NDRange offset(0);
 	cl::NDRange gsize1(n);
@@ -589,9 +646,11 @@ int main()
 	
 	time_t t0 = time(NULL);
 
-	for(int init_x=0; init_x<512; init_x ++)
+	for(int init_x=0; init_x<t_test; init_x ++)
 	{
 		//std::cout << init_x << "\n";		
+
+		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
@@ -630,9 +689,26 @@ int main()
 			tempstring = arraytostring(mu, n);
 			mu_tracker << tempstring;
 
-			//if (count[0] == 128) { queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); count[0] = 0; }
-			//count[0]++;
+			//queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*50*n), surf_temp);
+			//tempstring = arraytostring(surf_temp, n);
+			//coverage_tracker << tempstring; 	
 		
+			if (count[0] == energy_dump) 
+			{
+				//queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); 
+				//queue.enqueueNDRangeKernel(ker_surface, offset, gsize1, local_size); 	// Calculate surface coverage of each particle		
+				//queue.enqueueNDRangeKernel(ker_NN_inputs, offset, gsize1, local_size); 	// Calculate input neuron activations		
+				//queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
+
+				queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*surface_blocks*n), surf_temp);
+				tempstring = arraytostring(surf_temp, n);
+				coverage_tracker << tempstring; 
+	
+				count[0] = 0;
+			}
+			count[0]++;
+		
+			
 			//queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 			//tempstring = arraytostring(w, n);
 			//w_tracker << tempstring;
@@ -792,15 +868,14 @@ int main()
 	
 	//clock_t t_elap = clock()-t0;
 	time_t t_elap = difftime(time(NULL),t0);	
-	float est_time = (1.0/512.0)*float(t_elap)*(float(max_time)/stuff[0]);
+	float est_time = (1.0/(double) (t_test))*float(t_elap)*(float(max_time)/stuff[0]);
 	int est_h = floor(est_time/3600);
 	int est_m = floor((est_time/60)-60*est_h);
 	int est_s = floor(est_time-60*est_m-3600*est_h);
-	std::cout << "First 512 steps runtime: " << float(t_elap) << "s; Estimated run time: " << est_h << "h" << est_m << "m" << est_s << "s\n";
+	std::cout << "First " << t_test << " steps runtime: " << float(t_elap) << "s; Estimated run time: " << est_h << "h" << est_m << "m" << est_s << "s\n";
 
 	while (t_now < max_time)
 	{
-		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
@@ -839,8 +914,23 @@ int main()
 			tempstring = arraytostring(mu, n);
 			mu_tracker << tempstring;
 			
-			//if (count[0] == 128) { queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); count[0] = 0; }
-			//count[0]++;
+			//queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*50*n), surf_temp);
+			//tempstring = arraytostring(surf_temp, n);
+			//coverage_tracker << tempstring; 
+
+			if (count[0] == energy_dump) 
+			{
+				//queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); 
+				//queue.enqueueNDRangeKernel(ker_surface, offset, gsize1, local_size); 	// Calculate surface coverage of each particle		
+				//queue.enqueueNDRangeKernel(ker_NN_inputs, offset, gsize1, local_size); 	// Calculate input neuron activations		
+				//queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
+				
+				queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*surface_blocks*n), surf_temp);
+				tempstring = arraytostring(surf_temp, n);
+				coverage_tracker << tempstring; 
+				count[0] = 0;
+			}
+			count[0]++;
 		
 			//queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 			//tempstring = arraytostring(w, n);
@@ -879,15 +969,10 @@ int main()
 			ker_F.setArg(17, Vincbuff[b*(n/n_block[0])+a]);
 			ker_F.setArg(18, Intincbuff[b*(n/n_block[0])+a]);			
 			ker_F.setArg(21, offset_buff_0[i]);
-			try
-			{
 							
-				if (a == b) {queue.enqueueNDRangeKernel(ker_F, offset, gsize2[1], local_size); } 		// Compute force
-				else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 
-				
-			}
-			catch(cl::Error e) { queue.flush(); i--; std::cout << "Waiting for memory space...(" << waitcount << ")\r"; waitcount++;}
-			//catch(cl::Error e) {std::cout << "1:" << e.what() << "," << e.err() << "\n";break;}
+			if (a == b) {queue.enqueueNDRangeKernel(ker_F, offset, gsize2[1], local_size); } 		// Compute force
+			else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 
+			
 		}
 		n0[3] = n_block[0];
 		n0[2] = n_block[0];
@@ -1035,6 +1120,8 @@ int main()
 	delete [] l2;
 	delete [] l4;
 	delete [] l3;
+	delete [] surf_temp;
+//	delete [] link;
 	
 	//long hold = 0;
 	//while (true)
