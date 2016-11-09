@@ -1,7 +1,7 @@
-r = fileread('Particle_tracks.dat',l,1,n);
+%r = fileread('Particle_tracks.dat',l,1,n);
 mu = fileread('mu_tracks.dat',l,1,n);
 
-render_warp = 4;
+render_warp = 32;
 count = 0;
 for i = 1:l
     if i/render_warp == floor(i/render_warp)
@@ -20,10 +20,9 @@ open(vid_xy);
 field = figure;
 set(gcf, 'Position', get(0,'Screensize'));
 for i = 1:(l/render_warp)
-    quiver(r_w(i,:,1),r_w(i,:,2),mu_w(i,:,1),mu_w(i,:,2))
+    quiver(r_w(i,:,2),r_w(i,:,3),mu_w(i,:,2),mu_w(i,:,3))
     frame = getframe;
-    writeVideo(vid_xy,frame);
-    
+    writeVideo(vid_xy,frame);    
 end
 
 close(vid_xy);

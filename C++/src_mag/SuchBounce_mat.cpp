@@ -1,7 +1,7 @@
 #include "../Settings.h"
 
 //Auto-stuff
-double stuff[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+double stuff[17] = { 0.0 };
 double t_step = 0;
 const int n_el = (0.5)*n*(n - 1);
 
@@ -60,17 +60,17 @@ std::string arraytostring(double a[n][4], int n)
 	return out;
 }
 
-std::string arraytostring(double a[n][50], int n)
+std::string arraytostring(double a[n][net_size], int n)
 {	
 	std::string out = "[";
 	for (int j = 0; j < n; j++)
 	{
-		for (int k = 0; k < 50; k++)
+		for (int k = 0; k < net_size; k++)
 		{	
 			char temp[25];
 			sprintf(temp, "%+.13e", a[j][k]);
 			out.append(std::string(temp));
-			if (k != 49){out.append(", "); }		
+			if (k != net_size - 1){out.append(", "); }		
 		}
 		if (j != (n - 1)){ out.append("; "); }
 	}
@@ -234,6 +234,9 @@ int main()
 	stuff[11] = net_size;
 	stuff[12] = surface_blocks;
 	stuff[13] = NN_outputs;
+	stuff[14] = settings[10];
+	stuff[15] = settings[11];
+	stuff[16] = settings[12]; 
 
 	if (n_frames > max_time/stuff[9])
 	{	
@@ -244,7 +247,7 @@ int main()
 	int framecount = 0;
 	int tempcount = 0;
 	auto E_temp = new double[n];
-	auto surf_temp = new double[n][50];
+	auto surf_temp = new double[n][net_size];//[surface_blocks];
 	auto I = new double[n];
 	auto l1 = new int[n_el];
 	auto l2 = new int[n_el];
@@ -378,6 +381,7 @@ int main()
 	cl::Kernel ker_surface = kernel_init("surface_coverage.cl", "surface_coverage", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_NN_inputs = kernel_init("NN_inputs.cl", "NN_inputs", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_NN_run = kernel_init("NN_test.cl", "neural_net", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_NN_zero = kernel_init("NN_zero.cl", "NN_zero", ctx, ctxDevices, OpenCL_log);
 	
 	
 
@@ -579,6 +583,10 @@ int main()
 	ker_NN_run.setArg(2, activationbuff_t1);
 	ker_NN_run.setArg(3, mubuff);
 	ker_NN_run.setArg(4, tbuff);
+
+	ker_NN_zero.setArg(0, activationbuff_t0);
+	ker_NN_zero.setArg(1, activationbuff_t1);	
+	ker_NN_zero.setArg(2, tbuff);
 	
 	cl::NDRange offset(0);
 	cl::NDRange gsize1(n);
@@ -631,6 +639,14 @@ int main()
 
 	queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 	queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
+
+	
+	queue.enqueueNDRangeKernel(ker_NN_zero, offset, gsize1, local_size); 	// Calculate input neuron activations	
+
+	queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
+	tempstring = arraytostring(surf_temp, n);
+	coverage_tracker << tempstring; 
+			
 	
 	tempstring = arraytostring(r,n);
 	r_tracker << tempstring;
@@ -695,12 +711,12 @@ int main()
 		
 			if (count[0] == energy_dump) 
 			{
-				//queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); 
-				//queue.enqueueNDRangeKernel(ker_surface, offset, gsize1, local_size); 	// Calculate surface coverage of each particle		
-				//queue.enqueueNDRangeKernel(ker_NN_inputs, offset, gsize1, local_size); 	// Calculate input neuron activations		
-				//queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
+				
+				queue.enqueueNDRangeKernel(ker_surface, offset, gsize1, local_size); 	// Calculate surface coverage of each particle		
+				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, gsize1, local_size); 	// Calculate input neuron activations		
+				queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
 
-				queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*surface_blocks*n), surf_temp);
+				queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
 				tempstring = arraytostring(surf_temp, n);
 				coverage_tracker << tempstring; 
 	
@@ -920,12 +936,11 @@ int main()
 
 			if (count[0] == energy_dump) 
 			{
-				//queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); 
-				//queue.enqueueNDRangeKernel(ker_surface, offset, gsize1, local_size); 	// Calculate surface coverage of each particle		
-				//queue.enqueueNDRangeKernel(ker_NN_inputs, offset, gsize1, local_size); 	// Calculate input neuron activations		
-				//queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
+				queue.enqueueNDRangeKernel(ker_surface, offset, gsize1, local_size); 	// Calculate surface coverage of each particle		
+				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, gsize1, local_size); 	// Calculate input neuron activations		
+				queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
 				
-				queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*surface_blocks*n), surf_temp);
+				queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
 				tempstring = arraytostring(surf_temp, n);
 				coverage_tracker << tempstring; 
 				count[0] = 0;
@@ -1121,7 +1136,7 @@ int main()
 	delete [] l4;
 	delete [] l3;
 	delete [] surf_temp;
-//	delete [] link;
+	delete [] weights;
 	
 	//long hold = 0;
 	//while (true)

@@ -14,17 +14,27 @@
 
 //Settings:
 
-const int n = 512;
-const double settings[10] = {pow(2,18), pow(2.0,-3), pow(2.0,-3), 1.0e-03, 2.5e-16, 0, 0.8, 0.7, 1.0e-02, pow(2.0,8)};
-// [ t_max, dt_init, dt_max, soft body energy loss, VdW attraction, VdW repulsion (Deprecated), mu_static, mu_dynamic, soft body parameter, render warp]  
+const int n = 128;
+const double settings[13] = {pow(2,19), pow(2.0,-0), pow(2.0,-0), 1.0e-03, 2.5e-15, 0, 0.3, 0.2, 5.0e-03, pow(2.0,10), 5.0e-18, 1.0e-03, 2.0e+03};
+// [ t_max, dt_init, dt_max, soft body energy loss, VdW attraction, VdW repulsion (Deprecated), mu_static, mu_dynamic, soft body parameter, render warp, magnetic force constant, setae length, drag constant] 
+ 
+const int net_size = 64; //total # of neurons per cell
+const int surface_blocks = 32; //# of surface input neurons on each cell
+const int NN_outputs = 3;
+const int workgroup_size = 1; // set around 32-64 for GPU, 1 for CPU
+const int nDevs = 1; // leave as 1 unless running MultiDev version of code
+int Devs[3] = { 0, 1, 2 }; // 1st entry should be # of device on which code is to be run (see OpenCL_dev_info output)
+int block_size = 128; // Size of blocks for partitioning of particle interaction calculations 
 
-const double max_time = settings[0];
+int t_test = pow(2.0,10); // Number of integraiton steps to run for time estimation 
+int Tw_dump_rate = 64; // length of time (seconds) after which rotational kinetic energy is dumped/zeroed
+
+
+//----------------------------------------------------------------------------------//
+
 const double warp = settings[9];
-const int workgroup_size = 1;
-const int nDevs = 1;
-int Devs[3] = { 0, 1, 2 };
-int n_block[3] = { 64, 63, 32 };
+int energy_dump = ((Tw_dump_rate*64)/warp);
 double ranges[2] =  { 24e-2 , 64e-2 };
-int t_test = pow(2.0,12);
-
+const double max_time = settings[0];
+int n_block[3] = { block_size, block_size-1, 0.5*block_size };
 

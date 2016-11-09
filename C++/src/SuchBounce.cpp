@@ -218,8 +218,7 @@ int main()
 	cl::Kernel ker_F = kernel_init("F_Hybrid.cl", "Fimp", ctx, ctxDevices);
 	cl::Kernel ker_T = kernel_init("kinetic.cl", "Tstep", ctx, ctxDevices);
 	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices);
-	cl::Kernel ker_S = kernel_init("reduce.cl", "red", ctx, ctxDevices);
-	//cl::Kernel ker_Sp = kernel_init("reduce_pairwise.cl", "red_pair", ctx, ctxDevices);
+	cl::Kernel ker_S = kernel_init("reduce.cl", "red", ctx, ctxDevices);	
 	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices);
 	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices);
 	cl::Kernel ker_v_0 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
@@ -261,6 +260,8 @@ int main()
 	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
 	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));	
+	
+	
 
 	
 	// Open output streams
