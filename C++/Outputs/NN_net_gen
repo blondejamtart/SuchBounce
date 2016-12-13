@@ -1,0 +1,80 @@
+generate_new_nets = 1;
+net_size = 64;
+net_strat = 2;
+surface_blocks = 32;
+outputs = 3;
+synapse_density = 0.2;
+mutation_prob = 0.075;
+n_pop = 50;
+n = 512;
+l = 0;
+rad = 1e-2*ones(1024,1);
+
+allowed = zeros(1,net_size,net_size);
+for i = 1:surface_blocks
+    for j = (surface_blocks+1):net_size
+        allowed(1,i,j) = 1;
+    end
+end
+for i = (surface_blocks+1):net_size-3
+    for j = (i+1):net_size
+        allowed(1,i,j) = 1;
+    end
+end
+
+
+weights = zeros(n_pop,net_size,net_size);
+r_set = zeros(n_pop,n,3);
+S = zeros(n,n_pop);
+multiWaitbar('Simulating Nets...',0);
+for k = 1:n_pop
+    if generate_new_nets
+        connected = zeros(1,net_size-3);
+        while(any(~connected))
+            connections = zeros(1,net_size,net_size);
+            if net_strat == 1
+                for i = 1:surface_blocks
+                    for j = (surface_blocks+1):net_size
+                        connections(1,i,j) = (rand() < min(2*synapse_density,abs(1/(2*(j-i-surface_blocks)))));
+                    end
+                end
+                
+                for i = (surface_blocks+1):net_size-3
+                    for j = (i+1):net_size
+                        connections(1,i,j) = (rand() < synapse_density) ; %max(synapse_density,(j-i)/(net_size-i)));
+                    end
+                end
+                
+            elseif net_strat == 2
+                for i = 1:surface_blocks
+                    for j = (surface_blocks+1):net_size
+                        connections(1,i,j) = (rand() < synapse_density);
+                    end
+                end
+                
+                for i = (surface_blocks+1):net_size-3
+                    for j = (i+1):net_size
+                        connections(1,i,j) = (rand() < synapse_density) ; %max(synapse_density,(j-i)/(net_size-i)));
+                    end
+                end
+            end
+            
+            for i = 1:net_size-3
+                connected(i) = 0;
+                for j = (i+1):net_size
+                    connected = connected + connections(1,i,j);
+                end
+            end
+            %plot(connected)
+        end
+        
+        weights(k,:,:) = (2*(rand(1,net_size,net_size) > 0.2)-ones(1,net_size,net_size)).*rand(1,net_size,net_size).*connections;
+        %weights(k,:,:) = (0.05*ones(1,net_size,net_size)+0.95*(rand(1,net_size,net_size))).*connections;
+    else
+        breed = rand(1,net_size,net_size);
+        weights(k,:,:) = (breed < 1/3).*w1(1,:,:) + ((1/3 < breed) & (breed < 2/3)).*w1(2,:,:) + (breed > 2/3).*w1(3,:,:) + 1e-3*(rand() < mutation_prob)*(rand(1,net_size,net_size) < 1e-2).*(0.5-rand(1,net_size,net_size)).*allowed;
+    end
+    for i = 1:net_size
+        weights(k,:,i) = weights(k,:,i)/(sum((weights(k,:,i).*(weights(k,:,i)>0)),2)+(sum(weights(k,:,i),2) == 0));
+    end
+end

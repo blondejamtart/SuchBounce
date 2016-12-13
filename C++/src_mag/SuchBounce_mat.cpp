@@ -99,8 +99,8 @@ cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, 
 	std::stringstream tempstr;
 	std::ifstream programFile(file);
 	std::string programString(std::istreambuf_iterator<char>(programFile), (std::istreambuf_iterator<char>()));
-	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length()+1));
-	cl::Program program(ctx, source);
+	cl::Program::Sources source(1, std::make_pair(programString.c_str(), programString.length()+1));		
+	cl::Program program(ctx, source);			
 	try{ program.build(ctxdev, "-cl-finite-math-only"); }
 	catch (cl::Error e)
 	{
@@ -111,6 +111,7 @@ cl::Kernel kernel_init(std::string file, std::string ker_func, cl::Context ctx, 
 	tempstr << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(ctxdev[0]);	
 	logfile << tempstr.str().substr(0, tempstr.str().size()-1) << "\n";	
 	logfile.flush();
+		
 	cl::Kernel kernel(program, ker_func.c_str());
 	
 
@@ -370,19 +371,28 @@ int main()
 	cl::Kernel ker_S_interm = kernel_init("reduce_mat_interm.cl", "red_copy", ctx, ctxDevices, OpenCL_log);	
 	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_t_mean = kernel_init("translate_mean.cl", "rmove", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_v_0 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_v_1 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_2 = kernel_init("zero_vec.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
+	cl::Kernel ker_reset_vec = kernel_init("reset_vec.cl", "reset", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_rot = kernel_init("rotation.cl", "mustep", ctx, ctxDevices, OpenCL_log);	
+	cl::Kernel ker_rot_0 = kernel_init("rotation.cl", "mustep", ctx, ctxDevices, OpenCL_log);	
+	cl::Kernel ker_rot_1 = kernel_init("rotation.cl", "mustep", ctx, ctxDevices, OpenCL_log);	
 
+	
 	cl::Kernel ker_surface = kernel_init("surface_coverage.cl", "surface_coverage", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_NN_inputs = kernel_init("NN_inputs.cl", "NN_inputs", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_NN_run = kernel_init("NN_test.cl", "neural_net", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_NN_zero = kernel_init("NN_zero.cl", "NN_zero", ctx, ctxDevices, OpenCL_log);
-	
+	cl::NDRange NN_size(n);
+	if (use_NN != 1)
+	{			
+		ker_NN_run = kernel_init("NN_predef.cl", "neural_net", ctx, ctxDevices, OpenCL_log);
+		NN_size = 1;
+	}
 	
 
 	//std::cout << "2\n"; std::cout.flush();
@@ -404,7 +414,8 @@ int main()
 	cl::Buffer rbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, r);
 	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, v);
 	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, w);
-	cl::Buffer mubuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, mu);	
+	cl::Buffer mubuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, mu);
+	cl::Buffer orientbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, mu);	
 
 	cl::Buffer coveragebuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*surface_blocks*n));
 	cl::Buffer activationbuff_t1(ctx, CL_MEM_READ_WRITE, ::size_t (8*net_size*n));
@@ -449,6 +460,8 @@ int main()
 	
 	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE, vecsize);
 	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE, vecsize);
+
+	cl::Buffer r_mean_buff(ctx, CL_MEM_READ_WRITE, ::size_t(32));
 
 	cl::Buffer accelsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/n_block[0]*4));
 	cl::Buffer alphasumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/n_block[0]*4));
@@ -541,6 +554,8 @@ int main()
 
 	ker_0_2.setArg(0, wbuff);
 
+	ker_reset_vec.setArg(0, orientbuff);
+
 	ker_v_0.setArg(0, vbuff);
 	ker_v_0.setArg(1, accelbuff);
 	ker_v_1.setArg(0, wbuff);
@@ -550,12 +565,20 @@ int main()
 	ker_r.setArg(1, rbuff);
 	ker_r.setArg(2, vbuff);
 
-	ker_rot.setArg(0, tbuff);
-	ker_rot.setArg(1, mubuff);
-	ker_rot.setArg(2, wbuff);
+	ker_rot_0.setArg(0, tbuff);
+	ker_rot_0.setArg(1, mubuff);
+	ker_rot_0.setArg(2, wbuff);
+
+	ker_rot_1.setArg(0, tbuff);
+	ker_rot_1.setArg(1, orientbuff);
+	ker_rot_1.setArg(2, wbuff);
 	
 	ker_t.setArg(0,rbuff);
+
 	ker_t0.setArg(0,rbuff);
+
+	ker_t_mean.setArg(0,rbuff);
+	ker_t_mean.setArg(1,r_mean_buff);
 
 	ker_T.setArg(0, vbuff);
 	ker_T.setArg(1, wbuff);
@@ -565,7 +588,7 @@ int main()
 	ker_T.setArg(5, Ibuff);
 
 	ker_surface.setArg(0, rbuff);
-	ker_surface.setArg(1, mubuff);
+	ker_surface.setArg(1, orientbuff);
 	ker_surface.setArg(2, coveragebuff);
 	ker_surface.setArg(3, nbuff); 
 	ker_surface.setArg(4, radbuff);
@@ -583,6 +606,7 @@ int main()
 	ker_NN_run.setArg(2, activationbuff_t1);
 	ker_NN_run.setArg(3, mubuff);
 	ker_NN_run.setArg(4, tbuff);
+	ker_NN_run.setArg(5, rbuff);
 
 	ker_NN_zero.setArg(0, activationbuff_t0);
 	ker_NN_zero.setArg(1, activationbuff_t1);	
@@ -599,7 +623,7 @@ int main()
 		
 	
 	// Initialise timestep scaler	
-	double v_norm[n] = { 0 };
+	double v_norm[n] = { 0.0 };
 
 	double v_max = 0;
 
@@ -610,7 +634,7 @@ int main()
 		if (z > 0){ v_max = std::max(v_norm[z], v_norm[z - 1]); }		
 	}
 	
-	double F1[4] = { 0 };
+	double F1[4] = { 0.0 };
 	
 		
 	//queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size);
@@ -634,11 +658,13 @@ int main()
 	double t_now = 0;
 	double t_last = 0;
 	short int prog = 0;
+	double r_mean[4] = {0.0, 0.0, 0.0, 0.0};
 	count[0] = 0;
 	std::string tempstring;
 
 	queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 	queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
+	queue.enqueueNDRangeKernel(ker_reset_vec, offset, gsize1, local_size); 	// zero things
 
 	
 	queue.enqueueNDRangeKernel(ker_NN_zero, offset, gsize1, local_size); 	// Calculate input neuron activations	
@@ -657,6 +683,10 @@ int main()
 	std::cout << "..simulation started.\n";
 	//for (int i=0; i<100; i++){std::cout << "-";}
 	std::cout << "\n";
+
+//	std::cout << "0%   10   20   30   40   50   60   70   80   90   100%\n";
+//	std::cout << "|----|----|----|----|----|----|----|----|----|----|\n";
+//		     
 	//clock_t t0 = clock();
 	//clock_t t_temp = t0;
 	
@@ -678,7 +708,13 @@ int main()
 		if (( t_now == 0 || (t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
 			framecount++;
-			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}		
+			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}	
+//			if (floor(100 * framecount / n_frames) > 1+floor(prog))
+//			{
+//				prog = floor(100 * framecount / n_frames); 
+//				std::cout << "*";
+//				std::cout.flush();
+//			}		
 			
 			
 			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
@@ -709,17 +745,37 @@ int main()
 			//tempstring = arraytostring(surf_temp, n);
 			//coverage_tracker << tempstring; 	
 		
-			if (count[0] == energy_dump) 
+			if (count[0] == NN_eval_freq) 
 			{
-				
-				queue.enqueueNDRangeKernel(ker_surface, offset, gsize1, local_size); 	// Calculate surface coverage of each particle		
-				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, gsize1, local_size); 	// Calculate input neuron activations		
+				r_mean[0] = 0.0;
+				r_mean[1] = 0.0;
+				r_mean[2] = 0.0;
+				for (int i = 0; i < n; i++)
+				{
+					r_mean[0] += r[i][0]/n;
+					r_mean[1] += r[i][1]/n;
+					r_mean[2] += r[i][2]/n;
+				}
+			
+				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32), r_mean);
+				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean
+
+
+				queue.enqueueNDRangeKernel(ker_surface, offset, NN_size, local_size); 	// Calculate surface coverage of each particle		
+				queue.enqueueNDRangeKernel(ker_NN_inputs, offset,NN_size, local_size); 	// Calculate input neuron activations		
 				queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
 
-				queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
-				tempstring = arraytostring(surf_temp, n);
-				coverage_tracker << tempstring; 
-	
+				if (stuff[3] == 1)	{ stuff[3] = 0; }
+				else			{ stuff[3] = 1; }
+				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+				//std::cout << stuff[3] << "\n";
+
+				if (write_neurons == 1)
+				{				
+					queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
+					tempstring = arraytostring(surf_temp, n);
+					coverage_tracker << tempstring; 
+				}
 				count[0] = 0;
 			}
 			count[0]++;
@@ -743,8 +799,9 @@ int main()
 		
 	
 		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
-		
-		queue.enqueueNDRangeKernel(ker_rot, offset, gsize1, local_size); 		// Spin
+		queue.enqueueNDRangeKernel(ker_rot_0, offset, gsize1, local_size); 		// Spin
+		queue.enqueueNDRangeKernel(ker_rot_1, offset, gsize1, local_size); 		// Spin
+
 
 		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 		{
@@ -904,7 +961,12 @@ int main()
 		{
 			framecount++;
 			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}		
-			
+//			if (floor(100 * framecount / n_frames) > 1+floor(prog))
+//			{
+//				prog = floor(100 * framecount / n_frames); 
+//				std::cout << "*";
+//				std::cout.flush();
+//			}
 			
 			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
@@ -934,15 +996,36 @@ int main()
 			//tempstring = arraytostring(surf_temp, n);
 			//coverage_tracker << tempstring; 
 
-			if (count[0] == energy_dump) 
+			if (count[0] == NN_eval_freq) 
 			{
-				queue.enqueueNDRangeKernel(ker_surface, offset, gsize1, local_size); 	// Calculate surface coverage of each particle		
-				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, gsize1, local_size); 	// Calculate input neuron activations		
+				r_mean[0] = 0.0;
+				r_mean[1] = 0.0;
+				r_mean[2] = 0.0;
+				for (int i = 0; i < n; i++)
+				{
+					r_mean[0] += r[i][0]/n;
+					r_mean[1] += r[i][1]/n;
+					r_mean[2] += r[i][2]/n;
+				}
+			
+				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32), r_mean);
+				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean
+ 
+				queue.enqueueNDRangeKernel(ker_surface, offset, NN_size, local_size); 	// Calculate surface coverage of each particle		
+				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, NN_size, local_size); 	// Calculate input neuron activations		
 				queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
+				if (stuff[3] == 1)	{ stuff[3] = 0; }
+				else			{ stuff[3] = 1; }
+				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+				//std::cout << stuff[3] << "\n";
+
 				
-				queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
-				tempstring = arraytostring(surf_temp, n);
-				coverage_tracker << tempstring; 
+				if (write_neurons == 1)
+				{				
+					queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
+					tempstring = arraytostring(surf_temp, n);
+					coverage_tracker << tempstring; 
+				}
 				count[0] = 0;
 			}
 			count[0]++;
@@ -965,7 +1048,8 @@ int main()
 		
 	
 		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
-		queue.enqueueNDRangeKernel(ker_rot, offset, gsize1, local_size); 		// Spin
+		queue.enqueueNDRangeKernel(ker_rot_0, offset, gsize1, local_size); 		// Spin
+		queue.enqueueNDRangeKernel(ker_rot_1, offset, gsize1, local_size); 		// Spin
 
 
 		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
