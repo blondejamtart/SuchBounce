@@ -90,24 +90,19 @@ __kernel void Fimp(__global const double *q,
 			
 			double jf = collisionflag*length(v_rel)/((pow(rad_a,2)/I[a]+pow(rad_b,2)/I[b])+(1/m_a+1/m_b));
 		
-			double setae_drag = t_step*k_drag*length(v_rel)*((rad[a]+rad[b])*setae_length + pow(setae_length,2.0))*(1 - pow((d-rad[a]-rad[b])/(2.0*setae_length),2)*(3.0 - (d-rad[a]-rad[b])/setae_length))*step(d,(2.0*setae_length+rad[a]+rad[b]));
+			double kAdt = (t_step*k_drag*((rad[a]+rad[b])*setae_length + pow(setae_length,2.0))*(1 - pow((d-rad[a]-rad[b])/(2.0*setae_length),2)*(3.0 - (d-rad[a]-rad[b])/setae_length)));
+			double setae_drag_reversed = 2.0*(m_a*m_b)/(m_a+m_b)*((1 - sqrt(1 - 4*kAdt*length(v_rel)))/(2*kAdt)-length(v_rel))*step(d,(2.0*setae_length+rad[a]+rad[b]));
 			
 			double fdyn = (F*t_step + 0.5*dF*t_step*t_step);
 			if (fabs(jf) > fabs(fdyn*stuff[4])){jf = fdyn*stuff[5];}
 			
 			int a_sub = a - n[4]*(a/n[4]);
 			int b_sub = b - n[4]*(b/n[4]);
-			accel_part_lower[a_sub*n[4]+b_sub] = -(j*Runit - (collisionflag*step(0,jf)*jf + length(v_rel)*setae_drag)*normalize(v_rel) - F_magn); 
-			alpha_part_lower[a_sub*n[4]+b_sub] = cross(Runit,(step(0,jf)*jf + setae_drag)*v_rel)*rad[a] + T_magn_a;			
+			accel_part_lower[a_sub*n[4]+b_sub] = -(j*Runit - (collisionflag*step(0,jf)*jf + setae_drag_reversed)*normalize(v_rel) - F_magn); 
+			alpha_part_lower[a_sub*n[4]+b_sub] = cross(Runit,(step(0,jf)*jf + setae_drag_reversed)*v_rel)*rad[a] + T_magn_a;			
 			
-			accel_part_upper[b_sub*n[4]+a_sub] = (j*Runit - (collisionflag*step(0,jf)*jf + length(v_rel)*setae_drag)*normalize(v_rel) - F_magn); 
-			alpha_part_upper[b_sub*n[4]+a_sub] = cross(Runit,(step(0,jf)*jf + setae_drag)*v_rel)*rad[b] + T_magn_b;	
-			
-//			Ipart_lower[a_sub*n[4]+b_sub] = dot(mu[a],B_b); //0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);			
-//			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp; // - dot(mu[a],B_b);	
-//			
-//			Ipart_upper[b_sub*n[4]+a_sub] = dot(mu[b],B_a); //0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-//			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp;// - dot(mu[b],B_a); 	
+			accel_part_upper[b_sub*n[4]+a_sub] = (j*Runit - (collisionflag*step(0,jf)*jf + setae_drag_reversed)*normalize(v_rel) - F_magn); 
+			alpha_part_upper[b_sub*n[4]+a_sub] = cross(Runit,(step(0,jf)*jf + setae_drag_reversed)*v_rel)*rad[b] + T_magn_b;	
 
 			Ipart_lower[a_sub*n[4]+b_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);			
 			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp - dot(mu[a],B_b);	

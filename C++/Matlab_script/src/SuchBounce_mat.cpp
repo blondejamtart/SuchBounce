@@ -15,72 +15,6 @@ std::vector<T> &operator+=(std::vector<T> &A, const std::vector<T> &B)	// define
     A.insert( A.end(), B.begin(), B.end() );         	
     return A;                                        	
 }
-
-int net_group_find(short joined[n][n], int* groups)			// Finds connected groups of particles based on input of particle connection matrix
-{
-	int grouped[n], to_do[n];	
-	int counted = 0, to_do_count = 0, next_item = 0, block = 0;	
-	for (int i = 0; i < n; i++){ grouped[i] = 0; to_do[i] = 0; }
-	std::cout.flush();
-	while(counted < n)
-	{    
-		int temp_group[n] = { 0 };
-		int i = 0;	    	
-		while(to_do[0] == 0)
-		{	
-			if (grouped[i] == 0){ to_do[0] = i+1; }				
-			i++;			
-		}		
-	    	temp_group[0] = to_do[0];
-		int groupcount = 1;		
-		grouped[to_do[0]-1] = 1;
-		counted++;
-	
-		to_do_count = 1;
-		next_item = 0;
-	   	while(to_do_count >= (next_item+1))	
-		{        
-			int j = to_do[next_item] - 1;		
-    			to_do[next_item] = 0;    	    	
-			next_item++;			
-			for (int i = 0; i < n; i++)
-			{
-				
-				if(joined[i][j] == 1)
-				{				
-					if(grouped[i] == 0)
-					{
-						
-		    	    			to_do[to_do_count] = i+1;
-						to_do_count++;					
-						
-    		            			temp_group[groupcount] = i+1;
-						groupcount++;
-						
-    		            			grouped[i] = 1; 
-						counted++;               
-    		            		}
-					
-				}	
-			}    
-    		
-		}
-		int gcount = 0;
-		for(int k = 0; k < n; k++)
-		{
-			groups[k+n*block] = temp_group[k];
-			if (temp_group[k] != 0) {gcount++;}
-			temp_group[k] = 0;
-		}
-    		block++;		
-	}
-	for (int i = block; i < n; i++)
-	{
-		for (int j = 0; j < n; j++) { groups[j+i*n] = 0; }
-	}
-return block;
-}
-
 int string2array(std::string str, double* arr, int length)			// converts csv string to double array
 {
 	std::stringstream streamy(str);
@@ -189,7 +123,7 @@ int main()
 	auto r = new double[n][4];
 	auto v = new double[n][4];
 	auto w = new double[n][4];
-	auto mu = new double[n][4];	
+	//auto mu = new double[n][4];	
 	auto q = new double[n];
 	auto m = new double[n];
 	auto rad = new double[n];
@@ -203,7 +137,7 @@ int main()
 	std::ifstream r_in(path + "r.vec");
 	std::ifstream v_in(path + "v.vec");
 	std::ifstream w_in(path + "w.vec");
-	std::ifstream mu_in(path + "mu.vec");
+	//std::ifstream mu_in(path + "mu.vec");
 	std::ifstream rad_in(path + "rad.vec");	
 	std::ifstream q_in(path + "q.vec");
 	std::ifstream m_in(path + "m.vec");
@@ -215,7 +149,7 @@ int main()
 		std::string r_str = "";
 		std::string v_str = "";
 		std::string w_str = "";
-		std::string mu_str = "";		
+		//std::string mu_str = "";		
 		std::string q_str = "";
 		std::string m_str = "";
 		std::string rad_str = "";				
@@ -230,7 +164,7 @@ int main()
 		std::getline(r_in,r_str);
 		std::getline(v_in,v_str);
 		std::getline(w_in,w_str);
-		std::getline(mu_in,mu_str);
+		//std::getline(mu_in,mu_str);
 		std::getline(q_in,q_str);
 		std::getline(m_in,m_str);
 		std::getline(rad_in,rad_str);
@@ -238,7 +172,7 @@ int main()
 		string2array(r_str,r_temp,3);
 		string2array(v_str,v_temp,3);
 		string2array(w_str,w_temp,3);
-		string2array(mu_str,mu_temp,3);
+		//string2array(mu_str,mu_temp,3);
 		
 		q_temp = std::stod(q_str);		
 		m_temp = std::stod(m_str);		
@@ -253,21 +187,21 @@ int main()
 			r[i][j] = r_temp[j];
 			v[i][j] = v_temp[j];
 			w[i][j] = w_temp[j];
-			mu[i][j] = mu_temp[j];		
+			//mu[i][j] = mu_temp[j];		
 		}
 	}
 	
-	for (int i = 0; i < net_size; i++)
-	{
-		std::string weight_str = "";						
-		double weight_temp[net_size] = {0.0};			
-		std::getline(weight_in, weight_str);					
-		string2array(weight_str,weight_temp,net_size);	
-		for (int j = 0; j < net_size; j++)
-		{				
-			weights[i][j] = weight_temp[j];
-		}					
-	}
+//	for (int i = 0; i < net_size; i++)
+//	{
+//		std::string weight_str = "";						
+//		double weight_temp[net_size] = {0.0};			
+//		std::getline(weight_in, weight_str);					
+//		string2array(weight_str,weight_temp,net_size);	
+//		for (int j = 0; j < net_size; j++)
+//		{				
+//			weights[i][j] = weight_temp[j];
+//		}					
+//	}
 
 		
 	stuff[0] = settings[1];
@@ -435,27 +369,8 @@ int main()
 	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_2 = kernel_init("zero_vec.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_0_3 = kernel_init("zero_vec.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_reset_vec = kernel_init("reset_vec.cl", "reset", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_rot_0 = kernel_init("rotation.cl", "mustep", ctx, ctxDevices, OpenCL_log);	
-	cl::Kernel ker_rot_1 = kernel_init("rotation.cl", "mustep", ctx, ctxDevices, OpenCL_log);	
-
 	
-	cl::Kernel ker_surface = kernel_init("surface_coverage.cl", "surface_coverage", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_NN_inputs = kernel_init("NN_inputs.cl", "NN_inputs", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_NN_run = kernel_init("NN_accel.cl", "neural_net", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_NN_zero = kernel_init("NN_zero.cl", "NN_zero", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_NN_accel = kernel_init("NN_accel_add.cl", "NN_accel", ctx, ctxDevices, OpenCL_log);
-	
-	cl::Kernel ker_joints = kernel_init("net_group.cl", "group_joints", ctx, ctxDevices, OpenCL_log);
-	
-	cl::NDRange NN_size(n);
-	if (use_NN != 1)
-	{			
-		ker_NN_run = kernel_init("NN_predef.cl", "neural_net", ctx, ctxDevices, OpenCL_log);
-		NN_size = 1;
-	}
+	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices, OpenCL_log);		
 	
 
 	//std::cout << "2\n"; std::cout.flush();
@@ -478,14 +393,7 @@ int main()
 	cl::Buffer rbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, r);
 	cl::Buffer r_obs_buff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, r);
 	cl::Buffer vbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, v);
-	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, w);
-	cl::Buffer mubuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, mu);
-	cl::Buffer orientbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, mu);	
-
-	cl::Buffer coveragebuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*surface_blocks*n));
-	cl::Buffer activationbuff_t1(ctx, CL_MEM_READ_WRITE, ::size_t (8*net_size*n));
-	cl::Buffer activationbuff_t0(ctx, CL_MEM_READ_WRITE, ::size_t (8*net_size*n));
-	cl::Buffer weightsbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(8*net_size*net_size), weights);	
+	cl::Buffer wbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, w);	
 
 	//std::cout << "3\n"; std::cout.flush();
 
@@ -524,10 +432,7 @@ int main()
 
 	
 	cl::Buffer accelbuff(ctx, CL_MEM_READ_WRITE, vecsize);
-	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE, vecsize);
-
-	cl::Buffer r_mean_buff(ctx, CL_MEM_READ_WRITE, ::size_t(32*n));
-	cl::Buffer groupIDbuff(ctx, CL_MEM_READ_WRITE, ::size_t(4*n));
+	cl::Buffer alphabuff(ctx, CL_MEM_READ_WRITE, vecsize);	
 
 	cl::Buffer accelsumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/n_block[0]*4));
 	cl::Buffer alphasumbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n*n/n_block[0]*4));
@@ -538,10 +443,6 @@ int main()
 	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));	
-
-	cl::Buffer jointbuff(ctx, CL_MEM_READ_WRITE, ::size_t(2*n*n));
-	cl::Buffer accelNNbuff(ctx, CL_MEM_READ_WRITE, vecsize);
-
 	
 	// Open output streams
 	root = "../Outputs";	
@@ -550,19 +451,14 @@ int main()
 	std::ofstream Tv_tracker(path + "T_v_tracks.dat", std::ios::out);
 	std::ofstream Tw_tracker(path + "T_w_tracks.dat", std::ios::out);
 	std::ofstream E_tracker(path + "E_int_tracks.dat", std::ios::out);
-	std::ofstream V_tracker(path + "V_tracks.dat", std::ios::out);
-	std::ofstream mu_tracker(path + "mu_tracks.dat", std::ios::out);
-	std::ofstream coverage_tracker(path + "coverage_tracks.dat", std::ios::out);
-	std::ofstream w_tracker(path + "accel_tracks.dat", std::ios::out);
-
+	std::ofstream V_tracker(path + "V_tracks.dat", std::ios::out);	
+	std::ofstream w_tracker(path + "w_tracks.dat", std::ios::out);
+	std::ofstream stuff_tracker(path + "t_steps.dat", std::ios::out);
+	
 	std::ofstream r_final(path + "r_final.dat", std::ios::out);
 	std::ofstream v_final(path + "v_final.dat", std::ios::out);
 	std::ofstream w_final(path + "w_final.dat", std::ios::out);
-	std::ofstream mu_final(path + "mu_final.dat", std::ios::out);
 	
-	std::ofstream groups_track(path + "groups.dat", std::ios::out);
-	
-
 	//Set Kernel Arguments	
 
 	ker_F.setArg(0, cbuff);
@@ -575,7 +471,7 @@ int main()
 	ker_F.setArg(7, rbuff);
 	ker_F.setArg(8, vbuff);
 	ker_F.setArg(9, wbuff);
-	ker_F.setArg(10, mubuff);
+	ker_F.setArg(10, wbuff);
 	int a = l3[0];
 	int b = l4[0];	
 	ker_F.setArg(11, vincbuff[a*(n/n_block[0])+b]);
@@ -622,11 +518,7 @@ int main()
 	ker_0_1.setArg(0, alphabuff);
 	ker_0_1.setArg(1, Intbuff);
 
-	ker_0_2.setArg(0, wbuff);
-
-	ker_0_3.setArg(0, accelNNbuff);
-
-	ker_reset_vec.setArg(0, orientbuff);
+	ker_0_2.setArg(0, wbuff);	
 
 	ker_v_0.setArg(0, vbuff);
 	ker_v_0.setArg(1, accelbuff);
@@ -635,23 +527,11 @@ int main()
 
 	ker_r.setArg(0, tbuff);
 	ker_r.setArg(1, rbuff);
-	ker_r.setArg(2, vbuff);
-
-	ker_rot_0.setArg(0, tbuff);
-	ker_rot_0.setArg(1, mubuff);
-	ker_rot_0.setArg(2, wbuff);
-
-	ker_rot_1.setArg(0, tbuff);
-	ker_rot_1.setArg(1, orientbuff);
-	ker_rot_1.setArg(2, wbuff);
+	ker_r.setArg(2, vbuff);	
 	
 	ker_t.setArg(0,rbuff);
 
 	ker_t0.setArg(0,rbuff);
-
-	ker_t_mean.setArg(0,r_obs_buff);
-	ker_t_mean.setArg(1,r_mean_buff);
-	ker_t_mean.setArg(2,groupIDbuff);
 
 	ker_T.setArg(0, vbuff);
 	ker_T.setArg(1, wbuff);
@@ -659,52 +539,6 @@ int main()
 	ker_T.setArg(3, Twbuff);
 	ker_T.setArg(4, mbuff);
 	ker_T.setArg(5, Ibuff);
-
-	ker_surface.setArg(0, rbuff);
-	ker_surface.setArg(1, orientbuff);
-	ker_surface.setArg(2, coveragebuff);
-	ker_surface.setArg(3, nbuff); 
-	ker_surface.setArg(4, radbuff);
-	ker_surface.setArg(5, l1buff);
-	ker_surface.setArg(6, l2buff);
-	ker_surface.setArg(7, tbuff);
-
-	ker_NN_inputs.setArg(0, activationbuff_t0);
-	ker_NN_inputs.setArg(1, activationbuff_t1);
-	ker_NN_inputs.setArg(2, coveragebuff);
-	ker_NN_inputs.setArg(3, tbuff);
-
-	ker_NN_run.setArg(0, weightsbuff);
-	ker_NN_run.setArg(1, activationbuff_t0);
-	ker_NN_run.setArg(2, activationbuff_t1);
-	ker_NN_run.setArg(3, accelNNbuff);
-	ker_NN_run.setArg(4, tbuff);
-	ker_NN_run.setArg(5, r_obs_buff);
-
-	if (use_NN != 1)
-	{			
-		ker_NN_run.setArg(3, mubuff);
-	}
-//	ker_NN_accel.setArg(0, accelbuff);
-//	ker_NN_accel.setArg(1, accelNNbuff);
-
-
-
-	ker_NN_zero.setArg(0, activationbuff_t0);
-	ker_NN_zero.setArg(1, activationbuff_t1);	
-	ker_NN_zero.setArg(2, tbuff);
-	
-
-	ker_joints.setArg(0, l1buff);
-	ker_joints.setArg(1, l2buff);
-	ker_joints.setArg(2, radbuff);
-	ker_joints.setArg(3, tbuff);
-	ker_joints.setArg(4, rbuff);
-	ker_joints.setArg(5, nbuff);
-	ker_joints.setArg(6, jointbuff);
-
-	
-
 	
 	cl::NDRange offset(0);
 	cl::NDRange gsize1(n);
@@ -731,16 +565,34 @@ int main()
 	double F1[4] = { 0.0 };
 	
 		
-	//queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size);
+	for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
+	{
+		int a = l3[i];
+		int b = l4[i];
+		int waitcount = 0;
+		//std::cout << offsets_0[i] << "\n";
+		queue.flush();
+		ker_F.setArg(11, vincbuff[a*(n/n_block[0])+b]);
+		ker_F.setArg(12, wincbuff[a*(n/n_block[0])+b]);
+		ker_F.setArg(15, Vincbuff[a*(n/n_block[0])+b]);
+		ker_F.setArg(16, Intincbuff[a*(n/n_block[0])+b]);
+		ker_F.setArg(13, vincbuff[b*(n/n_block[0])+a]);
+		ker_F.setArg(14, wincbuff[b*(n/n_block[0])+a]);
+		ker_F.setArg(17, Vincbuff[b*(n/n_block[0])+a]);
+		ker_F.setArg(18, Intincbuff[b*(n/n_block[0])+a]);			
+		ker_F.setArg(21, offset_buff_0[i]);		
+						
+		if (a == b) {queue.enqueueNDRangeKernel(ker_F, offset, gsize2[1], local_size); } 		// Compute force
+		else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 							
+	}				
 	
-	//queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t (0), ::size_t (32), &F1);
+	queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t (0), ::size_t (32), &F1);
 	
-	double scaleset[4] = { F1[1], F1[1], v_max, v_max };
-	
+	double scaleset[4] = { F1[1], F1[1], v_max, v_max };//	std::cout << F1[2] << "," << v_max << "\n";	
 	
 	
 	cl::Buffer Fbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(32), scaleset);
-	ker_F.setArg(18, Fbuff);
+	ker_F.setArg(19, Fbuff);
 	ker_v_0.setArg(2, Fbuff);
 	ker_v_1.setArg(2, Ftmp);
 	ker_scale.setArg(0, tbuff);
@@ -759,23 +611,11 @@ int main()
 	std::string tempstring;
 
 	queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
-	queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
-	queue.enqueueNDRangeKernel(ker_reset_vec, offset, gsize1, local_size); 	// zero things
-
-	
-	queue.enqueueNDRangeKernel(ker_NN_zero, offset, gsize1, local_size); 	// Calculate input neuron activations	
-
-	queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
-	tempstring = arraytostring(surf_temp, n);
-	coverage_tracker << tempstring; 
-			
-	
+	queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things	
+		
 	tempstring = arraytostring(r,n);
 	r_tracker << tempstring;
-
-	tempstring = arraytostring(mu, n);
-	mu_tracker << tempstring;
-
+	
 	std::cout << "..simulation started.\n";
 	//for (int i=0; i<100; i++){std::cout << "-";}
 	std::cout << "\n";
@@ -811,7 +651,7 @@ int main()
 		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 		// Evaluate Kinetic Energy
 		queue.finish();		
 		
-		queue.enqueueNDRangeKernel(ker_0_3, offset, gsize1, local_size); 	// zero things
+
 		if (( t_now == 0 || fabs(t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
 			framecount++;
@@ -834,6 +674,7 @@ int main()
 
 			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
+//			tempstring = arraytostring(stuff, 11);
 			E_tracker << tempstring;
 
 			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
@@ -844,90 +685,37 @@ int main()
 			tempstring = arraytostring(E_temp, n);
 			Tw_tracker << tempstring;
 
-			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
-			tempstring = arraytostring(mu, n);
-			mu_tracker << tempstring;
+			tempstring = arraytostring(stuff,11);
+			stuff_tracker << tempstring;
 
-//			queue.enqueueReadBuffer(accelbuff, CL_TRUE, ::size_t (0), vecsize, mu);
-//			tempstring = arraytostring(mu, n);
-//			w_tracker << tempstring;
+			//queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
+			//tempstring = arraytostring(mu, n);
+			//mu_tracker << tempstring;
 
 			//queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*50*n), surf_temp);
 			//tempstring = arraytostring(surf_temp, n);
 			//coverage_tracker << tempstring; 	
 		
-			if (count[0] == NN_eval_freq) 
-			{		
-				int whichgroup[n];			
-				queue.enqueueNDRangeKernel(ker_joints, offset, gsize2[0], local_size);
-				queue.enqueueReadBuffer(jointbuff, CL_TRUE, ::size_t (0), ::size_t(2*n*n), joined);
-				int n_groups = net_group_find(joined, groups);		
-				//std::cout << "(" << n_groups << "):";							
-	
-				for (int j = 0; j < n_groups; j++)
-				{
-					int n_group = 0;
-					r_mean[j][0] = 0.0;
-					r_mean[j][1] = 0.0;
-					r_mean[j][2] = 0.0;
-				
-					int i = 0;
-					while (groups[i+j*n] != 0 && n_group < n)
-					{
-						int k = groups[i+j*n] - 1;
-						whichgroup[k] = j;
-						r_mean[j][0] += r[k][0];
-						r_mean[j][1] += r[k][1];
-						r_mean[j][2] += r[k][2];
-						n_group++;
-						i++;
-					}
-					r_mean[j][0] = r_mean[j][0]/n_group;
-					r_mean[j][1] = r_mean[j][1]/n_group;
-					r_mean[j][2] = r_mean[j][2]/n_group;
-				}
-
 		
-				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);	
-				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
-				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
-				
-				queue.enqueueNDRangeKernel(ker_surface, offset, NN_size, local_size); 	// Calculate surface coverage of each particle		
-				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, NN_size, local_size); 	// Calculate input neuron activations		
-				queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
-
-				if (stuff[3] == n_swaps){ stuff[3] = 0; }
-				else			{ stuff[3]++; 	}
-				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
-				
-				if (write_neurons == 1)
-				{				
-					queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
-					tempstring = arraytostring(surf_temp, n);
-					coverage_tracker << tempstring; 
-				}
-				count[0] = 0;
-			}
-			count[0]++;
-						
+			
+//			queue.enqueueReadBuffer(accelbuff, CL_TRUE, ::size_t (0), vecsize, w);
+//			tempstring = arraytostring(w, n);
+//			w_tracker << tempstring;
+			
 
 			t_last = t_now;
 		
 
 		}
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+		queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
 		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
+		queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
 		
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
 		
-		
-		
 	
-		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
-		queue.enqueueNDRangeKernel(ker_rot_0, offset, gsize1, local_size); 		// Spin
-		queue.enqueueNDRangeKernel(ker_rot_1, offset, gsize1, local_size); 		// Spin
+		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift	
 
 
 		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
@@ -1056,13 +844,12 @@ int main()
 
 
 		//counter++;
-
-		//queue.enqueueNDRangeKernel(ker_NN_accel, offset, gsize1, local_size); 	// add NN control accel
+		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
+		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
 		queue.finish();
 
 	}
@@ -1084,7 +871,7 @@ int main()
 		queue.enqueueNDRangeKernel(ker_T, offset, gsize1, local_size); 		// Evaluate Kinetic Energy
 		queue.finish();		
 		
-		queue.enqueueNDRangeKernel(ker_0_3, offset, gsize1, local_size); 	// zero things
+
 		if (( t_now == 0 || fabs(t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
 			framecount++;
@@ -1106,6 +893,7 @@ int main()
 
 			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
+//			tempstring = arraytostring(stuff, 11);
 			E_tracker << tempstring;
 
 			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
@@ -1116,113 +904,43 @@ int main()
 			tempstring = arraytostring(E_temp, n);
 			Tw_tracker << tempstring;
 
-			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
-			tempstring = arraytostring(mu, n);
-			mu_tracker << tempstring;
-
-//			queue.enqueueReadBuffer(accelbuff, CL_TRUE, ::size_t (0), vecsize, mu);
-//			tempstring = arraytostring(mu, n);
-//			w_tracker << tempstring;
-//			
-			//queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*50*n), surf_temp);
-			//tempstring = arraytostring(surf_temp, n);
-			//coverage_tracker << tempstring; 
-
-			if (count[0] == NN_eval_freq) 
-			{
-
-				int whichgroup[n];						
-				queue.enqueueNDRangeKernel(ker_joints, offset, gsize2[0], local_size);
-				queue.enqueueReadBuffer(jointbuff, CL_TRUE, ::size_t (0), ::size_t(2*n*n), joined);
-				int n_groups = net_group_find(joined, groups);	
-				
-//				for(int i = 0; i < n; i++)
-//				{
-//					double temp[n];
-//					for (int j = 0; j < n; j++) {temp[j] = groups[j+n*i];}
-//					tempstring = arraytostring(temp,n);
-//					groups_track << tempstring;
-//				}
-		
-				
-				for (int j = 0; j < n_groups; j++)
-				{
-					int n_group = 0;
-					r_mean[j][0] = 0.0;
-					r_mean[j][1] = 0.0;
-					r_mean[j][2] = 0.0;
-				
-					int i = 0;
-					while (groups[i+j*n] != 0 && n_group < n)
-					{
-						int k = groups[i+j*n] - 1;
-						whichgroup[k] = j;
-						r_mean[j][0] += r[k][0];
-						r_mean[j][1] += r[k][1];
-						r_mean[j][2] += r[k][2];
-						n_group++;
-						i++;
-					}
-					r_mean[j][0] = r_mean[j][0]/n_group;
-					r_mean[j][1] = r_mean[j][1]/n_group;
-					r_mean[j][2] = r_mean[j][2]/n_group;
-				}
-//				std::cout<< " Calcul"; std::cout.flush();
-
-//				r_mean[0][0] = 0.0;
-//				r_mean[0][1] = 0.0;
-//				r_mean[0][2] = 0.0;
-//				for (int i = 0; i < n; i++)
-//				{
-//					r_mean[0][0] += r[i][0]/n;
-//					r_mean[0][1] += r[i][1]/n;
-//					r_mean[0][2] += r[i][2]/n;
-//					whichgroup[i] = 0;
-//				}
-		
-				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);
-				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);
-				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
-				queue.enqueueNDRangeKernel(ker_surface, offset, NN_size, local_size); 	// Calculate surface coverage of each particle		
-				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, NN_size, local_size); 	// Calculate input neuron activations		
-				queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
-
-				if (stuff[3] == n_swaps){ stuff[3] = 0; }
-				else			{ stuff[3]++; 	}
-				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
-				//std::cout << stuff[3] << "\n";
-				
-				if (write_neurons == 1)
-				{				
-					queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
-					tempstring = arraytostring(surf_temp, n);
-					coverage_tracker << tempstring; 
-				}
-				count[0] = 0;
-			}
-			count[0]++;
-		
+			tempstring = arraytostring(stuff,11);
+			stuff_tracker << tempstring;
+			
 //			queue.enqueueReadBuffer(accelbuff, CL_TRUE, ::size_t (0), vecsize, w);
 //			tempstring = arraytostring(w, n);
 //			w_tracker << tempstring;
+
+
+//			r_mean[0][0] = 0.0;
+//			r_mean[0][1] = 0.0;
+//			r_mean[0][2] = 0.0;
+//			for (int i = 0; i < n - 1; i++)
+//			{
+//				r_mean[0][0] += r[i][0]/(n-1);
+//				r_mean[0][1] += r[i][1]/(n-1);
+//				r_mean[0][2] += r[i][2]/(n-1);				
+//			}
+//			queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
+//			queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
+
 			
 
 			t_last = t_now;
+
+
 		
 
 		}
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+		queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
 		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
+		queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
 		
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
 		
 	
 		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
-		queue.enqueueNDRangeKernel(ker_rot_0, offset, gsize1, local_size); 		// Spin
-		queue.enqueueNDRangeKernel(ker_rot_1, offset, gsize1, local_size); 		// Spin
-
 
 		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 		{
@@ -1350,13 +1068,11 @@ int main()
 
 		//counter++;
 		
-		//queue.enqueueNDRangeKernel(ker_NN_accel, offset, gsize1, local_size); 	// add NN control accel
-		
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
+		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
 		queue.finish();
 	}
   	queue.finish();
@@ -1372,20 +1088,13 @@ int main()
 	queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 	tempstring = arraytostring(w,n);
 	w_final << tempstring;
-	queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
-	tempstring = arraytostring(mu,n);
-	mu_final << tempstring;
-
-	
-
 
 	std::cout << "\nSimulation complete!\n\n";
 	t_elap = difftime(time(NULL),t0);
 	std::cout << "Runtime was: " << float(t_elap) << "s\n";
 	delete [] r;
 	delete [] v;
-	delete [] w;
-	delete [] mu;
+	delete [] w;	
 	delete [] q;
 	delete [] m;
 	delete [] rad;	

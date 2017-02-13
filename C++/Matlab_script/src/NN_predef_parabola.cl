@@ -22,19 +22,17 @@ __kernel void neural_net(
 	}
 	else
 	{
-		if (x_flag == 2)
-		{	
-			double d_field = sqrt(pow(positions[x].z,2) + pow(positions[x].y,2));
-			mu[x].x = 0.0;
-			mu[x].y = -(positions[x].z/d_field);
-			mu[x].z = (positions[x].y/d_field);	
-		}
-		else
-		{
-			double d_field = sqrt(pow(positions[x].x,2) + pow(positions[x].z,2));
-			mu[x].x = positions[x].z/d_field; 
-			mu[x].y = 0.0;		
-			mu[x].z = -(positions[x].x/d_field);
-		}	
+		double d_field = sqrt(pow(positions[x].x,2) + pow(positions[x].z,2));
+		mu[x].x = 1.0 + positions[x].z/d_field;
+		mu[x].y = 0.0;		
+		mu[x].z = -positions[x].x/d_field;
 	}
 }
+			
+		
+							
+							
+
+
+
+

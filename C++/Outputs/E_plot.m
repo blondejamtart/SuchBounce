@@ -1,7 +1,7 @@
  cd('../Outputs')
 do_zero = 1;
 isprog = 0;
-mem_save = 1;
+mem_save = 0;
 %n = 2048;
 %l = 8192;
 multiWaitbar('Total',0);
@@ -32,7 +32,8 @@ else
     multiWaitbar('Total',1/4);
     [Tw,~]=fileread('T_w_tracks.dat',l,0,n);
     multiWaitbar('Total',2/4);
-    [V,~]=fileread('V_tracks.dat',l,0,n);
+    [V,~]= fileread('V_tracks.dat',l,0,n);
+    %V = -V;
     multiWaitbar('Total',3/4);
     [E,~]=fileread('E_int_tracks.dat',l,0,n);
     multiWaitbar('Total',4/4);

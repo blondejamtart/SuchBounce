@@ -1,7 +1,7 @@
 %r = r_set(choice,:,:);
 r_backup = r;
 S_r = zeros(1,n);
-do_trim = 1;
+do_trim = 0;
 threshold_bond_count = 2;
 ignore = zeros(1,n);
 if ~exist('genes')

@@ -69,18 +69,18 @@ __kernel void Fimp(__global const double *q,
 
 			F_track[1] = maxmag(F_track[1],F);
 
-			double k_mu = stuff[14]; //1.0e-18;
-			double setae_length = stuff[15]; //0.1*(rad[a] + rad[b])/2.0;
-			double k_drag = stuff[16]; //1.0e+3;
+			//double k_mu = stuff[14]; //1.0e-18;
+			//double setae_length = stuff[15]; //0.1*(rad[a] + rad[b])/2.0;
+			//double k_drag = stuff[16]; //1.0e+3;
 
 			//double3 F_magn = t_step*3.0*k_mu*pow(d,-4.0)*(cross(cross(Runit,m[a]),m[b]) + cross(cross(Runit,m[b]),m[a]) - 2*Runit*dot(m[a],m[b]) + 5*Runit*dot(cross(Runit,m[a]),cross(Runit,m[b])));
 
-			double3 F_magn = t_step*3.0*k_mu*pow(d,-4.0)*(dot(mu[a],Runit)*mu[b]+dot(mu[b],Runit)*mu[a]-Runit*(5*dot(mu[a],Runit)*dot(mu[b],Runit)-dot(mu[a],mu[b])));
+			//double3 F_magn = t_step*3.0*k_mu*pow(d,-4.0)*(dot(mu[a],Runit)*mu[b]+dot(mu[b],Runit)*mu[a]-Runit*(5*dot(mu[a],Runit)*dot(mu[b],Runit)-dot(mu[a],mu[b])));
 
-			double3 B_a = k_mu*pow(d,-3.0)*(3*dot(mu[a],Runit)*Runit - mu[a]);
-			double3 B_b = k_mu*pow(d,-3.0)*(3*dot(mu[b],Runit)*Runit - mu[b]);
-			double3 T_magn_b = t_step*cross(mu[b],B_a);
-			double3 T_magn_a = t_step*cross(mu[a],B_b);  
+			//double3 B_a = k_mu*pow(d,-3.0)*(3*dot(mu[a],Runit)*Runit - mu[a]);
+			//double3 B_b = k_mu*pow(d,-3.0)*(3*dot(mu[b],Runit)*Runit - mu[b]);
+			//double3 T_magn_b = t_step*cross(mu[b],B_a);
+			//double3 T_magn_a = t_step*cross(mu[a],B_b);  
 
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
 			double t_sign = t_step/fabs(t_step);
@@ -90,30 +90,24 @@ __kernel void Fimp(__global const double *q,
 			
 			double jf = collisionflag*length(v_rel)/((pow(rad_a,2)/I[a]+pow(rad_b,2)/I[b])+(1/m_a+1/m_b));
 		
-			double setae_drag = t_step*k_drag*length(v_rel)*((rad[a]+rad[b])*setae_length + pow(setae_length,2.0))*(1 - pow((d-rad[a]-rad[b])/(2.0*setae_length),2)*(3.0 - (d-rad[a]-rad[b])/setae_length))*step(d,(2.0*setae_length+rad[a]+rad[b]));
+			//double setae_drag = t_step*k_drag*length(v_rel)*((rad[a]+rad[b])*setae_length + pow(setae_length,2.0))*(1 - pow((d-rad[a]-rad[b])/(2.0*setae_length),2)*(3.0 - (d-rad[a]-rad[b])/setae_length))*step(d,(2.0*setae_length+rad[a]+rad[b]));
 			
 			double fdyn = (F*t_step + 0.5*dF*t_step*t_step);
 			if (fabs(jf) > fabs(fdyn*stuff[4])){jf = fdyn*stuff[5];}
 			
 			int a_sub = a - n[4]*(a/n[4]);
 			int b_sub = b - n[4]*(b/n[4]);
-			accel_part_lower[a_sub*n[4]+b_sub] = -(j*Runit - (collisionflag*step(0,jf)*jf + length(v_rel)*setae_drag)*normalize(v_rel) - F_magn); 
-			alpha_part_lower[a_sub*n[4]+b_sub] = cross(Runit,(step(0,jf)*jf + setae_drag)*v_rel)*rad[a] + T_magn_a;			
+			accel_part_lower[a_sub*n[4]+b_sub] = -(j*Runit - (collisionflag*step(0,jf)*jf)*normalize(v_rel));// - F_magn); 
+			alpha_part_lower[a_sub*n[4]+b_sub] = cross(Runit,(step(0,jf)*jf)*v_rel)*rad[a];// + T_magn_a;			
 			
-			accel_part_upper[b_sub*n[4]+a_sub] = (j*Runit - (collisionflag*step(0,jf)*jf + length(v_rel)*setae_drag)*normalize(v_rel) - F_magn); 
-			alpha_part_upper[b_sub*n[4]+a_sub] = cross(Runit,(step(0,jf)*jf + setae_drag)*v_rel)*rad[b] + T_magn_b;	
-			
-//			Ipart_lower[a_sub*n[4]+b_sub] = dot(mu[a],B_b); //0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);			
-//			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp; // - dot(mu[a],B_b);	
-//			
-//			Ipart_upper[b_sub*n[4]+a_sub] = dot(mu[b],B_a); //0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-//			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp;// - dot(mu[b],B_a); 	
-
+			accel_part_upper[b_sub*n[4]+a_sub] = (j*Runit - (collisionflag*step(0,jf)*jf)*normalize(v_rel));// - F_magn); 
+			alpha_part_upper[b_sub*n[4]+a_sub] = cross(Runit,(step(0,jf)*jf)*v_rel)*rad[b];// + T_magn_b;				
+//		
 			Ipart_lower[a_sub*n[4]+b_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);			
-			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp - dot(mu[a],B_b);	
+			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp;// - dot(mu[a],B_b);	
 			
 			Ipart_upper[b_sub*n[4]+a_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp - dot(mu[b],B_a); 		
+			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp;// - dot(mu[b],B_a); 		
 
 			
 		}

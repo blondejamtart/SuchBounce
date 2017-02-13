@@ -1,12 +1,12 @@
 if ~exist('options','var')
-    options.generate_new_nets = 0;
+    options.generate_new_nets = 1;
     options.net_size = 64;
     options.net_strat = 2;
     options.surface_blocks = 32;
     options.outputs = 3;
     options.synapse_density = 0.2;
     options.mutation_prob = 0.025;
-    options.n_pop = 50;
+    options.n_pop = 10;
     options.n = 512;
     options.max_inhibition = -3;
     options.mutation_size = 1e-2;
