@@ -1,19 +1,20 @@
+
 %R_encounter = 2e5;
 %binary_orbit_find
 
 %for n = 64:32:64
-n = 128;
-for R_encounter = 2e5:5e4:4e5
- binary_orbit_find
- 
+n = 256;
+theta = pi;
+for R_encounter = 7*6.371e6:-(6.371e6):6.371e6
+ binary_orbit_find 
   
     r_temp = zeros(1,n,3);
     v_temp = zeros(1,n,3);
     settings{17} = ['const int n = ' num2str(n) ';'];
     settings{18} = ['const double settings[14] = {pow(2,12), pow(2.0,-4), pow(2.0,-4),'...
-       '5.0e-02, 2.5e-15, 0, 0.5, 0.4, 5.0e-03, pow(2.0,8), 2.0e-18, 1.0e-03, 8.0e+04, 3.0e-02};'];
-   settings{26} = 'const int workgroup_size = 1; // set around 32-64 for GPU, 1 for CPU'; 
-   settings{29} = ['int block_size = ' num2str(32) '; // Size of blocks for partitioning of particle interaction calculations '];
+       '1e-02, 2.5e-15, 0, 0.5, 0.4, 1.0e-02, pow(2.0,8), 2.0e-18, 1.0e-03, 8.0e+04, 3.0e-02};'];
+   settings{26} = 'const int workgroup_size = 64; // set around 32-64 for GPU, 1 for CPU'; 
+   settings{29} = ['int block_size = ' num2str(256) '; // Size of blocks for partitioning of particle interaction calculations '];
     
     settingsfile = fopen('../Settings.h','w');
     
@@ -25,7 +26,8 @@ for R_encounter = 2e5:5e4:4e5
     !g++ -std=c++11 SuchBounce_mat.cpp -lOpenCL
     cd('../Outputs')
     for i = 1:1
-        root = ['/media/falcon/Tesla_Data/binary_' num2str(n) '_' num2str(R_encounter) '/'];
+        root = ['/media/Data/Bryan/binary_' num2str(n) '_' num2str(R_encounter) '/'];
+%         root = ['/media/falcon/Tesla_Data/binary_' num2str(n) '_' num2str(R_encounter) '/'];
         eval(['mkdir ' root])
         eval(['mkdir ' root '/Setup'])
         filewrite([root '/Setup/q.vec'],zeros(1,n),'init')
@@ -44,14 +46,14 @@ for R_encounter = 2e5:5e4:4e5
         filewrite(['../Setup/' 'v.vec'],zeros(1,n,3),'init')
         filewrite(['../Setup/' 'w.vec'],zeros(1,n,3),'init')
         cnt = 0;
-        while cnt < 3
+        while cnt < 4
             cd('../src')
             !./a.out
             cd('../Outputs')
             Tv_temp = fileread('T_v_tracks.dat');
             [~,t_temp] = max(sum(Tv_temp,2));
             [tempset,~] = fileread('Particle_tracks.dat',t_temp,1,n);
-            filewrite('../Setup/r.vec',tempset(floor(0.95*t_temp),:,:),'init');
+            filewrite('../Setup/r.vec',tempset(floor(0.9*t_temp),:,:),'init');
             cnt = cnt + 1;
         end
         
@@ -59,7 +61,7 @@ for R_encounter = 2e5:5e4:4e5
         eval(['!cp ../Outputs/v_final.dat '  root])
         eval(['!cp ../Outputs/T_v_tracks.dat '  root])
         r_temp0 = fileread('../Outputs/r_final.dat');
-        [v_temp0,r_temp0] = spinup(r_temp0,[1e-2*ones(1,n-2) 1e4*(sqrt(n/1024))^3 1e4*(sqrt(n/1024))^3],[1e-2*ones(1,n-2) sqrt(n/1024) sqrt(n/1024)],n);
+        [v_temp0,r_temp0] = spinup(r_temp0,[1e-2*ones(1,n-2) 1e4*(sqrt(n/1024))^3 1e4*(sqrt(n/1024))^3],[1e-2*ones(1,n-2) sqrt(n/1024) sqrt(n/1024)],n,theta);
         v_temp0 = v_temp0 - repmat(v_offset(1,1,:),[1 n 1]);
         v_temp0(:,1,:) = [];
         v_temp(i,1:n-1,:) = v_temp0;
@@ -81,8 +83,8 @@ for R_encounter = 2e5:5e4:4e5
     !g++ -std=c++11 SuchBounce_mat.cpp -lOpenCL
     cd('../Outputs')
     for i = 1:1
-        root = ['/media/falcon/Tesla_Data/binary_' num2str(n) '_' num2str(i) '/'];
-        
+        root = ['/media/Data/Bryan/binary_' num2str(n) '_' num2str(R_encounter) '/'];
+%         root = ['/media/falcon/Tesla_Data/binary_' num2str(n) '_' num2str(R_encounter) '/'];
         filewrite([root 'q.vec'],zeros(1,n),'init')
         filewrite([root 'm.vec'],[1e-2*ones(1,n-3) 1e4*(sqrt(n/1024))^3 1e4*(sqrt(n/1024))^3 5.972e24],'init')
         filewrite([root 'rad.vec'],[1e-2*ones(1,n-3) sqrt(n/1024) sqrt(n/1024) 6.371e6],'init')

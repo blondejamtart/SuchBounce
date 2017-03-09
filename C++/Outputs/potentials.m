@@ -1,8 +1,8 @@
 function [V_vdw, V_G] = potentials(norm_r,rad,m)
-A = 8e-18;
-k = 1e-3;
-cut_off = (rad(1) + rad(2)) + 0.01*min(rad);
-hard_rad = (rad(1) + rad(2)) - 0.01*min(rad);
+A = 2.5e-15;
+k = 5e-1;
+cut_off = (rad(1) + rad(2)) + 1e-5*min(rad);
+hard_rad = (rad(1) + rad(2)) - 1e-5*min(rad);
 V_G = -m(1)*m(2)*6.734e-11/norm_r;
 fplus = (norm_r^2-(rad(1)+rad(2))^2)^-1;
 fminus = (norm_r^2-(rad(2)-rad(1))^2)^-1;

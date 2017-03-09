@@ -30,7 +30,7 @@ filewrite([root 'v.vec'],v,'init')
 
 
 settings{17} = ['const int n = ' num2str(2) ';'];
-settings{18} = ['const double settings[14] = {pow(2,17), pow(2.0,-8), pow(2.0,-0), '...
+settings{18} = ['const double settings[14] = {pow(2,17), pow(2.0,-3), pow(2.0,-0), '...
     '1.0e-08, 2.5e-15, 0, 0.2, 0.1, 5.0e-03, pow(2.0,8), 1.0e-20, 1.0e-03, 1.0e-04, 1.0e-02};'];
 settings{26} = 'const int workgroup_size = 1; // set around 32-64 for GPU, 1 for CPU'; 
 settings{29} = ['int block_size = ' num2str(2) '; // Size of blocks for partitioning of particle interaction calculations '];
@@ -49,24 +49,24 @@ r_offset = fileread('r_final.dat',1,1,2);
 v_offset = fileread('v_final.dat',1,1,2);
 
 % 
-filewrite([root 'r.vec'],r_offset,'init')
-filewrite([root 'v.vec'],-v_offset,'init')
+% filewrite([root 'r.vec'],r_offset,'init')
+% filewrite([root 'v.vec'],-v_offset,'init')
 
 
-% settings{17} = ['const int n = ' num2str(2) ';'];
-% settings{18} = ['const double settings[14] = {pow(2,18), pow(2.0,2), pow(2.0,2), '...
-%     '0.0e-02, 2.5e-15, 0, 0.0, 0.0, 5.0e-03, pow(2.0,8), 0.0e-18, 1.0e-03, 0.0e+04, 0.0e-02};'];
-% settings{29} = ['int block_size = ' num2str(2) '; // Size of blocks for partitioning of particle interaction calculations '];
-% settingsout = fopen('../Settings.h','w');
-% for j = 1:settings_length
-%     fprintf(settingsout,'%s\n',settings{j});
-% end
-% fclose(settingsout);
-% cd('../src');
-% !g++ -std=c++11 SuchBounce.cpp -lOpenCL
-% !./a.out
-% cd('../Outputs');
-% [E,l]=fileread('E_int_tracks.dat');
+settings{17} = ['const int n = ' num2str(3) ';'];
+settings{18} = ['const double settings[14] = {pow(2,19), pow(2.0,-8), pow(2.0,-3), '...
+    '0.0e-02, 2.5e-15, 0, 0.0, 0.0, 5.0e-03, pow(2.0,8), 0.0e-18, 1.0e-03, 0.0e+04, 0.0e-02};'];
+settings{29} = ['int block_size = ' num2str(2) '; // Size of blocks for partitioning of particle interaction calculations '];
+settingsout = fopen('../Settings.h','w');
+for j = 1:settings_length
+    fprintf(settingsout,'%s\n',settings{j});
+end
+fclose(settingsout);
+cd('../src');
+!g++ -std=c++11 SuchBounce.cpp -lOpenCL
+!./a.out
+cd('../Outputs');
+[E,l]=fileread('E_int_tracks.dat');
 
 
 

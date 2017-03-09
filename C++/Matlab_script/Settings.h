@@ -14,8 +14,8 @@
 
 //Settings:
 
-const int n = 128;
-const double settings[14] = {pow(2,14), pow(2.0,1), pow(2.0,-5),0.0e-02, 2.5e-15, 0, 0.0, 0.0, 5.0e-03, pow(2.0,8), 0.0e-18, 1.0e-03, 0.0e+04, 0.0e-02};
+const int n = 2;
+const double settings[14] = {pow(2,17), pow(2.0,-3), pow(2.0,-0), 1.0e-08, 2.5e-15, 0, 0.2, 0.1, 5.0e-03, pow(2.0,8), 1.0e-20, 1.0e-03, 1.0e-04, 1.0e-02};
 // [t_max, dt_init, dt_max, soft body energy loss, VdW attraction, VdW repulsion (Deprecated), mu_static, mu_dynamic, soft body parameter, render warp, magnetic force constant, setae length, drag constant...
 //, particle comms range] 
  
@@ -26,7 +26,7 @@ const int n_swaps = 2;
 const int workgroup_size = 1; // set around 32-64 for GPU, 1 for CPU
 const int nDevs = 1; // leave as 1 unless running MultiDev version of code
 int Devs[3] = { 0, 1, 2 }; // 1st entry should be # of device on which code is to be run (see OpenCL_dev_info output)
-int block_size = 32; // Size of blocks for partitioning of particle interaction calculations 
+int block_size = 2; // Size of blocks for partitioning of particle interaction calculations 
 int write_neurons = 0;
 int t_test = pow(2.0,14); // Number of integraiton steps to run for time estimation
 int Neural_eval_inter = 128; // length of time (seconds) after which rotational kinetic energy is dumped/zeroed

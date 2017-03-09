@@ -364,8 +364,8 @@ int main()
 	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_t_mean = kernel_init("translate_mean.cl", "rmove", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_v_0 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_v_1 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices, OpenCL_log);
+    cl::Kernel ker_v_0 = kernel_init("velocity_mat.cl", "vstep", ctx, ctxDevices, OpenCL_log);
+    cl::Kernel ker_v_1 = kernel_init("velocity_mat.cl", "vstep", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_2 = kernel_init("zero_vec.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
@@ -388,7 +388,7 @@ int main()
 	cl::Buffer radbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), rad);
 	cl::Buffer Ibuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), I);
 	cl::Buffer tbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(stuff), stuff);
-	cl::Buffer Ftmp(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t (32), zerotemp_4);
+	
 
 	cl::Buffer rbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, r);
 	cl::Buffer r_obs_buff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, vecsize, r);
@@ -442,7 +442,8 @@ int main()
 	cl::Buffer Vbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
-	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));	
+	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
+	cl::Buffer Fbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));	
 	
 	// Open output streams
 	root = "../Outputs";	
@@ -483,7 +484,7 @@ int main()
 	ker_F.setArg(17, Vincbuff[b*(n/n_block[0])+a]);
 	ker_F.setArg(18, Intincbuff[b*(n/n_block[0])+a]);			
 	ker_F.setArg(21, offset_buff_0[0]);
-	ker_F.setArg(19, Ftmp);
+	ker_F.setArg(19, Fbuff);
 	ker_F.setArg(20, nbuff);
 		
 	
@@ -522,6 +523,7 @@ int main()
 
 	ker_v_0.setArg(0, vbuff);
 	ker_v_0.setArg(1, accelbuff);
+	ker_v_0.setArg(2, Fbuff);
 	ker_v_1.setArg(0, wbuff);
 	ker_v_1.setArg(1, alphabuff);
 
@@ -553,7 +555,8 @@ int main()
 	// Initialise timestep scaler	
 	double v_norm[n] = { 0.0 };
 
-	double v_max = 0;
+	double v_max = 0.0;
+	double Fmax = 0.0;
 
 
 	for (int z = 0; z < n; z++)
@@ -562,9 +565,9 @@ int main()
 		if (z > 0){ v_max = std::max(v_norm[z], v_norm[z - 1]); }		
 	}
 	
-	double F1[4] = { 0.0 };
-	
+	double Flist[n_el] = { 0.0 };
 		
+
 	for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 	{
 		int a = l3[i];
@@ -586,17 +589,21 @@ int main()
 		else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 							
 	}				
 	
-	queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t (0), ::size_t (32), &F1);
+	queue.enqueueReadBuffer(Fbuff, CL_TRUE, ::size_t (0), ::size_t (8*n_el), &Flist);
+	Fmax = Flist[0];	
+	for (int i = 1; i < n_el; i++)
+	{
+		if(Flist[i] > Fmax) { Fmax = Flist[i]; }
+	}
+		
 	
-	double scaleset[4] = { F1[1], F1[1], v_max, v_max };//	std::cout << F1[2] << "," << v_max << "\n";	
+	double scaleset[4] = { Fmax, Fmax, v_max, v_max };
 	
+	cl::Buffer scalebuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(32), scaleset);
 	
-	cl::Buffer Fbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(32), scaleset);
-	ker_F.setArg(19, Fbuff);
-	ker_v_0.setArg(2, Fbuff);
-	ker_v_1.setArg(2, Ftmp);
+	ker_v_1.setArg(2, Fbuff);
 	ker_scale.setArg(0, tbuff);
-	ker_scale.setArg(1, Fbuff);
+	ker_scale.setArg(1, scalebuff);
 	
 		
 
@@ -605,6 +612,7 @@ int main()
 	double t_last = 0;
 	if (stuff[0] < 0) { t_now = max_time; t_last = max_time;}
 	short int prog = 0;
+
 	//double r_mean[4] = {0.0, 0.0, 0.0, 0.0};
 	double r_mean[n][4];
 	count[0] = 0;
@@ -841,12 +849,26 @@ int main()
 		}
 		
 		queue.enqueueNDRangeKernel(ker_S, offset, gsize1, local_size);
-
-
-		//counter++;
-		
+		queue.enqueueReadBuffer(scalebuff, CL_TRUE, ::size_t (0), ::size_t (32), &scaleset);
+		queue.enqueueReadBuffer(Fbuff, CL_TRUE, ::size_t (0), ::size_t (8*n_el), &Flist);
+		Fmax = Flist[0];	
+		for (int i = 1; i < n_el; i++)
+		{
+			if(Flist[i] > Fmax) { Fmax = Flist[i]; }
+		}	
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
+		queue.enqueueReadBuffer(Fbuff, CL_TRUE, ::size_t (0), ::size_t (8*n_el), &Flist);	
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
+	
+		v_max = Flist[0];	
+		for (int i = 1; i < n; i++)
+		{
+			if(Flist[i] > v_max) { v_max = Flist[i]; }
+		}
+		scaleset[1] = Fmax;
+		scaleset[3] = v_max;
+		queue.enqueueWriteBuffer(scalebuff, CL_TRUE, ::size_t (0), ::size_t (32), scaleset);	
+		
 
 		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
 		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
@@ -1064,13 +1086,30 @@ int main()
 		}
 
 		queue.enqueueNDRangeKernel(ker_S, offset, gsize1, local_size);
-
-
-		//counter++;
-		
+		queue.enqueueReadBuffer(scalebuff, CL_TRUE, ::size_t (0), ::size_t (32), &scaleset);
+		queue.enqueueReadBuffer(Fbuff, CL_TRUE, ::size_t (0), ::size_t (8*n_el), &Flist);
+		Fmax = Flist[0];	
+		for (int i = 1; i < n_el; i++)
+		{
+			if(Flist[i] > Fmax) { Fmax = Flist[i]; }
+		}	
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
+		queue.enqueueReadBuffer(Fbuff, CL_TRUE, ::size_t (0), ::size_t (8*n_el), &Flist);	
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
+	
+		v_max = Flist[0];	
+		for (int i = 1; i < n; i++)
+		{
+			if(Flist[i] > v_max) { v_max = Flist[i]; }
+		}
+		scaleset[1] = Fmax;
+		scaleset[3] = v_max;
+		queue.enqueueWriteBuffer(scalebuff, CL_TRUE, ::size_t (0), ::size_t (32), scaleset);	
+		
 
+		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
+		queue.finish();
 		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
 		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
 		queue.finish();

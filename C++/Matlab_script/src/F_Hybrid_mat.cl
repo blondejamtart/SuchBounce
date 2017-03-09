@@ -67,7 +67,7 @@ __kernel void Fimp(__global const double *q,
 				F_VdW =  -((1.0/3.0)*stuff[2]*cut_off*(fpe-fme-2*rad_a*rad_b*(pow(fpe,2)+pow(fme,2))))*(d-hard_rad)/(cut_off-hard_rad);
 			}
 
-			F_track[1] = maxmag(F_track[1],F);
+			F_track[x] = fabs(F);
 
 			//double k_mu = stuff[14]; //1.0e-18;
 			//double setae_length = stuff[15]; //0.1*(rad[a] + rad[b])/2.0;

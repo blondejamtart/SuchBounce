@@ -61,13 +61,13 @@ if ~mem_save
     Vnat0 = zeros(ii,size(V,2));
     
     if do_zero
-        for i = [3:ii,1]
-            E0(i,:) = E(i,:) - E(2,:);
-            Tw0(i,:) = Tw(i,:) - Tw(2,:);
-            Tv0(i,:) = Tv(i,:) - Tv(2,:);
-            V0(i,:) = V(i,:) - V(2,:);
-            T0(i) = T(i) - T(2);
-            Vnat0(i) = Vnat(i) - Vnat(2);
+        for t_ind = [3:ii,1]
+            E0(t_ind,:) = E(t_ind,:) - E(2,:);
+            Tw0(t_ind,:) = Tw(t_ind,:) - Tw(2,:);
+            Tv0(t_ind,:) = Tv(t_ind,:) - Tv(2,:);
+            V0(t_ind,:) = V(t_ind,:) - V(2,:);
+            T0(t_ind) = T(t_ind) - T(2);
+            Vnat0(t_ind) = Vnat(t_ind) - Vnat(2);
         end
         E0(2,:) = zeros(1,size(V,2));
         Tw0(2,:) = zeros(1,size(V,2));
@@ -90,10 +90,10 @@ else
     T0 = zeros(ii,1);
     V0 = zeros(ii,1);         
     if do_zero
-        for i = [3:ii,1]
-            E0(i,:) = sum(E(i,:),2) - sum(E(2,:),2);           
-            V0(i,:) = sum(V(i,:),2) - sum(V(2,:),2);
-            T0(i) = T(i) - T(2);            
+        for t_ind = [3:ii,1]
+            E0(t_ind,:) = sum(E(t_ind,:),2) - sum(E(2,:),2);           
+            V0(t_ind,:) = sum(V(t_ind,:),2) - sum(V(2,:),2);
+            T0(t_ind) = T(t_ind) - T(2);            
         end
         E0(1:2) = [0 0];
         V0(1:2) = [0 0];      

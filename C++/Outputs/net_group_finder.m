@@ -4,8 +4,8 @@ for i = 1:n
     for j = 1:i-1
         dist(i,j) = norm(reshape(r(1,i,:)-r(1,j,:),1,3));
         dist(j,i) = dist(i,j);
-        rad_mat(i,j) = 3e-2+(rad(i)+rad(j));
-        rad_mat(j,i) = 3e-2+(rad(i)+rad(j));
+        rad_mat(i,j) = 6e-2+(rad(i)+rad(j));
+        rad_mat(j,i) = 6e-2+(rad(i)+rad(j));
     end
 end
 joined = dist < rad_mat;

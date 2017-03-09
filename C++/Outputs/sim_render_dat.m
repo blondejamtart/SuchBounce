@@ -1,17 +1,17 @@
-clear  tempset
+%clear  tempset
 clear frameset ignore dist dist_trim;
 recalc = 1;
 trim_outliers = 0;
-l = ii;
-[tempset,~] = fileread('Particle_tracks.dat',l,1,n);
+%l = ii;
+%[tempset,~] = fileread('Particle_tracks.dat',l,1,n);
 
 
-render_warp =  4;
+render_warp =  8;
 start = 1; %size(tempset,1);
 stop = size(tempset,1);
 
 n = size(tempset,2);
-ig = n-1;
+ig = 512;
 frameset = zeros(floor((stop-start)/render_warp),n,3);
 x = 0;
 for i = start:stop

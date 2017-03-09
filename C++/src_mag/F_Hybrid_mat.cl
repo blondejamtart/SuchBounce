@@ -30,7 +30,7 @@ __kernel void Fimp(__global const double *q,
 			int a = k[x];
 			int b = l[x];
 			double3 r_a = r[a], r_b = r[b], v_a = v[a], v_b = v[b];
-			double rad_a = rad[a], rad_b = rad[b], q_a = q[a], q_b = q[b], m_a = m[a], m_b = m[b], t_step = (stuff[0]);
+			double rad_a = rad[a], rad_b = rad[b], q_a = q[a], q_b = q[b], m_a = m[a], m_b = m[b], t_step = stuff[0];
 		   	double G = stuff[6];
 			double e0 = stuff[7];
 			double 	d = distance(r_a,r_b);
@@ -42,8 +42,8 @@ __kernel void Fimp(__global const double *q,
 			double 	p0 = dot(vtemp,normalize((r_a-v_a*0.5*t_step)-(r_b-v_b*0.5*t_step)));		
 			int 	collisionflag = step(d0,(rad_a+rad_b));
 
-			double 	cut_off = (rad_a+rad_b) + 0.01*min(rad_a,rad_b);
-			double 	hard_rad = (rad_a+rad_b) - 0.01*min(rad_a,rad_b);		
+			double 	cut_off = (rad_a+rad_b) + stuff[18]*min(rad_a,rad_b);
+			double 	hard_rad = (rad_a+rad_b) - stuff[18]*min(rad_a,rad_b);		
 			double 	fplus = 1.0/(pow(d,2.0) - pow((rad_a+rad_b),2.0));		
 			double 	fminus = 1.0/(pow(d,2.0) - pow((rad_b-rad_a),2.0));
 			double 	fpe = 1.0/(pow(cut_off,2.0) - pow((rad_a+rad_b),2.0));		
@@ -83,17 +83,17 @@ __kernel void Fimp(__global const double *q,
 			double3 T_magn_a = t_step*cross(mu[a],B_b);  
 
 			double3 v_rel = (vtemp - p*Runit) - cross(wvec,Runit);				
-			double t_sign = t_step/fabs(t_step);
-			double dt = fmax((fabs(t_step)-(d0-rad_a-rad_b)/p0)*step((d0-rad_a-rad_b)/p0,fabs(t_step))*step(0,(d0-rad_a-rad_b)/p0),0);
+			
+			double dt = fmax((t_step-(d0-rad_a-rad_b)/p0)*step((d0-rad_a-rad_b)/p0,t_step)*step(0,(d0-rad_a-rad_b)/p0),0);
 						
-			double j = ((F+F_VdW)*t_step+0.5*dF*t_step*t_step)-m_a*m_b/(m_a+m_b)*(collisionflag*(stuff[1]*p0*(fabs(t_step)-dt)*t_sign+stuff[8]*(rad_a+rad_b-d0)*(fabs(t_step)-dt)*t_sign+0.5*stuff[8]*p0*((fabs(t_step)-dt))*(fabs(t_step)-dt))-(collisionflag-1)*(stuff[1]*p0*dt*t_sign+0.5*stuff[8]*p0*dt*dt));
+			double j = ((F+F_VdW)*t_step+0.5*dF*t_step*t_step)-m_a*m_b/(m_a+m_b)*(collisionflag*(stuff[1]*p0*(t_step-dt)+stuff[8]*(rad_a+rad_b-d0)*(t_step-dt)+0.5*stuff[8]*p0*(t_step-dt)*(t_step-dt))-(collisionflag-1)*(stuff[1]*p0*dt+0.5*stuff[8]*p0*dt*dt));
 			
 			double jf = collisionflag*length(v_rel)/((pow(rad_a,2)/I[a]+pow(rad_b,2)/I[b])+(1/m_a+1/m_b));
 		
 			double setae_drag = t_step*k_drag*length(v_rel)*((rad[a]+rad[b])*setae_length + pow(setae_length,2.0))*(1 - pow((d-rad[a]-rad[b])/(2.0*setae_length),2)*(3.0 - (d-rad[a]-rad[b])/setae_length))*step(d,(2.0*setae_length+rad[a]+rad[b]));
 			
 			double fdyn = (F*t_step + 0.5*dF*t_step*t_step);
-			if (fabs(jf) > fabs(fdyn*stuff[4])){jf = fdyn*stuff[5];}
+			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}
 			
 			int a_sub = a - n[4]*(a/n[4]);
 			int b_sub = b - n[4]*(b/n[4]);
@@ -113,7 +113,8 @@ __kernel void Fimp(__global const double *q,
 			Vpart_lower[a_sub*n[4]+b_sub] = Vtemp - dot(mu[a],B_b);	
 			
 			Ipart_upper[b_sub*n[4]+a_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
-			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp - dot(mu[b],B_a); 		
+			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp - dot(mu[b],B_a); 	
+
 
 			
 		}

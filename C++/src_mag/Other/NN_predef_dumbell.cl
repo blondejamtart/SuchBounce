@@ -23,11 +23,11 @@ __kernel void neural_net(
 	}
 	else
 	{
-
-		double d_field = sqrt(pow(positions[x].x,2) + pow(positions[x].z,2));
-		mu[x].x = maxmag(positions[x].z/d_field,0.0);
+		double theta = atan(positions[x].z/positions[x].x);
+		mu[x].x = sign(positions[x].x)*maxmag(-sin(2*theta)*cos(theta),0.0);		
 		mu[x].y = 0.0;		
-		mu[x].z = -maxmag(positions[x].x/d_field,0.0);
+		mu[x].z = sign(positions[x].x)*maxmag(cos(2*theta)*cos(theta),0.0);
+	
 	}
 }
 			

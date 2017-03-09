@@ -1,7 +1,7 @@
 #include "../Settings.h"
 
 //Auto-stuff
-double stuff[19] = { 0.0 }; 						// container for various simulation parameters 
+double stuff[18] = { 0.0 }; 						// container for various simulation parameters 
 double t_step = 0;
 const int n_el = (0.5)*n*(n - 1); 					// number of distinct particle interaction matrix elements
 const int n_frames = (max_time * 64 / warp);				// Calculated interval between data samples for output	
@@ -288,7 +288,6 @@ int main()
 	stuff[15] = settings[11];
 	stuff[16] = settings[12]; 
 	stuff[17] = settings[13];
-	stuff[18] = settings[14];
 	if (stuff[0] < 0)
 	{	
 		stuff[4] = 0.0;
@@ -419,10 +418,7 @@ int main()
 	
 		
 	// Build Kernels	
-	cl::Kernel ker_F;
-	if (stuff[0] < 0) { ker_F = kernel_init("F_Hybrid_mat_reversed.cl", "Fimp", ctx, ctxDevices, OpenCL_log); }	
-	else { ker_F = kernel_init("F_Hybrid_mat.cl", "Fimp", ctx, ctxDevices, OpenCL_log); }
-	
+	cl::Kernel ker_F = kernel_init("F_Grav_mat.cl", "Fimp", ctx, ctxDevices, OpenCL_log); 	
 	cl::Kernel ker_T = kernel_init("kinetic.cl", "Tstep", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_S = kernel_init("reduce_mat.cl", "red", ctx, ctxDevices, OpenCL_log);
@@ -898,7 +894,7 @@ int main()
 //					r_mean[0][2] += r[i][2]/n;
 //					whichgroup[i] = 0;
 //				}
-				queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);	
+		
 				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);	
 				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
 				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
@@ -1146,7 +1142,16 @@ int main()
 				queue.enqueueNDRangeKernel(ker_joints, offset, gsize2[0], local_size);
 				queue.enqueueReadBuffer(jointbuff, CL_TRUE, ::size_t (0), ::size_t(2*n*n), joined);
 				int n_groups = net_group_find(joined, groups);	
-								
+				
+//				for(int i = 0; i < n; i++)
+//				{
+//					double temp[n];
+//					for (int j = 0; j < n; j++) {temp[j] = groups[j+n*i];}
+//					tempstring = arraytostring(temp,n);
+//					groups_track << tempstring;
+//				}
+		
+				
 				for (int j = 0; j < n_groups; j++)
 				{
 					int n_group = 0;
@@ -1181,7 +1186,7 @@ int main()
 //					r_mean[0][2] += r[i][2]/n;
 //					whichgroup[i] = 0;
 //				}
-				queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);
+		
 				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);
 				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);
 				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
