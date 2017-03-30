@@ -2,16 +2,16 @@ function C_norm = jacobi_const_norm(r,m,t_step,earth,sun)
 
 l = size(r,1);
 
-r_ec = zeros(l,3,3);
-r_hc = zeros(l,3,3);
-r_bc = zeros(l,3,3);
+r_ec = zeros(l,4,3);
+r_hc = zeros(l,4,3);
+r_bc = zeros(l,4,3);
 C_norm = zeros(l,1);
 R = zeros(l,1);
 theta = zeros(l,1);
 
 if sun ~= -1
     m_sun = m(sun);
-    for i = 1:3
+    for i = 1:4
         r_ec(:,i,:) = r(:,i,:) - r(:,earth,:);
         r_hc(:,i,:) = r(:,i,:) - r(:,sun,:);
     end
@@ -22,7 +22,7 @@ if sun ~= -1
     end
     
     for i = 1:l
-        for j = 1:3
+        for j = 1:4
             r_tmp = reshape(r_ec(i,j,:),1,3);
             r_tmp = r_tmp*[cos(theta(i)),sin(theta(i)), 0 ; -sin(theta(i)), cos(theta(i)), 0; 0, 0, 1];
             r_tmp = r_tmp + m(sun)/(m(sun)+m(earth))*R(i)*[1, 0, 0];

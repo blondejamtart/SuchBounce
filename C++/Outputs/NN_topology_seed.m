@@ -7,7 +7,7 @@ if ~exist('options','var')
     options.synapse_density = 0.2;
     options.mutation_prob = 0.025;
     options.n_pop = 10;
-    options.n = 512;
+    options.n = 384;
     options.max_inhibition = -3;
     options.mutation_size = 1e-2;
 end
@@ -43,22 +43,8 @@ for k = 1:options.n_pop
     cd('../Setup')
     filewrite('weights.vec',weights(k,:,:),'init')
     cd('../src_mag')
-    multiWaitbar('Simulating Nets...',k/options.n_pop);
-    %     sim_prog = 0;
-    %     multiWaitbar('Current Simulation:',sim_prog);
-    %     last_line = '';
-    % std_cout = evalc('!./a.out');
+    multiWaitbar('Simulating Nets...',k/options.n_pop);   
     !./a.out
-    %     while ~strcmp(last_line,'Simulation complete!')
-    %         tempstr = strsplit(std_cout,'\n');
-    %         last_line = tempstr{size(tempstr,2)};
-    %         try
-    %             sim_prog = eval(last_line)/100;
-    %         end
-    %         pause(0.25)
-    %         multiWaitbar('Current Simulation:',sim_prog);
-    %     end
-    %     multiWaitbar('Current Simulation:','close')
     cd('../Outputs')
     if l == 0
         [Tv_temp,l] = fileread('T_v_tracks.dat');
@@ -90,20 +76,6 @@ else
     filewrite('weights.vec',w1,'init')
 end
 cd('../src_mag')
-% sim_prog = 0;
-% multiWaitbar('Current Simulation:',sim_prog);
-% last_line = '';
-% std_cout = evalc('!./a.out')
-% while ~strcmp(last_line,'Simulation complete!')
-%     tempstr = strsplit(std_cout,'\n');
-%     last_line = tempstr{size(tempstr,2)};
-%     try
-%         sim_prog = eval(last_line)/100;
-%     end
-%     pause(0.25)
-%     multiWaitbar('Current Simulation:',sim_prog);
-% end
-% multiWaitbar('Current Simulation:','close')
 !./a.out
 cd('../Outputs')
 temp_r = fileread('Particle_tracks.dat',l,1,options.n);
@@ -122,5 +94,6 @@ for i = 1:options.n
         end
     end
 end
+
 multiWaitbar('Simulating Nets...','close');
-save(['NN_evo_' datestr(date,29) '.mat'])
+%save(['NN_evo_' datestr(date,29) '.mat'])

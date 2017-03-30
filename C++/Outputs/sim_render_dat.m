@@ -6,12 +6,12 @@ trim_outliers = 0;
 %[tempset,~] = fileread('Particle_tracks.dat',l,1,n);
 
 
-render_warp =  8;
-start = 1; %size(tempset,1);
-stop = size(tempset,1);
+render_warp =  4;
+start = 29001; %size(tempset,1);
+stop = 37192; %size(tempset,1);
 
 n = size(tempset,2);
-ig = 512;
+ig = 255;
 frameset = zeros(floor((stop-start)/render_warp),n,3);
 x = 0;
 for i = start:stop
@@ -51,7 +51,7 @@ end
 
 
 
-s = size(frameset,1);
+s = 0.25*size(frameset,1);
 
 if recalc
     r_scaled_xy = zeros(size(frameset,1),size(frameset,2),2);

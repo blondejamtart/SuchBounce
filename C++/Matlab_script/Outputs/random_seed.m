@@ -12,31 +12,33 @@ if nargin == 2
                 d(i,j) = norm(reshape(r(1,i,:) - r(1,j,:),1,3));
                 occupied(j) = heaviside(rad(j) + rad(i) - d(i,j));
             end
-        end        
-        multiWaitbar('Placing...',i/(n-2));
+        end
+        %   multiWaitbar('Placing...',i/(n-2));
     end
-    rad(n-1) = sqrt(n/1024);
-    rad(n) = rad(n-1);    
+    if length(rad) == n-2
+        rad(n-1) = sqrt(n/1024);
+        rad(n) = rad(n-1);
+    end
     r(1,n-1,:) = reshape([8e-2*0.5+rad(n),0,0],1,1,3);
-    r(1,n,:) = reshape([-(8e-2*0.5+rad(n)),0,0],1,1,3);   
+    r(1,n,:) = reshape([-(8e-2*0.5+rad(n)),0,0],1,1,3);
 else
     size = reshape([x_size y_size z_size],1,1,3);
     r = zeros(1,n,3);
-    multiWaitbar('Placing...',0);
+    % multiWaitbar('Placing...',0);
     for i = 2:n
         occupied = 1;
         while any(occupied)
-            r(1,i,:) = size.*(0.5-rand(1,1,3)); 
+            r(1,i,:) = size.*(0.5-rand(1,1,3));
             for j = 1:(i-1)
                 d(i,j) = norm(reshape(r(1,i,:) - r(1,j,:),1,3));
                 occupied(j) = heaviside(rad(j) + rad(i) - d(i,j));
             end
         end
-        multiWaitbar('Placing...',i/n);
+        % multiWaitbar('Placing...',i/n);
     end
     
 end
-multiWaitbar('Placing...','Close');
+%multiWaitbar('Placing...','Close');
 end
 
 

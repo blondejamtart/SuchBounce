@@ -756,7 +756,6 @@ int main()
 	short int prog = 0;
 	//double r_mean[4] = {0.0, 0.0, 0.0, 0.0};
 	double r_mean[n][4];
-	int swap_flag = 0;
 	count[0] = 0;
 	std::string tempstring;
 
@@ -856,10 +855,7 @@ int main()
 
 			//queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*50*n), surf_temp);
 			//tempstring = arraytostring(surf_temp, n);
-			//coverage_tracker << tempstring; 
-
-			tempstring = arraytostring(stuff,11);
-			stuff_tracker << tempstring;	
+			//coverage_tracker << tempstring; 	
 		
 			if (count[0] == NN_eval_freq) 
 			{		
@@ -892,9 +888,16 @@ int main()
 					r_mean[j][2] = r_mean[j][2]/n_group;
 				}
 
-				stuff[3] = swap_flag;
-				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
-	
+//				r_mean[0][0] = 0.0;
+//				r_mean[0][1] = 0.0;
+//				r_mean[0][2] = 0.0;
+//				for (int i = 0; i < n; i++)
+//				{
+//					r_mean[0][0] += r[i][0]/n;
+//					r_mean[0][1] += r[i][1]/n;
+//					r_mean[0][2] += r[i][2]/n;
+//					whichgroup[i] = 0;
+//				}
 				queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);	
 				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);	
 				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
@@ -904,11 +907,10 @@ int main()
 				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, NN_size, local_size); 	// Calculate input neuron activations		
 				queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
 
-				if (swap_flag == n_swaps){ swap_flag = 0; }
-				else			{ swap_flag++; 	}
-								
-				stuff[3] = 2*n_swaps;				
-	
+				if (stuff[3] == n_swaps){ stuff[3] = 0; }
+				else			{ stuff[3]++; 	}
+				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
+				
 				if (write_neurons == 1)
 				{				
 					queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);
@@ -1137,9 +1139,6 @@ int main()
 			//tempstring = arraytostring(surf_temp, n);
 			//coverage_tracker << tempstring; 
 
-			tempstring = arraytostring(stuff,11);
-			stuff_tracker << tempstring;
-
 			if (count[0] == NN_eval_freq) 
 			{
 
@@ -1170,10 +1169,18 @@ int main()
 					r_mean[j][1] = r_mean[j][1]/n_group;
 					r_mean[j][2] = r_mean[j][2]/n_group;
 				}
-				
-				stuff[3] = swap_flag;
-				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+//				std::cout<< " Calcul"; std::cout.flush();
 
+//				r_mean[0][0] = 0.0;
+//				r_mean[0][1] = 0.0;
+//				r_mean[0][2] = 0.0;
+//				for (int i = 0; i < n; i++)
+//				{
+//					r_mean[0][0] += r[i][0]/n;
+//					r_mean[0][1] += r[i][1]/n;
+//					r_mean[0][2] += r[i][2]/n;
+//					whichgroup[i] = 0;
+//				}
 				queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);
 				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);
 				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);
@@ -1183,11 +1190,11 @@ int main()
 				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, NN_size, local_size); 	// Calculate input neuron activations		
 				queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
 
-				if (swap_flag == n_swaps){ swap_flag = 0; }
-				else			{ swap_flag++; 	}
+				if (stuff[3] == n_swaps){ stuff[3] = 0; }
+				else			{ stuff[3]++; 	}
+				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+				//std::cout << stuff[3] << "\n";
 				
-				stuff[3] = 2*n_swaps;				
-
 				if (write_neurons == 1)
 				{				
 					queue.enqueueReadBuffer(activationbuff_t0, CL_TRUE, ::size_t (0), ::size_t(8*net_size*n), surf_temp);

@@ -1,4 +1,6 @@
-function [var, l, errorcount] = fileread(filestr,l,isvectorset,n)
+filestr = 'T_v_tracks.dat';
+nargin = 1;
+
 
 file = fopen(filestr);
 %multiWaitbar('Current File:',0);
@@ -85,5 +87,3 @@ end
 fclose('all');
 var = tempvar;
 %multiWaitbar('Current File:','Close');
-end
-

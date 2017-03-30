@@ -390,9 +390,6 @@ int main()
 	queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 	queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
 
-	tempstring = arraytostring(r,n);
-	r_tracker << tempstring;
-	
 	std::cout << "Kernels & Buffers set: simulation started.\n";
 	//for (int i=0; i<100; i++){std::cout << "-";}
 	std::cout << "\n";
@@ -461,10 +458,10 @@ int main()
 			
 		}
 
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+		queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
 		//std::cout << stuff[0] << ", ";
 		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
+		queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
 		
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
@@ -552,9 +549,9 @@ int main()
 		
 
 		}
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+		queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
 		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
+		queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
 		
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
