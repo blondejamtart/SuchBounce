@@ -12,15 +12,15 @@ __kernel void red_pair(__global double3 *rddp,
 			int x = i-0.5*n_2*a/n[1];							
 				
 			rddp[a+x] += rddp[a+n_2-x-1];
-			rddp[a+n_2-x-1] = (0,0,0);
+			rddp[a+n_2-x-1] = (0.0,0.0,0.0);
 
 			oddp[a+x] += oddp[a+n_2-x-1];
-			oddp[a+n_2-x-1] = (0,0,0);
+			oddp[a+n_2-x-1] = (0.0,0.0,0.0);
 
 			Ipart[a+x] += Ipart[a+n_2-x-1];
-			Ipart[a+n_2-x-1] = 0;
+			Ipart[a+n_2-x-1] = 0.0;
 
 			Vpart[a+x] += Vpart[a+n_2-x-1];
-			Vpart[a+n_2-x-1] = 0;											
+			Vpart[a+n_2-x-1] = 0.0;											
 				
 		}	

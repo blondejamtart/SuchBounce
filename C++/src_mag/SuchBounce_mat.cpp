@@ -1,7 +1,7 @@
 #include "../Settings.h"
 
 //Auto-stuff
-double stuff[19] = { 0.0 }; 						// container for various simulation parameters 
+double stuff[21] = { 0.0 }; 						// container for various simulation parameters 
 double t_step = 0;
 const int n_el = (0.5)*n*(n - 1); 					// number of distinct particle interaction matrix elements
 const int n_frames = (max_time * 64 / warp);				// Calculated interval between data samples for output	
@@ -314,14 +314,13 @@ int main()
 	auto l1temp = new int[n_block[1]*n_block[2]];
 	auto l2temp = new int[n_block[1]*n_block[2]];
 	auto l1_block0 = new int[n_block[1]*n_block[2]];
-	auto l2_block0 = new int[n_block[1]*n_block[2]];
-	
+	auto l2_block0 = new int[n_block[1]*n_block[2]];	
 	
 	int n0[6] = { n_el, n, n , n, n_block[0], n};
 
 	for (int x=0; x<n; x++)
 	{
-		I[x] = (2*m[x]*(pow(rad[x],2))/5);
+		I[x] = (2.0*m[x]*(pow(rad[x],2.0))/5.0);
 		
 	}
 	
@@ -336,8 +335,7 @@ int main()
 			l2_block0[i] = y;			
 		}
 		
-	}
-	
+	}	
 
 	int count[2] = { 0 };
 	int offsets_0[(n/n_block[0])*((n/n_block[0])+1)/2]; 
@@ -469,7 +467,7 @@ int main()
 	cl::Buffer l2buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l2);
 	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l1);
 	
-	cl::Buffer cbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
+	cl::Buffer cbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
 	cl::Buffer mbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), m);
 	cl::Buffer radbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), rad);
 	cl::Buffer Ibuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), I);
@@ -554,8 +552,9 @@ int main()
 	std::ofstream V_tracker(path + "V_tracks.dat", std::ios::out);
 	std::ofstream mu_tracker(path + "mu_tracks.dat", std::ios::out);
 	std::ofstream coverage_tracker(path + "coverage_tracks.dat", std::ios::out);
-	std::ofstream w_tracker(path + "accel_tracks.dat", std::ios::out);
+	std::ofstream v_tracker(path + "v_tracks.dat", std::ios::out);
 
+	std::ofstream stuff_tracker(path + "t_tracks.dat", std::ios::out);
 	std::ofstream r_final(path + "r_final.dat", std::ios::out);
 	std::ofstream v_final(path + "v_final.dat", std::ios::out);
 	std::ofstream w_final(path + "w_final.dat", std::ios::out);
@@ -653,6 +652,7 @@ int main()
 	ker_t_mean.setArg(0,r_obs_buff);
 	ker_t_mean.setArg(1,r_mean_buff);
 	ker_t_mean.setArg(2,groupIDbuff);
+	ker_t_mean.setArg(3,tbuff);
 
 	ker_T.setArg(0, vbuff);
 	ker_T.setArg(1, wbuff);
@@ -681,6 +681,7 @@ int main()
 	ker_NN_run.setArg(3, accelNNbuff);
 	ker_NN_run.setArg(4, tbuff);
 	ker_NN_run.setArg(5, r_obs_buff);
+	ker_NN_run.setArg(6, cbuff);
 
 	if (use_NN != 1)
 	{			
@@ -844,21 +845,17 @@ int main()
 		
 			queue.enqueueReadBuffer(Twbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
-			Tw_tracker << tempstring;
+			Tw_tracker << tempstring;		
 
-			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
-			tempstring = arraytostring(mu, n);
-			mu_tracker << tempstring;
-
-//			queue.enqueueReadBuffer(accelbuff, CL_TRUE, ::size_t (0), vecsize, mu);
-//			tempstring = arraytostring(mu, n);
-//			w_tracker << tempstring;
+			queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t (0), vecsize, v);
+			tempstring = arraytostring(v, n);
+			v_tracker << tempstring;
 
 			//queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*50*n), surf_temp);
 			//tempstring = arraytostring(surf_temp, n);
 			//coverage_tracker << tempstring; 
 
-			tempstring = arraytostring(stuff,11);
+			tempstring = arraytostring(stuff,21);
 			stuff_tracker << tempstring;	
 		
 			if (count[0] == NN_eval_freq) 
@@ -891,15 +888,18 @@ int main()
 					r_mean[j][1] = r_mean[j][1]/n_group;
 					r_mean[j][2] = r_mean[j][2]/n_group;
 				}
-
+				
 				stuff[3] = swap_flag;
+				stuff[19] = 0.0;
+				stuff[20] = 0.0;
 				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
 	
 				queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);	
 				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);	
 				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
 				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
-				
+				queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
+
 				queue.enqueueNDRangeKernel(ker_surface, offset, NN_size, local_size); 	// Calculate surface coverage of each particle		
 				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, NN_size, local_size); 	// Calculate input neuron activations		
 				queue.enqueueNDRangeKernel(ker_NN_run, offset, gsize1, local_size); 	// Evaluate Neural net output	
@@ -919,6 +919,9 @@ int main()
 			}
 			count[0]++;
 						
+			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
+			tempstring = arraytostring(mu, n);
+			mu_tracker << tempstring;
 
 			t_last = t_now;
 		
@@ -1070,8 +1073,8 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
+		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
 		queue.finish();
 
 	}
@@ -1125,19 +1128,15 @@ int main()
 			tempstring = arraytostring(E_temp, n);
 			Tw_tracker << tempstring;
 
-			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
-			tempstring = arraytostring(mu, n);
-			mu_tracker << tempstring;
-
-//			queue.enqueueReadBuffer(accelbuff, CL_TRUE, ::size_t (0), vecsize, mu);
-//			tempstring = arraytostring(mu, n);
-//			w_tracker << tempstring;
+			queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t (0), vecsize, v);
+			tempstring = arraytostring(v, n);
+			v_tracker << tempstring;
 //			
 			//queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*50*n), surf_temp);
 			//tempstring = arraytostring(surf_temp, n);
 			//coverage_tracker << tempstring; 
 
-			tempstring = arraytostring(stuff,11);
+			tempstring = arraytostring(stuff,21);
 			stuff_tracker << tempstring;
 
 			if (count[0] == NN_eval_freq) 
@@ -1170,14 +1169,16 @@ int main()
 					r_mean[j][1] = r_mean[j][1]/n_group;
 					r_mean[j][2] = r_mean[j][2]/n_group;
 				}
-				
 				stuff[3] = swap_flag;
-				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
-
-				queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);
-				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);
-				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);
+				stuff[19] = 0.0;
+				stuff[20] = 0.0;
+				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
+	
+				queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);	
+				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);	
+				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
 				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
+				queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);	
 
 				queue.enqueueNDRangeKernel(ker_surface, offset, NN_size, local_size); 	// Calculate surface coverage of each particle		
 				queue.enqueueNDRangeKernel(ker_NN_inputs, offset, NN_size, local_size); 	// Calculate input neuron activations		
@@ -1195,12 +1196,14 @@ int main()
 					coverage_tracker << tempstring; 
 				}
 				count[0] = 0;
+				if (framecount > 0.8*n_frames){stuff[14] = 0.0;}
+				
 			}
 			count[0]++;
 		
-//			queue.enqueueReadBuffer(accelbuff, CL_TRUE, ::size_t (0), vecsize, w);
-//			tempstring = arraytostring(w, n);
-//			w_tracker << tempstring;
+			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
+			tempstring = arraytostring(mu, n);
+			mu_tracker << tempstring;
 			
 
 			t_last = t_now;
@@ -1351,8 +1354,8 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
+		queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
+		queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
 		queue.finish();
 	}
   	queue.finish();
@@ -1373,6 +1376,7 @@ int main()
 	mu_final << tempstring;
 
 	
+
 
 
 	std::cout << "\nSimulation complete!\n\n";

@@ -70,7 +70,7 @@ __kernel void Fimp(__global const double *q,
 			double jf = collisionflag*length(v_rel)/((pow(rad_a,2)/I[a]+pow(rad_b,2)/I[b])+(1/m_a+1/m_b));
 			
 			double fdyn = (F*t_step + 0.5*dF*t_step*t_step);
-			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}			
+			//if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}			
 			rddp[x] = j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel); 
 			oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);			
 			

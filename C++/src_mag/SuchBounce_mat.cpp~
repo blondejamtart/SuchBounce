@@ -304,6 +304,7 @@ int main()
 	cl::Kernel ker_v_1 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
 	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
 	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices);
+	cl::Kernel ker_0_2 = kernel_init("zero_vec.cl", "zeroer", ctx, ctxDevices);
 	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices);
 	cl::Kernel ker_rot = kernel_init("rotation.cl", "mustep", ctx, ctxDevices);	
 
@@ -480,6 +481,8 @@ int main()
 	ker_0_1.setArg(0, alphabuff);
 	ker_0_1.setArg(1, Intbuff);
 
+	ker_0_2.setArg(0, wbuff);
+
 	ker_v_0.setArg(0, vbuff);
 	ker_v_0.setArg(1, accelbuff);
 	ker_v_1.setArg(0, wbuff);
@@ -549,7 +552,7 @@ int main()
 	double t_now = 0;
 	double t_last = 0;
 	short int prog = 0;
-	//long counter = 0;
+	count[0] = 0;
 	std::string tempstring;
 
 	queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
@@ -609,6 +612,9 @@ int main()
 			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
 			tempstring = arraytostring(mu, n);
 			mu_tracker << tempstring;
+
+			if (count[0] == 128) { queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); count[0] = 0; }
+			count[0]++;
 		
 			//queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 			//tempstring = arraytostring(w, n);
@@ -815,6 +821,9 @@ int main()
 			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
 			tempstring = arraytostring(mu, n);
 			mu_tracker << tempstring;
+			
+			if (count[0] == 128) { queue.enqueueNDRangeKernel(ker_0_2, offset, gsize1, local_size); count[0] = 0; }
+			count[0]++;
 		
 			//queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 			//tempstring = arraytostring(w, n);
@@ -976,6 +985,22 @@ int main()
 		queue.finish();
 	}
   	queue.finish();
+
+	queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
+	tempstring = arraytostring(r,n);
+	r_final << tempstring;
+
+	queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t (0), vecsize, v);
+	tempstring = arraytostring(v,n);
+	v_final << tempstring;
+
+	queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
+	tempstring = arraytostring(w,n);
+	w_final << tempstring;
+	queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
+	tempstring = arraytostring(mu,n);
+	mu_final << tempstring;
+
 
 	std::cout << "\nSimulation complete!\n\n";
 	t_elap = difftime(time(NULL),t0);

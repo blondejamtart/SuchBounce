@@ -47,6 +47,10 @@ Temporary Items
 *.asv
 *.m4v
 *.mat
+*.dat
+*.fig
+*.zip
+*.*~
 /Julia/12_Particle_tracks.dat
 /Julia/bouncy_balls_cl.jl~
 /Julia/bouncy_balls.jl~
@@ -1511,11 +1515,6 @@ Temporary Items
 /C++/Outputs/4/V_tracks.dat
 /C++/Outputs/4/v_tracks.dat
 /C++/Outputs/4/w_tracks.dat
-/C++/Outputs/E_plot.m
-/C++/Outputs/fileread.m
-/C++/Outputs/filewrite.m
-/C++/Outputs/multiWaitbar.m
-/C++/Outputs/sim_render_dat.m
 /C++/Outputs/sim_render_dat.m~
 /Julia/Outputs/micron_dust/1/E_int_tracks.dat
 /Julia/Outputs/micron_dust/1/final_dump.dat
@@ -1741,7 +1740,6 @@ Temporary Items
 /C++/Output_Data/Regolith_half_orbit/V_tracks.dat
 /C++/Output_Data/Regolith_half_orbit/v_tracks.dat
 /C++/Output_Data/Regolith_half_orbit/w_tracks.dat
-/C++/Outputs/sphere_plot.m
 /C++/Outputs/spinup.m
 /C++/AAS/E_int_tracks.dat
 /C++/AAS.rar

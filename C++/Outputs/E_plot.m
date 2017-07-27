@@ -30,8 +30,8 @@ else
     %[Tv,~]=fileread('T_v_tracks.dat',l,0,n);
     n = size(Tv,2);
     multiWaitbar('Total',1/4);
-    %[Tw,~]=fileread('T_w_tracks.dat',l,0,n);
-    Tw = zeros(l,n);
+    [Tw,~]=fileread('T_w_tracks.dat',l,0,n);
+    %Tw = zeros(l,n);
     multiWaitbar('Total',2/4);
     [V,~]= fileread('V_tracks.dat',l,0,n);
     %V = -V;

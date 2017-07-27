@@ -23,7 +23,7 @@ __kernel void red(__global double3 *rddp,
 					Internal[x] += Ipart[abs(b[c+n[1]*x])-1];				
 					V[x] += 0.5*Vpart[abs(b[c+n[1]*x])-1];				
 					accel[x] -= sign(flag)*rddp[abs(b[c+n[1]*x])-1]/m[x];					
-					alpha[x] += oddp[abs(b[c+n[1]*x])-1]*rad[x]/I[x];	
+					alpha[x] += oddp[abs(b[c+n[1]*x])-1]/I[x];	
 				}			
 			}
 				

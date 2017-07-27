@@ -1,5 +1,5 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void Fimp(__global const double *q,			
+__kernel void Fimp(__global double *q,			
 				 	__global const double *m,				  
 				  	__global const double *I,
 				  	__global const int *k,
@@ -13,6 +13,7 @@ __kernel void Fimp(__global const double *q,
 					__global double3 *oddp,
 					__global double *Vpart,
 					__global double *Ipart,
+					__global double *thermpart,
 					__global double *F_track)
 					
 				  
@@ -40,9 +41,10 @@ __kernel void Fimp(__global const double *q,
 			double 	fpe = 1/(pow(cut_off,2) - pow((rad_a+rad_b),2));		
 			double 	fme = 1/(pow(cut_off,2) - pow((rad_b-rad_a),2));					
 					
-			Vpart[x] = (-(m_a*m_b*G)+(q_a*q_b*e0))/d;			
-			double 	F = (((m_a*m_b*G) - (q_a*q_b*e0))/(d*d));
-			double 	dF = ((-2*(m_a*m_b*G) + 2*(q_a*q_b*e0))/(d*d*d))*p;	
+			Vpart[x] = (-(m_a*m_b*G)+(q_a*q_b*e0))/d;
+			VCpart[x] = q_a*q_b*e0/d;			
+			double 	F = -Vpart[x]/d; //(((m_a*m_b*G) - (q_a*q_b*e0))/(d*d));
+			double 	dF = -2*p*Vpart[x]/pow(d,2); //((-2*(m_a*m_b*G) + 2*(q_a*q_b*e0))/(d*d*d))*p;	
 		
 
 			if (d > cut_off) 
@@ -66,14 +68,13 @@ __kernel void Fimp(__global const double *q,
 			double dt = fmax((t_step-(d0-rad_a-rad_b)/p0)*step((d0-rad_a-rad_b)/p0,t_step)*step(0,(d0-rad_a-rad_b)/p0),0);
 			
 			double j = (F*t_step+0.5*dF*t_step*t_step)-m_a*m_b/(m_a+m_b)*(collisionflag*(stuff[1]*p0*(t_step-dt)+stuff[8]*(rad_a+rad_b-d0)*(t_step-dt)+0.5*stuff[8]*p0*(t_step-dt)*(t_step-dt))-(collisionflag-1)*(stuff[1]*p0*dt+0.5*stuff[8]*p0*dt*dt));
-				
+			
 			double jf = collisionflag*length(v_rel)/((pow(rad_a,2)/I[a]+pow(rad_b,2)/I[b])+(1/m_a+1/m_b));
 			
 			double fdyn = (F*t_step + 0.5*dF*t_step*t_step);
 			if (jf > fdyn*stuff[4]){jf = fdyn*stuff[5];}			
 			rddp[x] = j*Runit - collisionflag*step(0,jf)*jf*normalize(v_rel); 
 			oddp[x] = cross(Runit,step(0,jf)*jf*v_rel);			
-			
-
+			thermpart[x] = m_a*m_b/(m_a+m_b)*stuff[1]*(fabs(collisionflag*pow(p0,2)*(t_step-dt)) + fabs((collisionflag-1)*pow(p0,2)*dt)) + fabs(0.5*jf*length(v_rel));  
 			Ipart[x] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);				
 		}

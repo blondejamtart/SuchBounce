@@ -5,39 +5,17 @@ multiWaitbar('Current File:',0);
 i = 1;
 errorcount = 0;
 if nargin == 1
-    tempstr = 'a';
     
-    d = 0;
-    l = -2;
-    
-    while tempstr ~= -1
-        tempstr = fgetl(file);
-        clc
-        l = l + 1;
-        if d == 0
-            try
-                temp = double(eval(['[' tempstr ']']));
-                d = 1;
-            end
-        end
-    end
-    fclose('all');
-    % fid = fopen(filestr, 'rb');
-    % fseek(fid, 0, 'eof');
-    % fileSize = ftell(fid);
-    % frewind(fid);
-    %
-    % data = fread(fid, fileSize, 'uint8');
-    % l = sum(data == 10) + 1;
-    % fclose(fid);
-    % clear data
+    [~,cmdout] = system(['wc -l ' filestr]);
+    l = eval(cmdout(1:(length(cmdout)-length(filestr)-1)));
     
     file = fopen(filestr);
+    tempstr = fgetl(file);
+    temp = eval(tempstr);
     if size(temp,1)~=1
         n = size(temp,1);        
     else
-        n = size(temp,2);
-        l = l + 1;
+        n = size(temp,2);   
     end
     if ~isvector(temp)
         if size(temp,2) == 3
@@ -50,6 +28,8 @@ if nargin == 1
     end
 end
 
+fclose('all');
+file = fopen(filestr);
 
 if nargin == 4
     if isvectorset

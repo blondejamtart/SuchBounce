@@ -6,9 +6,9 @@ trim_outliers = 0;
 %[tempset,~] = fileread('Particle_tracks.dat',l,1,n);
 
 
-render_warp =  4;
-start = 29001; %size(tempset,1);
-stop = 37192; %size(tempset,1);
+render_warp =  16;
+start = 1; %size(tempset,1);
+stop = size(tempset,1);
 
 n = size(tempset,2);
 ig = 255;

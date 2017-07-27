@@ -2,7 +2,7 @@
 r_backup = r;
 S_r = zeros(1,n);
 do_trim = 0;
-threshold_bond_count = 2;
+threshold_bond_count = 4;
 ignore = zeros(1,n);
 if ~exist('genes')
     genes = zeros(1,n);
@@ -35,27 +35,28 @@ surf(rad(1)*x+r(1,1,1),rad(1)*y+r(1,1,2),rad(1)*z+r(1,1,3)-genes(1),1.1*ones(21)
 hold on
 
 
-for i = 2:n-2    
+for i = 2:n   
     surf(rad(i)*x+r(1,i,1),rad(i)*y+r(1,i,2),rad(i)*z+r(1,i,3)-genes(i),1.1*ones(21),'EdgeColor','none')    
 end
-for i = n-1:n
-    
-    surf(rad(i)*x-r(1,i,1),rad(i)*y-r(1,i,2)-genes(i),rad(i)*z-r(1,i,3),1.0*ones(21),'EdgeColor','none')
-    
-end
+% for i = n-1:n
+%     
+%     surf(rad(i)*x+r(1,i,1),rad(i)*y+r(1,i,2)-genes(i),rad(i)*z+r(1,i,3),1.0*ones(21),'EdgeColor','none')
+%     
+% end
 
-surf(0.01*rad(i)*x-r(1,i,1),0.01*rad(i)*y-r(1,i,2)-genes(i),0.01*rad(i)*z-r(1,i,3),1.11*ones(21),'EdgeColor','none')
+surf(0.01*rad(i)*x+r(1,i,1),0.01*rad(i)*y+r(1,i,2)-genes(i),0.01*rad(i)*z+r(1,i,3),1.11*ones(21),'EdgeColor','none')
 r = r_backup;
 clear r_backup
 axis equal
-xlim([-2 2])
-ylim([-2 2])
-zlim([-2 2])
+
+%  xlim([-0.2 0.2])
+%  ylim([-0.2 0.2])
+%  zlim([-0.2 0.2])
 
 material dull
 light('Position',[0 0 5],'Style','local')
 light('Position',[0 0 -5],'Style','local')
-view([0.1 0.1 1])
+view([0.5 0.5 1])
 hold off
 pause(0.05)
 

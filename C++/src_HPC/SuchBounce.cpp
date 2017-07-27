@@ -196,7 +196,7 @@ int main()
 	cl::Device DevChoice;
 	int nDev;
 	cl::Platform::get(&platforms);
-	platforms[0].getDevices(CL_DEVICE_TYPE_ALL, &platformDevices);
+    platforms[0].getDevices(CL_DEVICE_TYPE_ALL, &platformDevices);
 	
 		
 	std::cout << "Please Choose Device:\n\n";
@@ -207,7 +207,7 @@ int main()
 		<< device_name
 		<< std::endl;
 	}
-	std::cin >> nDev;
+	nDev = 0;
 	
 	std::vector<cl::Device> ctxDevices = { platformDevices[nDev] };
 	cl::Context ctx(ctxDevices[0]);
@@ -218,8 +218,7 @@ int main()
 	cl::Kernel ker_F = kernel_init("F_Hybrid.cl", "Fimp", ctx, ctxDevices);
 	cl::Kernel ker_T = kernel_init("kinetic.cl", "Tstep", ctx, ctxDevices);
 	cl::Kernel ker_r = kernel_init("position.cl", "rstep", ctx, ctxDevices);
-	cl::Kernel ker_S = kernel_init("reduce.cl", "red", ctx, ctxDevices);
-	//cl::Kernel ker_Sp = kernel_init("reduce_pairwise.cl", "red_pair", ctx, ctxDevices);
+	cl::Kernel ker_S = kernel_init("reduce.cl", "red", ctx, ctxDevices);	
 	cl::Kernel ker_t = kernel_init("translate.cl", "rmove", ctx, ctxDevices);
 	cl::Kernel ker_t0 = kernel_init("translate_0.cl", "rmove0", ctx, ctxDevices);
 	cl::Kernel ker_v_0 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices);
@@ -261,6 +260,8 @@ int main()
 	cl::Buffer Intincbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n_el));
 	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));	
+	
+	
 
 	
 	// Open output streams
@@ -273,8 +274,10 @@ int main()
 	std::ofstream V_tracker(path + "V_tracks.dat", std::ios::out);
 	std::ofstream v_tracker(path + "v_tracks.dat", std::ios::out);
 	std::ofstream w_tracker(path + "w_tracks.dat", std::ios::out);
-	
-	
+	std::ofstream r_final(path + "r_final.dat", std::ios::out);
+	std::ofstream v_final(path + "v_final.dat", std::ios::out);
+	std::ofstream w_final(path + "w_final.dat", std::ios::out);	
+	std::ofstream stuff_tracker(path + "t_steps.dat", std::ios::out);
 
 	//Set Kernel Arguments
 
@@ -306,21 +309,7 @@ int main()
 	ker_S.setArg(9, Vbuff);
 	ker_S.setArg(10, Vincbuff);
 	ker_S.setArg(11, Intbuff);
-	ker_S.setArg(12, Intincbuff);
-
-	//ker_Sp.setArg(0, vincbuff);
-	//ker_Sp.setArg(1, wincbuff);
-	//ker_Sp.setArg(2, accelbuff);
-	//ker_Sp.setArg(3, alphabuff);
-	//ker_Sp.setArg(4, l3buff);
-	//ker_Sp.setArg(5, mbuff);
-	//ker_Sp.setArg(6, Ibuff);
-	//ker_Sp.setArg(7, radbuff);
-	//ker_Sp.setArg(8, nbuff);
-	//ker_Sp.setArg(9, Vbuff);
-	//ker_Sp.setArg(10, Vincbuff);
-	//ker_Sp.setArg(11, Intbuff);
-	//ker_Sp.setArg(12, Intincbuff);
+	ker_S.setArg(12, Intincbuff);	
 
 	ker_0_0.setArg(0, accelbuff);
 	ker_0_0.setArg(1, Vbuff);
@@ -374,9 +363,11 @@ int main()
 	
 	queue.enqueueNDRangeKernel(ker_F, offset, gsize2, local_size);
 	
-	//queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t (0), ::size_t (32), &F1);
+	queue.enqueueReadBuffer(Ftmp, CL_TRUE, ::size_t (0), ::size_t (32), &F1);
 	
 	double scaleset[4] = { F1[1], F1[1], v_max, v_max };
+
+	//std::cout << F1[1] << "\n";
 	
 	
 	
@@ -439,6 +430,9 @@ int main()
 
 			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
+//			queue.enqueueReadBuffer(Fbuff, CL_TRUE, ::size_t (0), ::size_t(32), scaleset);
+//			tempstring = arraytostring(stuff, 11);
+
 			E_tracker << tempstring;
 
 			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
@@ -457,15 +451,17 @@ int main()
 			tempstring = arraytostring(w, n);
 			w_tracker << tempstring;
 			
+			tempstring = arraytostring(stuff,11);
+			stuff_tracker << tempstring;
 
 			t_last = t_now;
 			
 		}
 
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+		queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
 		//std::cout << stuff[0] << ", ";
 		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
+		queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
 		
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
@@ -491,11 +487,11 @@ int main()
 	
 	//clock_t t_elap = clock()-t0;
 	time_t t_elap = difftime(time(NULL),t0);	
-	float est_time = (1.0/float(t_test))*float(t_elap)*(float(max_time)/stuff[0]);
+	float est_time = (1.0/(double) (t_test))*float(t_elap)*(float(max_time)/fabs(stuff[0]));
 	int est_h = floor(est_time/3600);
 	int est_m = floor((est_time/60)-60*est_h);
 	int est_s = floor(est_time-60*est_m-3600*est_h);
-	std::cout << "First "<< t_test << " steps runtime: " << float(t_elap) << "s; Estimated run time: " << est_h << "h" << est_m << "m" << est_s << "s\n";
+	std::cout << "First " << t_test << " steps runtime: " << float(t_elap) << "s; Estimated run time: " << est_h << "h" << est_m << "m" << est_s << "s\n";
 
 	while (t_now < max_time)
 	{
@@ -524,6 +520,9 @@ int main()
 
 			queue.enqueueReadBuffer(Intbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
+//			queue.enqueueReadBuffer(Fbuff, CL_TRUE, ::size_t (0), ::size_t(32), scaleset);
+//			tempstring = arraytostring(stuff, 11);
+
 			E_tracker << tempstring;
 
 			queue.enqueueReadBuffer(Tvbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
@@ -541,15 +540,18 @@ int main()
 			queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 			tempstring = arraytostring(w, n);
 			w_tracker << tempstring;
-			
+
+			tempstring = arraytostring(stuff,11);
+			stuff_tracker << tempstring;
+					
 
 			t_last = t_now;
 		
 
 		}
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
+		queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
 		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
+		queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
 		
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
@@ -573,20 +575,38 @@ int main()
   
 
 	std::cout << "\nSimulation complete!\n\n";
-	t_elap = difftime(time(NULL),t0);
-	std::cout << "Runtime was: " << float(t_elap) << "s\n";
-	delete [] r;
-	delete [] v;
-	delete [] w;
+	t_elap = difftime(time(NULL),t0);	
+	
 	delete [] q;
 	delete [] m;
-	delete [] rad;	
+	delete [] rad;		
 	delete [] E_temp;
 	delete [] I;
 	delete [] l1;
 	delete [] l2; 
 	delete [] l3;
+	
 
+	queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
+	tempstring = arraytostring(r,n);
+	r_final << tempstring;
+	r_final.flush();	
+	
+	queue.enqueueReadBuffer(vbuff, CL_TRUE, ::size_t (0), vecsize, v);
+	tempstring = arraytostring(v,n);
+	v_final << tempstring;
+	v_final.flush();
+	
+	queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);	
+	tempstring = arraytostring(w,n);
+	w_final << tempstring;
+	w_final.flush();
+
+	delete [] r;
+	delete [] v;
+	delete [] w;	
+
+	std::cout << "Runtime was: " << float(t_elap) << "s\n";
 	//long hold = 0;
 	//while (true)
 	//{

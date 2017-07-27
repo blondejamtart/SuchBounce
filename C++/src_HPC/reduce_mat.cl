@@ -17,10 +17,19 @@ __kernel void red(__global double3 *rddp,
 			Internal[x] = Ipart[n[1]*x];
 			Ipart[n[1]*x] = 0.0;
 			V[x] = 0.5*Vpart[n[1]*x];
-			Vpart[n[1]*x] = 0.0;				
+			Vpart[n[1]*x] = 0.0;	
+			
 			accel[x] = rddp[n[1]*x]/m[x];
-			rddp[n[1]*x] = (0.0, 0.0, 0.0);					
-			alpha[x] = oddp[n[1]*x]*rad[x]/I[x];
-			oddp[n[1]*x] = (0.0, 0.0, 0.0);	
+			//rddp[n[1]*x] = (0.0, 0.0, 0.0);
+			rddp[n[1]*x].x = 0.0;
+			rddp[n[1]*x].y = 0.0;
+			rddp[n[1]*x].z = 0.0;
+			//rddp[n[1]*x] -= rddp[n[1]*x];					
+			alpha[x] = oddp[n[1]*x]/I[x];
+			//oddp[n[1]*x] = (0.0, 0.0, 0.0);
+			oddp[n[1]*x].x = 0.0;
+			oddp[n[1]*x].y = 0.0;
+			oddp[n[1]*x].z = 0.0;
+			//oddp[n[1]*x] -= oddp[n[1]*x];	
 				
 		}	
