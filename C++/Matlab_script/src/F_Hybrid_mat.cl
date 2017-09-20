@@ -42,8 +42,8 @@ __kernel void Fimp(__global const double *q,
 			double 	p0 = dot(vtemp,normalize((r_a-v_a*0.5*t_step)-(r_b-v_b*0.5*t_step)));		
 			int 	collisionflag = step(d0,(rad_a+rad_b));
 
-			double 	cut_off = (rad_a+rad_b) + 0.01*min(rad_a,rad_b);
-			double 	hard_rad = (rad_a+rad_b) - 0.01*min(rad_a,rad_b);		
+			double 	cut_off = (rad_a+rad_b) + 5.0e-07;//0.0025*min(rad_a,rad_b);
+			double 	hard_rad = (rad_a+rad_b) + 1.5e-12;//- 0.0025*min(rad_a,rad_b);		
 			double 	fplus = 1.0/(pow(d,2.0) - pow((rad_a+rad_b),2.0));		
 			double 	fminus = 1.0/(pow(d,2.0) - pow((rad_b-rad_a),2.0));
 			double 	fpe = 1.0/(pow(cut_off,2.0) - pow((rad_a+rad_b),2.0));		

@@ -25,6 +25,5 @@ __kernel void red_pair(__global double3 *rddp,
 			Vpart[a+n_2-x-1] = 0.0;	
 			
 			pheremone_part[a+x] += pheremone_part[a+n_2-x-1];
-			pheremone_part[a+n_2-x-1] = 0.0; 										
-				
+			pheremone_part[a+n_2-x-1] = 0.0; 
 		}	

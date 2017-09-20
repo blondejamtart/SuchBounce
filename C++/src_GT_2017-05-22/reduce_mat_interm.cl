@@ -27,7 +27,5 @@ __kernel void red_copy(__global double3 *rddp,
 			accelsum[row+column] = rddp[n[4]*x];
 			rddp[n[4]*x] = (0.0, 0.0, 0.0);					
 			alphasum[row+column] = oddp[n[4]*x];
-			oddp[n[4]*x] = (0.0, 0.0, 0.0);	
-
-				
+			oddp[n[4]*x] = (0.0, 0.0, 0.0);					
 		}	

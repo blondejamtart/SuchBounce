@@ -212,6 +212,8 @@ int main()
 	auto joined = new short[n][n];
 	auto weights = new double[net_size][net_size];
 	auto gene_list = new int[n];
+	auto gene_buff = new int[n];
+	auto which_round = new int[n];
 	std::string path;
 	std::string root = "../Setup";
 
@@ -314,8 +316,7 @@ int main()
 	stuff[17] = settings[13];
 	stuff[18] = settings[14];
 
-	stuff[19] =  NN_eval_freq*warp/(64*settings[1]);
-	std::cout << stuff[19] << "\n";
+	stuff[19] =  128.0; //NN_eval_inter/stuff[0];
 	
 	if (stuff[0] < 0)
 	{	
@@ -374,18 +375,18 @@ int main()
 	offsets_0[0] = 0;
 	for (int p = 0; p<(n/n_block[0]); p++)
 	{
-		for (int q = 0; q<p; q++)
+		for (int p1 = 0; p1<p; p1++)
 		{
 			offsets_0[count[1]+1] = offsets_0[count[1]] + n_block[0]*n_block[0];
 			l3[count[1]] = p;
-			l4[count[1]] = q;
+			l4[count[1]] = p1;
 			count[1]++;
         		for (int s = 0; s<n_block[0]; s++)
 			{
             			for (int t = 0; t<n_block[0]; t++)
 				{
                 			l1[count[0]] = p*n_block[0] + t;
-                			l2[count[0]] = q*n_block[0] + (s + t - n_block[0]*floor((s+t)/n_block[0]));
+                			l2[count[0]] = p1*n_block[0] + (s + t - n_block[0]*floor((s+t)/n_block[0]));
                 			count[0]++;
 				}
 			}
@@ -464,7 +465,7 @@ int main()
 	cl::Kernel ker_v_1 = kernel_init("velocity.cl", "vstep", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_0 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_0_1 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);
-	cl::Kernel ker_0_2 = kernel_init("zero_vec.cl", "zeroer", ctx, ctxDevices, OpenCL_log);	
+	cl::Kernel ker_0_2 = kernel_init("zero.cl", "zeroer", ctx, ctxDevices, OpenCL_log);	
 	cl::Kernel ker_0_init = kernel_init("int_zero.cl", "WHYUNO0", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_reset_vec = kernel_init("reset_vec.cl", "reset", ctx, ctxDevices, OpenCL_log);
 	cl::Kernel ker_scale = kernel_init("time_scaler.cl", "Scale", ctx, ctxDevices, OpenCL_log);
@@ -487,6 +488,7 @@ int main()
 	cl::Buffer l1buff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(4*n_el), l1);
 	
 	cl::Buffer cbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
+	cl::Buffer deltacbuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);
 	cl::Buffer mbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), m);
 	cl::Buffer radbuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), rad);
 	cl::Buffer Ibuff(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), I);
@@ -553,7 +555,7 @@ int main()
 	cl::Buffer Intbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Tvbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));
 	cl::Buffer Twbuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));	
-	cl::Buffer pheremonebuff(ctx, CL_MEM_READ_WRITE, ::size_t (8*n));	
+	cl::Buffer pheremonebuff(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, ::size_t(8*n), q);	
 
 	cl::Buffer jointbuff(ctx, CL_MEM_READ_WRITE, ::size_t(2*n*n));
 	
@@ -569,6 +571,7 @@ int main()
 	std::ofstream coverage_tracker(path + "coverage_tracks.dat", std::ios::out);
 	std::ofstream w_tracker(path + "w_tracks.dat", std::ios::out);
 	std::ofstream q_tracker(path + "q_tracks.dat", std::ios::out);
+	std::ofstream dq_tracker(path + "delta_q_tracks.dat", std::ios::out);
 	std::ofstream pheremone_tracker(path + "pheremone_tracks.dat", std::ios::out);
 
 	std::ofstream stuff_tracker(path + "t_tracks.dat", std::ios::out);
@@ -608,6 +611,7 @@ int main()
 	ker_F.setArg(20, nbuff);
 	ker_F.setArg(22, pheremoneincbuff[a*(n/n_block[0])+b]);
 	ker_F.setArg(23, pheremoneincbuff[b*(n/n_block[0])+a]);
+	ker_F.setArg(24, deltacbuff);
 		
 	
 	ker_S.setArg(0, vincbuff[0]);
@@ -643,8 +647,6 @@ int main()
 	ker_0_0.setArg(1, Vbuff);
 	ker_0_1.setArg(0, alphabuff);
 	ker_0_1.setArg(1, Intbuff);
-
-	ker_0_2.setArg(0, wbuff);	
 
 	ker_0_init.setArg(1, gsbuff);
 	ker_0_init.setArg(0, oppbuff);	
@@ -683,7 +685,6 @@ int main()
 	ker_T.setArg(3, Twbuff);
 	ker_T.setArg(4, mbuff);
 	ker_T.setArg(5, Ibuff);
-	
 
 	ker_comms.setArg(0, rbuff);
 	ker_comms.setArg(1, radbuff);
@@ -704,6 +705,7 @@ int main()
 	ker_interact.setArg(6, rbuff);
 	ker_interact.setArg(7, tbuff);
 	ker_interact.setArg(8, genes);
+	ker_interact.setArg(9, deltacbuff);
 
 	ker_joints.setArg(0, l1buff);
 	ker_joints.setArg(1, l2buff);
@@ -744,12 +746,14 @@ int main()
 	ker_scale.setArg(1, Fbuff);		
 
 	// Initialise simulation
-	double t_now = 0;	
-	double t_last = 0;
+	double t_now = 0.0;	
+	double t_last = 0.0;
+	double t_last_NN = 0.0;
 	if (stuff[0] < 0) { t_now = max_time; t_last = max_time;}
 	short int prog = 0;
 	double r_mean[n][4];
 	int swap_flag = 0;
+	int GT_round_count = 0;
 	count[0] = 0;
 	std::string tempstring;
 
@@ -777,8 +781,7 @@ int main()
 
 
 	for(int init_x=0; init_x<t_test; init_x ++)
-	{	
-		
+	{			
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size);	// Rotational Kick
@@ -789,7 +792,7 @@ int main()
 		if (( t_now == 0 || fabs(t_now - t_last) >= (1.0 / 64.0)*warp) && framecount < n_frames)
 		{
 			framecount++;
-			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}			
+			if (floor(100 * framecount / n_frames) > 4+floor(prog)){prog = floor(100 * framecount / n_frames); std::cout << prog << "%\n";}	
 			
 			queue.enqueueReadBuffer(rbuff, CL_TRUE, ::size_t (0), vecsize, r);
 			tempstring = arraytostring(r,n);
@@ -809,92 +812,117 @@ int main()
 		
 			queue.enqueueReadBuffer(Twbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
-			Tw_tracker << tempstring;	
-
+			Tw_tracker << tempstring;
+			
 			queue.enqueueReadBuffer(cbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), q);
 			tempstring = arraytostring(q, n);
 			q_tracker << tempstring;
+
+			queue.enqueueReadBuffer(deltacbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
+//			tempstring = arraytostring(E_temp, n);
+			tempstring = arraytostring(gene_buff, n);
+			dq_tracker << tempstring;
 		
 			queue.enqueueReadBuffer(pheremonebuff, CL_TRUE, ::size_t (0), ::size_t(8*n),E_temp);
 			tempstring = arraytostring(E_temp, n);
 			pheremone_tracker << tempstring;
+			
+//			queue.enqueueReadBuffer(gsbuff, CL_TRUE, ::size_t (0), ::size_t(4*n),int_temp);
+//			tempstring = arraytostring(int_temp, n);
+//			pheremone_tracker << tempstring;
 		
-			//queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
+//			queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 //			tempstring = arraytostring(w, n);
 //			w_tracker << tempstring;
-
+//			
 			//queue.enqueueReadBuffer(coveragebuff, CL_TRUE, ::size_t (0), ::size_t(8*50*n), surf_temp);
 			//tempstring = arraytostring(surf_temp, n);
 			//coverage_tracker << tempstring; 
 
 			tempstring = arraytostring(stuff,21);
-			stuff_tracker << tempstring;	
-		
-			if (count[0] == NN_eval_freq) 
-			{		
-				int whichgroup[n];			
-				queue.enqueueNDRangeKernel(ker_joints, offset, gsize2[0], local_size);
-				queue.enqueueReadBuffer(jointbuff, CL_TRUE, ::size_t (0), ::size_t(2*n*n), joined);
-				int n_groups = net_group_find(joined, groups);		
-										
-				for (int j = 0; j < n_groups; j++)
-				{
-					int n_group = 0;
-					r_mean[j][0] = 0.0;
-					r_mean[j][1] = 0.0;
-					r_mean[j][2] = 0.0;
-				
-					int i = 0;
-					while (groups[i+j*n] != 0 && n_group < n)
-					{
-						int k = groups[i+j*n] - 1;
-						whichgroup[k] = j;
-						r_mean[j][0] += r[k][0];
-						r_mean[j][1] += r[k][1];
-						r_mean[j][2] += r[k][2];
-						n_group++;
-						i++;
-					}
-					r_mean[j][0] = r_mean[j][0]/n_group;
-					r_mean[j][1] = r_mean[j][1]/n_group;
-					r_mean[j][2] = r_mean[j][2]/n_group;
-				}
-								
-				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
-	
-				queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);	
-				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);	
-				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
-				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
-				queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
-				
-				count[0] = 0;
-			}
-			count[0]++;
-						
-//			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
-//			tempstring = arraytostring(mu, n);
-//			mu_tracker << tempstring;
-
+			stuff_tracker << tempstring;
+			
 			t_last = t_now;
-		
-
 		}
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
-		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
+		if ((t_now - t_last_NN) > NN_eval_inter) 
+		{
+			t_last_NN  = t_now;
+			int whichgroup[n];						
+			queue.enqueueNDRangeKernel(ker_joints, offset, gsize2[0], local_size);
+			queue.enqueueReadBuffer(jointbuff, CL_TRUE, ::size_t (0), ::size_t(2*n*n), joined);
+			int n_groups = net_group_find(joined, groups);	
+							
+			for (int j = 0; j < n_groups; j++)
+			{
+				int n_group = 0;
+				r_mean[j][0] = 0.0;
+				r_mean[j][1] = 0.0;
+				r_mean[j][2] = 0.0;
+			
+				int i = 0;
+				while (groups[i+j*n] != 0 && n_group < n)
+				{
+					int k = groups[i+j*n] - 1;
+					whichgroup[k] = j;
+					r_mean[j][0] += r[k][0];
+					r_mean[j][1] += r[k][1];
+					r_mean[j][2] += r[k][2];
+					n_group++;
+					i++;
+				}
+				r_mean[j][0] = r_mean[j][0]/n_group;
+				r_mean[j][1] = r_mean[j][1]/n_group;
+				r_mean[j][2] = r_mean[j][2]/n_group;
+			}
+			
+			if (GT_round_count == 0) 
+			{ 
+				for (int j = 0; j < n; j++)
+				{
+					which_round[j] = std::rand() % 10 + 1; 
+					gene_buff[j] = 0;
+				}
+				GT_round_count = 10;
+			}
+			else
+			{
+				for (int j = 0; j < n; j++)
+				{
+					if (which_round[j] == 1) 
+					{ 
+						gene_buff[j] = gene_list[j]; 
+						which_round[j] = 0;
+					}
+					else 
+					{ 
+						gene_buff[j] = 0;
+						if (which_round != 0) { which_round[j]--; }
+					}
+				}
+			}
+						
+			GT_round_count--;
+			queue.enqueueWriteBuffer(genes, CL_TRUE, ::size_t (0), ::size_t(4*n), gene_buff);	
+			queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
+			queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);	
+			queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);	
+			queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
+			queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
+				
+			queue.enqueueNDRangeKernel(ker_comms, offset, gsize1, local_size);		// interparticle communications					
+			queue.enqueueNDRangeKernel(ker_interact, offset, gsize2[0], local_size);	// Interparticle actions					
+			
+			queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);		
+		}
+		t_now += stuff[0];		
 		
 		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
 		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
-		
-		
-		
-	
 		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
-		queue.enqueueNDRangeKernel(ker_rot_0, offset, gsize1, local_size); 		// Spin
-		queue.enqueueNDRangeKernel(ker_rot_1, offset, gsize1, local_size); 		// Spin
+		queue.enqueueNDRangeKernel(ker_rot_0, offset, gsize1, local_size); 	// Spin
+		queue.enqueueNDRangeKernel(ker_rot_1, offset, gsize1, local_size); 	// Spin
 
-		queue.enqueueNDRangeKernel(ker_interact, offset, gsize2[0], local_size);	// Interparticle actions
+//		queue.enqueueNDRangeKernel(ker_interact, offset, gsize2[0], local_size);	// Interparticle actions
 
 		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 		{
@@ -915,9 +943,7 @@ int main()
 			ker_F.setArg(23, pheremoneincbuff[b*(n/n_block[0])+a]);		
 							
 			if (a == b) {queue.enqueueNDRangeKernel(ker_F, offset, gsize2[1], local_size); } 		// Compute force
-			else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 
-				
-			
+			else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 			
 		}	
 		n0[3] = n_block[0];
 		n0[2] = n_block[0];
@@ -955,14 +981,12 @@ int main()
 		
 		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 		{	
-
 			int a = l3[i];
 			int b = l4[i];				
 			cl::NDRange gsizeRed(n_block[0]);
 	
 			if (a != b)
-			{
-			
+			{			
 				queue.flush();
 				ker_S_interm.setArg(0, vincbuff[a*(n/n_block[0])+b]);
 				ker_S_interm.setArg(1, wincbuff[a*(n/n_block[0])+b]);
@@ -981,8 +1005,7 @@ int main()
 				ker_S_interm.setArg(9, offset_buff_1[b*(n/n_block[0])+a]);
 				ker_S_interm.setArg(11, pheremoneincbuff[b*(n/n_block[0])+a]);			
 					
-				queue.enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);
-							
+				queue.enqueueNDRangeKernel(ker_S_interm, offset, gsizeRed, local_size);							
 			}
 			else
 			{
@@ -1026,16 +1049,11 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
-		
-		queue.enqueueNDRangeKernel(ker_comms, offset, gsize1, local_size);	// interparticle communications	
+		//queue.enqueueNDRangeKernel(ker_comms, offset, gsize1, local_size);	// interparticle communications	
 	
 		queue.finish();
-
-	}
+	}	
 	
-	//clock_t t_elap = clock()-t0;
 	time_t t_elap = difftime(time(NULL),t0);	
 	float est_time = (1.0/(double) (t_test))*float(t_elap)*(float(max_time)/fabs(stuff[0]));
 	int est_h = floor(est_time/3600);
@@ -1076,14 +1094,23 @@ int main()
 			queue.enqueueReadBuffer(Twbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
 			tempstring = arraytostring(E_temp, n);
 			Tw_tracker << tempstring;
-
+			
 			queue.enqueueReadBuffer(cbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), q);
 			tempstring = arraytostring(q, n);
 			q_tracker << tempstring;
+
+			queue.enqueueReadBuffer(deltacbuff, CL_TRUE, ::size_t (0), ::size_t(8*n), E_temp);
+			//tempstring = arraytostring(E_temp, n);
+			tempstring = arraytostring(gene_buff, n);
+			dq_tracker << tempstring;
 		
 			queue.enqueueReadBuffer(pheremonebuff, CL_TRUE, ::size_t (0), ::size_t(8*n),E_temp);
 			tempstring = arraytostring(E_temp, n);
 			pheremone_tracker << tempstring;
+			
+//			queue.enqueueReadBuffer(gsbuff, CL_TRUE, ::size_t (0), ::size_t(4*n),int_temp);
+//			tempstring = arraytostring(int_temp, n);
+//			pheremone_tracker << tempstring;
 		
 //			queue.enqueueReadBuffer(wbuff, CL_TRUE, ::size_t (0), vecsize, w);
 //			tempstring = arraytostring(w, n);
@@ -1095,73 +1122,94 @@ int main()
 
 			tempstring = arraytostring(stuff,21);
 			stuff_tracker << tempstring;
-
-			if (count[0] == NN_eval_freq) 
-			{
-
-				int whichgroup[n];						
-				queue.enqueueNDRangeKernel(ker_joints, offset, gsize2[0], local_size);
-				queue.enqueueReadBuffer(jointbuff, CL_TRUE, ::size_t (0), ::size_t(2*n*n), joined);
-				int n_groups = net_group_find(joined, groups);	
-								
-				for (int j = 0; j < n_groups; j++)
-				{
-					int n_group = 0;
-					r_mean[j][0] = 0.0;
-					r_mean[j][1] = 0.0;
-					r_mean[j][2] = 0.0;
-				
-					int i = 0;
-					while (groups[i+j*n] != 0 && n_group < n)
-					{
-						int k = groups[i+j*n] - 1;
-						whichgroup[k] = j;
-						r_mean[j][0] += r[k][0];
-						r_mean[j][1] += r[k][1];
-						r_mean[j][2] += r[k][2];
-						n_group++;
-						i++;
-					}
-					r_mean[j][0] = r_mean[j][0]/n_group;
-					r_mean[j][1] = r_mean[j][1]/n_group;
-					r_mean[j][2] = r_mean[j][2]/n_group;
-				}
-				
-				queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
-	
-				queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);	
-				queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);	
-				queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
-				queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
-				queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);	
-				
-				count[0] = 0;			
-				
-			}
-			count[0]++;
-		
-//			queue.enqueueReadBuffer(mubuff, CL_TRUE, ::size_t (0), vecsize, mu);
-//			tempstring = arraytostring(mu, n);
-//			mu_tracker << tempstring;
 			
-
 			t_last = t_now;
-		
-
 		}
-		//queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
-		t_now += stuff[0];
-		//queue.enqueueNDRangeKernel(ker_scale,offset,local_size,local_size); 	// Set new time step
+		if ((t_now - t_last_NN) > NN_eval_inter) 
+		{
+			t_last_NN  = t_now;
+			int whichgroup[n];						
+			queue.enqueueNDRangeKernel(ker_joints, offset, gsize2[0], local_size);
+			queue.enqueueReadBuffer(jointbuff, CL_TRUE, ::size_t (0), ::size_t(2*n*n), joined);
+			int n_groups = net_group_find(joined, groups);	
+							
+			for (int j = 0; j < n_groups; j++)
+			{
+				int n_group = 0;
+				r_mean[j][0] = 0.0;
+				r_mean[j][1] = 0.0;
+				r_mean[j][2] = 0.0;
+			
+				int i = 0;
+				while (groups[i+j*n] != 0 && n_group < n)
+				{
+					int k = groups[i+j*n] - 1;
+					whichgroup[k] = j;
+					r_mean[j][0] += r[k][0];
+					r_mean[j][1] += r[k][1];
+					r_mean[j][2] += r[k][2];
+					n_group++;
+					i++;
+				}
+				r_mean[j][0] = r_mean[j][0]/n_group;
+				r_mean[j][1] = r_mean[j][1]/n_group;
+				r_mean[j][2] = r_mean[j][2]/n_group;
+			}
+			
+			
+			
+			if (GT_round_count == 0) 
+			{ 
+				for (int j = 0; j < n; j++)
+				{
+					which_round[j] = std::rand() % 10 + 1; 
+					gene_buff[j] = 0;
+				}
+				GT_round_count = 10;
+			}
+			else
+			{
+				for (int j = 0; j < n; j++)
+				{
+					if (which_round[j] == 1) 
+					{ 
+						gene_buff[j] = gene_list[j]; 
+						which_round[j] = 0;
+					}
+					else 
+					{ 
+						gene_buff[j] = 0;
+						if (which_round != 0) { which_round[j]--; }
+					}
+				}
+			}
+						
+			GT_round_count--;
+			
+			queue.enqueueWriteBuffer(genes, CL_TRUE, ::size_t (0), ::size_t(4*n), gene_buff);	
+			queue.enqueueWriteBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);				
+			queue.enqueueWriteBuffer(r_obs_buff, CL_TRUE, ::size_t (0), vecsize, r);	
+			queue.enqueueWriteBuffer(groupIDbuff, CL_TRUE, ::size_t (0), ::size_t(4*n), whichgroup);	
+			queue.enqueueWriteBuffer(r_mean_buff, CL_TRUE, ::size_t (0), ::size_t(32*n), r_mean);	
+			queue.enqueueNDRangeKernel(ker_t_mean, offset, gsize1, unitsize);		// Make positions relative to mean	
+				
+			queue.enqueueNDRangeKernel(ker_comms, offset, gsize1, local_size);		// interparticle communications					
+			queue.enqueueNDRangeKernel(ker_interact, offset, gsize2[0], local_size);	// Interparticle actions					
+			
+			queue.enqueueReadBuffer(tbuff, CL_TRUE, ::size_t(0), sizeof(stuff), stuff);
 		
-		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 	// zero things
-		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 	// zero things
+		}	
+			
+		t_now += stuff[0];		
 		
+		queue.enqueueNDRangeKernel(ker_0_0, offset, gsize1, local_size); 		// zero things
+		queue.enqueueNDRangeKernel(ker_0_1, offset, gsize1, local_size); 		// zero things		
 	
-		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 		// Drift
+		queue.enqueueNDRangeKernel(ker_r, offset, gsize1, local_size); 			// Drift
 		queue.enqueueNDRangeKernel(ker_rot_0, offset, gsize1, local_size); 		// Spin
 		queue.enqueueNDRangeKernel(ker_rot_1, offset, gsize1, local_size); 		// Spin
 
-		queue.enqueueNDRangeKernel(ker_interact, offset, gsize2[0], local_size);	// Interparticle actions
+//		queue.enqueueNDRangeKernel(ker_interact, offset, gsize2[0], local_size);	// Interparticle actions
 
 		for (int i = 0; i < 0.5*(n/n_block[0])*(n/n_block[0]+1); i++)
 		{
@@ -1183,8 +1231,7 @@ int main()
 			ker_F.setArg(23, pheremoneincbuff[b*(n/n_block[0])+a]);
 							
 			if (a == b) {queue.enqueueNDRangeKernel(ker_F, offset, gsize2[1], local_size); } 		// Compute force
-			else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 
-			
+			else { queue.enqueueNDRangeKernel(ker_F, offset, gsize2[2], local_size); } 	
 		}
 		n0[3] = n_block[0];
 		n0[2] = n_block[0];
@@ -1228,8 +1275,7 @@ int main()
 			cl::NDRange gsizeRed(n_block[0]);
 	
 			if (a != b)
-			{
-			
+			{			
 				queue.flush();
 				ker_S_interm.setArg(0, vincbuff[a*(n/n_block[0])+b]);
 				ker_S_interm.setArg(1, wincbuff[a*(n/n_block[0])+b]);
@@ -1292,10 +1338,7 @@ int main()
 		queue.enqueueNDRangeKernel(ker_v_0, offset, gsize1, local_size); 	// Translational Kick
 		queue.enqueueNDRangeKernel(ker_v_1, offset, gsize1, local_size); 	// Rotational Kick
 
-		//queue.enqueueNDRangeKernel(ker_t, offset, gsize1m, unitsize);		// Make positions relative to particle 1
-		//queue.enqueueNDRangeKernel(ker_t0, offset, unitsize, unitsize);	
-
-		queue.enqueueNDRangeKernel(ker_comms, offset, gsize1, local_size);	// interparticle communications	
+//		queue.enqueueNDRangeKernel(ker_comms, offset, gsize1, local_size);	// interparticle communications	
 		
 		queue.finish();
 	}
@@ -1338,7 +1381,10 @@ int main()
 	delete [] l3;
 	delete [] surf_temp;
 	delete [] weights;
-	delete [] groups;	
+	delete [] groups;
+	delete [] gene_list;
+	delete [] gene_buff;
+	delete [] which_round;	
 
 	return 0;
 }

@@ -14,8 +14,8 @@
 
 //Settings:
 
-const int n = 2048;
-const double settings[15] = {pow(2,2), pow(2.0,-12), pow(2.0,-12), 8.0e-02, 3.0e-16, 0, 0.5, 0.4, 2.0e-01, pow(2.0,-6), 2.0e-18, 4.0e-03, 0.0e+00, 3.0e-02, 1.0e-2};
+const int n = 512;
+const double settings[15] = {pow(2,9), pow(2.0,-12), pow(2.0,-12), 8.0e+00, 3.0e-16, 0, 0.5, 0.4, 2.0e+05, pow(2.0,-0), 2.0e-18, 4.0e-03, 0.0e+00, 3.0e-02, 1.0e-2};
 // [t_max, dt_init, dt_max, soft body energy loss, VdW attraction, VdW repulsion (Deprecated), mu_static, mu_dynamic, soft body parameter, render warp, magnetic force constant, setae length, drag constant...
 //, particle comms range, VdW pseudopotential cut-off] 
  
@@ -30,14 +30,14 @@ int platform_choice = 0;
 int block_size = 512; // Size of blocks for partitioning of particle interaction calculations 
 int write_neurons = 0;
 int t_test = pow(2.0,8); // Number of integraiton steps to run for time estimation 
-double Neural_eval_inter = pow(2,14); // length of time (seconds) after which rotational kinetic energy is dumped/zeroed
+double NN_eval_inter = pow(2,-8); // length of time (seconds) after which rotational kinetic energy is dumped/zeroed
 int use_NN = 0; // toggle between using Neural net to control magnetic dipole moment or using analytically defined 
 
 //----------------------------------------------------------------------------------//
 
 const double warp = settings[9];
-int NN_eval_freq = ((Neural_eval_inter*64)/warp);
-double ranges[2] =  { 10e-2 , 15e-2 };
+int NN_eval_freq = ((NN_eval_inter*64)/warp);
+double ranges[2] =  { 5e-2 , 15e-2 };
 const double max_time = settings[0];
 int n_block[3] = { block_size, block_size-1, block_size/2 };
 

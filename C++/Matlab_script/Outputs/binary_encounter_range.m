@@ -5,15 +5,15 @@
 %for n = 64:32:64
 n = 256;
 theta = 0.75*pi;
-for R_encounter = 6.371e6:-6.371e6:3*6.371e6    
+for R_encounter = 6.371e6:6.371e6:3*6.371e6    
     
     [r_offset, v_offset, settings, settings_length] = binary_orbit_find(R_encounter,0.0);
     r_temp = zeros(1,n,3);
     v_temp = zeros(1,n,3);
     w_temp = zeros(1,n,3);
     settings{17} = ['const int n = ' num2str(n) ';'];
-    settings{18} = ['const double settings[14] = {pow(2,12), pow(2.0,-4), pow(2.0,-4),'...
-       '1e-02, 2.5e-15, 0, 0.5, 0.4, 1.0e-02, pow(2.0,8), 2.0e-18, 1.0e-03, 8.0e+04, 3.0e-02};'];
+    settings{18} = ['const double settings[14] = {pow(2,10), pow(2.0,-10), pow(2.0,-10),'...
+       ' 1e-00, 2.0e-14, 0, 0.5, 0.4, 1.0e-00, pow(2.0,2), 2.0e-18, 1.0e-03, 8.0e+04, 3.0e-02};'];
    settings{26} = 'const int workgroup_size = 64; // set around 32-64 for GPU, 1 for CPU'; 
    settings{29} = ['int block_size = ' num2str(n) '; // Size of blocks for partitioning of particle interaction calculations '];
     
@@ -34,7 +34,7 @@ for R_encounter = 6.371e6:-6.371e6:3*6.371e6
         filewrite([root '/Setup/q.vec'],zeros(1,n),'init')
         filewrite([root '/Setup/m.vec'],[1e-2*ones(1,n-2) 1e4*(sqrt(n/1024))^3 1e4*(sqrt(n/1024))^3],'init')
         filewrite([root '/Setup/rad.vec'],[1e-2*ones(1,n-2) sqrt(n/1024) sqrt(n/1024)],'init')
-        r = random_seed(n,[1e-2*ones(1,n-2) sqrt(n/1024) sqrt(n/1024)]);
+        %r = random_seed(n,[(1e-2+5e-7)*ones(1,n-2) sqrt(n/1024)+5e-7 sqrt(n/1024)+5e-7]);
         
         filewrite([root '/Setup/r.vec'],r,'init')
         filewrite([root '/Setup/v.vec'],zeros(1,n,3),'init')
@@ -47,7 +47,7 @@ for R_encounter = 6.371e6:-6.371e6:3*6.371e6
         filewrite(['../Setup/' 'v.vec'],zeros(1,n,3),'init')
         filewrite(['../Setup/' 'w.vec'],zeros(1,n,3),'init')
         cnt = 0;
-        while cnt < 4
+        while cnt < 12
             cd('../src')
             !./a.out
             cd('../Outputs')

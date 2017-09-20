@@ -25,11 +25,10 @@ __kernel void comms(__global double3 *r,
 						
 				for (int i = 0; i < n[5]; i++)
 				{										
-					double d = distance(r[x],r[i]);
-					//if ((i != x) && (d < ranges[0]) && d > (rad[x] + rad[i]))// random
+					double d = distance(r[x],r[i]);					
 					if ((i != x) && (d < ranges[0]) && d > (rad[x] + rad[i]) && (genes[x] != genes[i]) && genes[i] != 0)//genetic
 					{						
-						double optimality =  pow(pheremones[x],-1.0)*exp(-1.0*pow((d-0.5*ranges[0])/(rad[x]+rad[i]),2.0));//CHANGE TACTIC HERE AND ABOVE
+						double optimality =  exp(-10.00*pow(pheremones[x],3.0))*(-1.0e+00)*(d-rad[x]-rad[i])*(d-ranges[0])/(0.25*(pow(rad[x]+rad[i],2.0)+pow(ranges[0],2.0)-(rad[x]+rad[i])*2.0*ranges[0])); //exp(-1.0*pow((d-0.5*ranges[0])/(rad[x]+rad[i]),2.0));//CHANGE TACTIC HERE AND ABOVE
 
 						if ((optimality > last_optimality) && (gespielt[i] == 0))			
 						{

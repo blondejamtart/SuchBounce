@@ -16,7 +16,7 @@ __kernel void red(__global double3 *rddp,
 		{
 			int x = get_global_id(0);			
 							
-			pheremones[x] = pheremonepart[n[1]*x];	
+			pheremones[x] = 0.995*pheremones[x] + pheremonepart[n[1]*x];	
 			pheremonepart[n[1]*x] = 0.0;	
 			Internal[x] = Ipart[n[1]*x];
 			Ipart[n[1]*x] = 0.0;
@@ -25,6 +25,5 @@ __kernel void red(__global double3 *rddp,
 			accel[x] = rddp[n[1]*x]/m[x];
 			rddp[n[1]*x] = (0.0, 0.0, 0.0);					
 			alpha[x] = oddp[n[1]*x]/I[x];
-			oddp[n[1]*x] = (0.0, 0.0, 0.0);	
-				
+			oddp[n[1]*x] = (0.0, 0.0, 0.0);					
 		}	

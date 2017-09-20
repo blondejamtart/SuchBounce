@@ -1,7 +1,7 @@
 function [V_vdw, V_G, F_vdw, F_G] = potentials(norm_r,rad,m)
-A = 4.5e-20;%3e-14;
+A = 2.0e-14;%3e-14;
 k = 5e-1;
-cut_off = (rad(1) + rad(2)) + 5.0e-10;%*min(rad);
+cut_off = (rad(1) + rad(2)) + 5.0e-7;%*min(rad);
 hard_rad = (rad(1) + rad(2)) + 1.5e-10;%*min(rad);
 F_G = m(1)*m(2)*6.734e-11/(norm_r^2);
 V_G = -m(1)*m(2)*6.734e-11/norm_r;

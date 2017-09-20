@@ -24,7 +24,8 @@ __kernel void Fimp(__global double *q,
 					__global const int *n,
 					__global const int *offset,
 					__global double *pheremones_upper,				
-					__global double *pheremones_lower)
+					__global double *pheremones_lower,
+					__global double *deltaq)
 					
 				  
 		{ 			
@@ -110,7 +111,7 @@ __kernel void Fimp(__global double *q,
 			Ipart_upper[b_sub*n[4]+a_sub] = 0.25*collisionflag*m_a*m_b/(m_a+m_b)*stuff[8]*pow((rad_a+rad_b-d0),2);
 			Vpart_upper[b_sub*n[4]+a_sub] = Vtemp - dot(mu[b],B_a);
 
-			pheremones_upper[b_sub*n[4]+a_sub] = ((rad[a]+rad[b])/d)*step(1.0e-100,q[b]);
-			pheremones_lower[a_sub*n[4]+b_sub] = ((rad[a]+rad[b])/d)*step(1.0e-100,q[a]);
+			pheremones_upper[b_sub*n[4]+a_sub] = fmax(((rad[a]+rad[b])/d)*step(1.0e-12,deltaq[a]),0.0);
+			pheremones_lower[a_sub*n[4]+b_sub] = fmax(((rad[a]+rad[b])/d)*step(1.0e-12,deltaq[b]),0.0);
 			
 		}

@@ -1,0 +1,43 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <CL\cl.hpp>
+#include <array>
+#include <stdio.h>	
+	
+int main()
+{
+
+	// Open output streams
+	std::string root = ""; //"../Outputs";	
+	std::string path = ""; //root + "/";
+	std::ofstream dev_list(path + "OpenCL_devices.txt", std::ios::out);
+
+	// OpenCL Context Sorcery
+	std::vector<cl::Platform> platforms;
+	std::vector<cl::Device> platformDevices, allDevices, conDev;
+	std::string device_name;
+	cl::Device DevChoice;
+	int nDev;
+	cl::Platform::get(&platforms);
+	dev_list << "Number of installed OpenCL Platforms: " << platforms.size() << "\n\r";
+	
+	
+		
+	dev_list << "Accesible Devices on current Node:\n\n";
+	for (int j = 0; j < platforms.size(); j++)
+	{
+		platforms[j].getDevices(CL_DEVICE_TYPE_ALL, &platformDevices);
+		dev_list << "Platform #" << j << " (" <<  platforms[j].getInfo<CL_PLATFORM_NAME>() << "; running " << platforms[j].getInfo<CL_PLATFORM_VERSION>() << "):\n\r";
+		for (int i = 0; i < platformDevices.size(); i++)
+		{
+		
+			device_name = platformDevices[i].getInfo<CL_DEVICE_NAME>();
+			dev_list << "Device " << i << ": "
+			<< device_name
+			<< "\n\r";
+		}
+	}
+	return 0;
+}

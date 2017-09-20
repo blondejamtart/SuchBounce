@@ -38,7 +38,7 @@ filewrite([root 'v.vec'],v,'init')
 
 
 settings{17} = ['const int n = ' num2str(2) ';'];
-settings{18} = ['const double settings[14] = {pow(2,17), pow(2.0,-6), pow(2.0,-2), '...
+settings{18} = ['const double settings[14] = {pow(2,17), pow(2.0,-10), pow(2.0,-2), '...
     '1.0e-08, 2.5e-15, 0, 0.2, 0.1, 5.0e-03, pow(2.0,8), 1.0e-20, 1.0e-03, 1.0e-04, 1.0e-02};'];
 settings{26} = 'const int workgroup_size = 1; // set around 32-64 for GPU, 1 for CPU'; 
 settings{29} = ['int block_size = ' num2str(2) '; // Size of blocks for partitioning of particle interaction calculations '];
